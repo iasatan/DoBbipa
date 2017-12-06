@@ -57,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     DatabaseHandler db;
     Position position = new Position();
-    List<Room> rooms /*= new ArrayList<Room>()*/;
+    List<Room> rooms;
 
+    
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         closestRoom = (TextView) findViewById(R.id.closestRoom);
         residents = (TextView) findViewById(R.id.residents);
-        residents.setText("");
-        closestRoom.setText("");
 
         devices = new HashMap<>();
         db = new DatabaseHandler(this, "dobbipa11", 1);
