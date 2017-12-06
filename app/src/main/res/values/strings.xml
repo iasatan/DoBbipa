@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">DoBbipa</string>
+    <string name="startScan">Start Scan</string>
+    <string name="stopScan">Stop Scan</string>
+    <string name="appBasicInfo">Indoor Positioning</string>
+    <string name="closestRoom">Closest Room: </string>
+    <string name="roomNumber">Room Number: </string>
+    <string name="residents">Residents: </string>
+</resources>
