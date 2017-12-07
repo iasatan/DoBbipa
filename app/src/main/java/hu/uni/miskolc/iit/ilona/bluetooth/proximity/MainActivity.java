@@ -56,10 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     DatabaseHandler db;
-    Position position = new Position();
     List<Room> rooms;
 
-    
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         residents = (TextView) findViewById(R.id.residents);
 
         devices = new HashMap<>();
-        db = new DatabaseHandler(this, "dobbipa11", 1);
+        db = new DatabaseHandler(this, "dobbipa12", 1);
         if(db.getDeviceCount()<1)
             db.populateDatabase();
 
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 stopScanning();
             }
         });
-        stopScanningButton.setVisibility(View.INVISIBLE);
+        //stopScanningButton.setVisibility(View.INVISIBLE);
 
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
@@ -119,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+        startScanning();
         if(savedInstanceState!=null){
             currentClosestRoomNumber=savedInstanceState.getInt(CLOSESTROOM);
             currentResidents=savedInstanceState.getStringArrayList(RESIDENTS);
@@ -151,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
         Position position = new Position();
         position.setId(0);
         position.setZ(4.4);
-        position.setY(7);
         Map<String, Device> devices = new HashMap<String, Device>();
         for (Map.Entry<String, Device> device : this.devices.entrySet()){
             if (device.getValue().getAverageRSSI()!=0){
@@ -164,17 +162,27 @@ public class MainActivity extends AppCompatActivity {
             throw new NoCloseBeaconException();
         if(devices.size()==1){
             for (Map.Entry<String, Device> device : devices.entrySet()){
-                if(device.getValue().getAlignment()== Alignment.PLUS){
+                if(device.getValue().getAlignment()== Alignment.RIGHT){
+                    position.setY(device.getValue().getPosition().getY());
                     position.setX(device.getValue().getPosition().getX()+device.getValue().getDistanceFrom());
                 }
-                else{
+                else if(device.getValue().getAlignment()==Alignment.LEFT){
+                    position.setY(device.getValue().getPosition().getY());
                     position.setX(device.getValue().getPosition().getX()-device.getValue().getDistanceFrom());
+                }
+                else if(device.getValue().getAlignment()==Alignment.FRONT){
+                    position.setX(device.getValue().getPosition().getX());
+                    position.setY(device.getValue().getPosition().getY()+device.getValue().getDistanceFrom());
+                }
+                else if(device.getValue().getAlignment()==Alignment.BEHIND){
+                    position.setX(device.getValue().getPosition().getX());
+                    position.setY(device.getValue().getPosition().getY()-device.getValue().getDistanceFrom());
                 }
             }
         }
         else{
             List<Device> closestDevices = new ArrayList<Device>();
-            Device closestDevice=new Device(0, 0, "", new Position(0, 0.0, 0.0, 0.0), Alignment.MINUS);
+            Device closestDevice=new Device(0, 0, "", new Position(0, 0.0, 0.0, 0.0), Alignment.LEFT);
 
             for (Map.Entry<String, Device> device : devices.entrySet()){
                 if(device.getValue().getDistanceFrom()<closestDevice.getDistanceFrom()) {

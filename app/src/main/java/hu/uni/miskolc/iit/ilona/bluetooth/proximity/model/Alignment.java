@@ -5,5 +5,5 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
  */
 
 public enum Alignment {
-    PLUS, MINUS
+    LEFT, RIGHT, FRONT, BEHIND
 }
