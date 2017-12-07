@@ -13,23 +13,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.android.test.R;
+import com.example.android.test.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
@@ -37,60 +38,103 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class MainActivity extends AppCompatActivity {
 
-    BluetoothManager btManager;
     static final String CLOSESTROOM = "closestRoom";
     static final String RESIDENTS = "residents";
     static final String STARTED = "started";
+    private final static int REQUEST_ENABLE_BT = 1;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    ActivityMainBinding activityMainBinding;
+    BluetoothManager btManager;
     boolean started;
-    int currentClosestRoomNumber;
+    Integer currentClosestRoomNumber;
     ArrayList<String> currentResidents;
-
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
-    Button startScanningButton;
-    Button stopScanningButton;
+    //Button startScanningButton;
+    //Button stopScanningButton;
     TextView closestRoom;
     TextView residents;
     Map<String, Device> devices;
     List<ScanFilter> filter;
-    private final static int REQUEST_ENABLE_BT = 1;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     DatabaseHandler db;
     List<Room> rooms;
+    // Device scan callback.
+    private ScanCallback leScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            String address = result.getDevice().getAddress();
+            Device device = devices.get(address);
+            device.addRSSI(result.getRssi());
+            if (device.getPrevRSSIs().size() >= 3) {
+                Room room = null;
+                try {
+                    room = getPosition().getClosestRoom(rooms);
+                    currentClosestRoomNumber = room.getNumber();
+                    activityMainBinding.setClosestRoom(currentClosestRoomNumber.toString());
+                    //closestRoom.setText(currentClosestRoomNumber + "");
+                    residents.setText("");
+                    currentResidents = new ArrayList<String>();
+                    for (Person person : room.getPeople()) {
+                        residents.append(person.toString() + "\n");
+                        currentResidents.add(person.toString());
+                    }
+                } catch (NoCloseBeaconException e) {
+                    //closestRoom.setText("No near Beacons found");
+                }
+            }
+        }
+    };
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        closestRoom = (TextView) findViewById(R.id.closestRoom);
+        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        //closestRoom = (TextView) findViewById(R.id.closestRoom);
         residents = (TextView) findViewById(R.id.residents);
 
         devices = new HashMap<>();
-        db = new DatabaseHandler(this, "dobbipa12", 1);
-        if(db.getDeviceCount()<1)
+        db = new DatabaseHandler(this, "dobbipa13", 1);
+        if (db.getDeviceCount() < 1) {
             db.populateDatabase();
+        }
 
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
         }
-        rooms=db.getAllRoom();
+        rooms = db.getAllRoom();
 
 
-
-        startScanningButton = (Button) findViewById(R.id.StartScanButton);
-        startScanningButton.setOnClickListener(new View.OnClickListener() {
+        activityMainBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
+                activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
                 startScanning();
+
             }
         });
-
-        stopScanningButton = (Button) findViewById(R.id.StopScanButton);
-        stopScanningButton.setOnClickListener(new View.OnClickListener() {
+        //startScanningButton = (Button) findViewById(R.id.StartScanButton);
+        //startScanningButton.setOnClickListener(new View.OnClickListener() {
+        //  public void onClick(View v) {
+        //startScanning();
+        //}
+        //});
+        activityMainBinding.StopScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                activityMainBinding.StartScanButton.setVisibility(View.VISIBLE);
+                activityMainBinding.StopScanButton.setVisibility(View.INVISIBLE);
                 stopScanning();
             }
         });
+        //stopScanningButton = (Button) findViewById(R.id.StopScanButton);
+        //stopScanningButton.setOnClickListener(new View.OnClickListener() {
+        //  public void onClick(View v) {
+        //     stopScanning();
+        // }
+        //});
+
         //stopScanningButton.setVisibility(View.INVISIBLE);
 
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -104,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
-        if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("This app needs location access");
             builder.setMessage("Please grant location access so this app can detect peripherals.");
@@ -117,32 +161,67 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+        activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
+        activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
         startScanning();
-        if(savedInstanceState!=null){
-            currentClosestRoomNumber=savedInstanceState.getInt(CLOSESTROOM);
-            currentResidents=savedInstanceState.getStringArrayList(RESIDENTS);
-            closestRoom.setText(currentClosestRoomNumber+"");
-            for(String names : currentResidents){
-                residents.append(names+"\n");
+        if (savedInstanceState != null) {
+            currentClosestRoomNumber = savedInstanceState.getInt(CLOSESTROOM);
+            currentResidents = savedInstanceState.getStringArrayList(RESIDENTS);
+            //closestRoom.setText(currentClosestRoomNumber + "");
+            for (String names : currentResidents) {
+                residents.append(names + "\n");
             }
-            if(savedInstanceState.getBoolean(STARTED)){
+            if (savedInstanceState.getBoolean(STARTED)) {
+                activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
+                activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
                 startScanning();
-            }
-            else
+            } else {
+                activityMainBinding.StartScanButton.setVisibility(View.VISIBLE);
+                activityMainBinding.StopScanButton.setVisibility(View.INVISIBLE);
                 stopScanning();
+            }
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putInt(CLOSESTROOM, currentClosestRoomNumber);
-        savedInstanceState.putStringArrayList(RESIDENTS, currentResidents);
+        if (currentClosestRoomNumber != null) {
+            savedInstanceState.putInt(CLOSESTROOM, currentClosestRoomNumber);
+        }
+        if (currentResidents != null) {
+            savedInstanceState.putStringArrayList(RESIDENTS, currentResidents);
+        }
         savedInstanceState.putBoolean(STARTED, started);
 
-
-        // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private Map<String, Device> filter(Map<String, Device> devices) {
+        Map<String, Device> nearDevices = new HashMap<String, Device>();
+        for (Map.Entry<String, Device> device : devices.entrySet()) {
+            if (device.getValue().getAverageRSSI() != 0) {
+                if (device.getValue().getDistanceFrom() < 12) { //TODO szervezd ki a 12métert db-be, building szinten
+                    nearDevices.put(device.getKey(), device.getValue());
+                }
+            }
+        }
+        return nearDevices;
+    }
+
+    private List<Device> closestTwoDevice(Map<String, Device> nearDevices) {
+        Device[] result = new Device[2];
+        result[0] = (Device) nearDevices.values().toArray()[0];
+        result[1] = result[0];
+        for (Device currentDevice : nearDevices.values()) {
+            if (currentDevice.getDistanceFrom() < result[1].getDistanceFrom()) {
+                result[1] = currentDevice;
+            }
+            if (currentDevice.getDistanceFrom() < result[0].getDistanceFrom()) {
+                result[1] = result[0];
+                result[0] = currentDevice;
+            }
+        }
+        return Arrays.asList(result);
     }
 
 
@@ -150,87 +229,49 @@ public class MainActivity extends AppCompatActivity {
         Position position = new Position();
         position.setId(0);
         position.setZ(4.4);
-        Map<String, Device> devices = new HashMap<String, Device>();
-        for (Map.Entry<String, Device> device : this.devices.entrySet()){
-            if (device.getValue().getAverageRSSI()!=0){
-                if(device.getValue().getDistanceFrom()<12){ //TODO szervezd ki db-be, building szinten
-                    devices.put(device.getKey(), device.getValue());
-                }
-            }
-        }
-        if(devices.size()==0)
+        Map<String, Device> nearDevices = filter(devices);
+
+        if (nearDevices.size() == 0) {
             throw new NoCloseBeaconException();
-        if(devices.size()==1){
-            for (Map.Entry<String, Device> device : devices.entrySet()){
-                if(device.getValue().getAlignment()== Alignment.RIGHT){
-                    position.setY(device.getValue().getPosition().getY());
-                    position.setX(device.getValue().getPosition().getX()+device.getValue().getDistanceFrom());
-                }
-                else if(device.getValue().getAlignment()==Alignment.LEFT){
-                    position.setY(device.getValue().getPosition().getY());
-                    position.setX(device.getValue().getPosition().getX()-device.getValue().getDistanceFrom());
-                }
-                else if(device.getValue().getAlignment()==Alignment.FRONT){
-                    position.setX(device.getValue().getPosition().getX());
-                    position.setY(device.getValue().getPosition().getY()+device.getValue().getDistanceFrom());
-                }
-                else if(device.getValue().getAlignment()==Alignment.BEHIND){
-                    position.setX(device.getValue().getPosition().getX());
-                    position.setY(device.getValue().getPosition().getY()-device.getValue().getDistanceFrom());
-                }
-            }
         }
-        else{
-            List<Device> closestDevices = new ArrayList<Device>();
-            Device closestDevice=new Device(0, 0, "", new Position(0, 0.0, 0.0, 0.0), Alignment.LEFT);
-
-            for (Map.Entry<String, Device> device : devices.entrySet()){
-                if(device.getValue().getDistanceFrom()<closestDevice.getDistanceFrom()) {
-                    closestDevices.add(device.getValue());
-                    devices.remove(device);
+        if (nearDevices.size() == 1) {
+            List<String> keys = new ArrayList<String>(nearDevices.keySet());
+            Device nearestDevice = nearDevices.get(keys.get(0));
+            switch (nearestDevice.getAlignment()) {
+                case RIGHT:
+                    position.setY(nearestDevice.getPosition().getY());
+                    position.setX(nearestDevice.getPosition().getX() - nearestDevice.getDistanceFrom());
                     break;
-                }
-            }
-            for (Map.Entry<String, Device> device : devices.entrySet()){
-                if(device.getValue().getDistanceFrom()<closestDevice.getDistanceFrom()) {
-                    closestDevices.add(device.getValue());
-                    devices.remove(device);
+                case LEFT:
+                    position.setY(nearestDevice.getPosition().getY());
+                    position.setX(nearestDevice.getPosition().getX() + nearestDevice.getDistanceFrom());
                     break;
-                }
-            }
+                case FRONT:
+                    position.setY(nearestDevice.getPosition().getY() - nearestDevice.getDistanceFrom());
+                    position.setX(nearestDevice.getPosition().getX());
 
-            double xCoordinate = 12 / (closestDevices.get(0).getDistanceFrom()+closestDevices.get(1).getDistanceFrom());
-            xCoordinate = xCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getX();
-            position.setX(xCoordinate);
+                    break;
+                case BEHIND:
+                    position.setY(nearestDevice.getPosition().getY() + nearestDevice.getDistanceFrom());
+                    position.setX(nearestDevice.getPosition().getX());
+                    break;
+            }
+        } else {
+            List<Device> closestDevices = closestTwoDevice(nearDevices);
+            if (closestDevices.get(0).getPosition().getX() == closestDevices.get(1).getPosition().getX()) {
+                double xCoordinate = 12 / (closestDevices.get(0).getDistanceFrom() + closestDevices.get(1).getDistanceFrom());
+                xCoordinate = xCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getX();
+                position.setX(xCoordinate);
+                position.setY(closestDevices.get(0).getPosition().getY());
+            } else if (closestDevices.get(0).getPosition().getY() == closestDevices.get(1).getPosition().getY()) {
+                double yCoordinate = 12 / (closestDevices.get(0).getDistanceFrom() + closestDevices.get(1).getDistanceFrom());
+                yCoordinate = yCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getY();
+                position.setY(yCoordinate);
+                position.setX(closestDevices.get(0).getPosition().getX());
+            }
         }
         return position;
     }
-
-    // Device scan callback.
-    private ScanCallback leScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            String address = result.getDevice().getAddress();
-            Device device = devices.get(address);
-            device.addRSSI(result.getRssi());
-            if (device.getPrevRSSIs().size() >= 3) {
-                Room room = null;
-                try {
-                    room = getPosition().getClosestRoom(rooms);
-                    currentClosestRoomNumber=room.getNumber();
-                    closestRoom.setText(currentClosestRoomNumber+"");
-                    residents.setText("");
-                    currentResidents = new ArrayList<String>();
-                    for(Person person : room.getPeople()){
-                        residents.append(person.toString()+ "\n");
-                        currentResidents.add(person.toString());
-                    }
-                } catch (NoCloseBeaconException e) {
-                    closestRoom.setText("No near Beacons found");
-                }
-            }
-        }
-    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -259,26 +300,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startScanning() {
-        startScanningButton.setVisibility(View.INVISIBLE);
-        stopScanningButton.setVisibility(View.VISIBLE);
-        started=true;
+        //startScanningButton.setVisibility(View.INVISIBLE);
+        //stopScanningButton.setVisibility(View.VISIBLE);
+        started = true;
         filter = new ArrayList<ScanFilter>();
-        for (Map.Entry<String, Device> device : devices.entrySet()){
+        for (Map.Entry<String, Device> device : devices.entrySet()) {
             filter.add(new ScanFilter.Builder().setDeviceAddress(device.getValue().getMAC()).build());
         }
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                btScanner.startScan(filter, new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build(), leScanCallback);
+                btScanner.startScan(filter, new ScanSettings.Builder().setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE).build(), leScanCallback);
             }
         });
     }
 
     public void stopScanning() {
-        System.out.println("stopping scanning");
-        startScanningButton.setVisibility(View.VISIBLE);
-        stopScanningButton.setVisibility(View.INVISIBLE);
-        started=false;
+        //startScanningButton.setVisibility(View.VISIBLE);
+        //stopScanningButton.setVisibility(View.INVISIBLE);
+        started = false;
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {

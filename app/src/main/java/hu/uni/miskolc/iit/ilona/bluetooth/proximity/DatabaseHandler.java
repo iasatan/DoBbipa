@@ -7,9 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -116,7 +114,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void addRoom(Room room) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("number", room.getNumber());
         values.put("position", room.getPosition().getId());
@@ -124,10 +122,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Room getRoom(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("Room", null, "id=" + id, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Position position = getPosition(Integer.parseInt(cursor.getString(2)));
         Room room = new Room();
         room.setId(Integer.parseInt(cursor.getString(0)));
@@ -140,7 +139,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Room> getAllRoom() {
         List<Room> rooms = new ArrayList<Room>();
         String selectQuery = "Select * From Room";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         //Toast.makeText(context, "getting the rooms", Toast.LENGTH_LONG);
         if (cursor.moveToFirst()) {
@@ -158,14 +157,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public int getRoomCount() {
         String countQuery = "SELECT * FROM Room";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
         return cursor.getCount();
     }
 
     public int updateRoom(Room room) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("number", room.getNumber());
         values.put("position", room.getPosition().getId());
@@ -173,12 +172,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void deleteRoom(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("Room", "id=" + id, null);
     }
 
     public void addPosition(Position position) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("x", position.getX());
         contentValues.put("y", position.getY());
@@ -188,10 +187,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Position getPosition(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("Position", null/*new String[]{"id", "x", "y", "z", "comment"}*/, "id="+id, null/*new String[]{String.valueOf(id)}*/, null, null, null);
-        if (cursor != null)
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Position", null/*new String[]{"id", "x", "y", "z", "comment"}*/, "id=" + id, null/*new String[]{String.valueOf(id)}*/, null, null, null);
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)), cursor.getString(4));
 
         return position;
@@ -200,7 +200,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Position> getAllPosition() {
         List<Position> positions = new ArrayList<Position>();
         String selectQuery = "Select * From Position";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -218,14 +218,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public int getPositionCount() {
         String countQuery = "SELECT * FROM Position";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
         return cursor.getCount();
     }
 
     public int updatePosition(Position position) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("x", position.getX());
         values.put("y", position.getY());
@@ -236,14 +236,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void deletePosition(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("Position", "id=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
     public void addDevice(Device device) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("baserssi", device.getBaseRSSI());
         contentValues.put("mac", device.getMAC());
@@ -254,10 +254,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Device getDevice(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("Device", null, "id=" + id, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Position position = getPosition(Integer.parseInt(cursor.getString(3)));
         Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), position, Alignment.valueOf(cursor.getString(4)));
 
@@ -265,7 +266,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Device getDevice(String mac) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Device device = new Device();
         Cursor cursor = db.query("Device", null, "mac=" + "'" + mac + "'", null, null, null, null);
         if (cursor == null) {
@@ -277,8 +278,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return device;
         }
         Log.d("read", "wtf? ha nem null miért működik");
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
 
         return device;
@@ -287,7 +289,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Collection<Device> getAllDevice() {
         Collection<Device> devices = new HashSet<Device>();
         String selectQuery = "Select * From Device";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -296,6 +298,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 device.setBaseRSSI(Integer.parseInt(cursor.getString(1)));
                 device.setMAC(cursor.getString(2));
                 Position position = getPosition(Integer.parseInt(cursor.getString(3)));
+                device.setAlignment(Alignment.valueOf(cursor.getString(4)));
                 device.setPosition(position);
                 devices.add(device);
             } while (cursor.moveToNext());
@@ -305,7 +308,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public int getDeviceCount() {
         String countQuery = "SELECT * FROM Device";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int temp = cursor.getCount();
         cursor.close();
@@ -313,7 +316,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public int updateDevice(Device device) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("baserssi", device.getBaseRSSI());
         values.put("mac", device.getMAC());
@@ -323,13 +326,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void deleteDevice(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("Device", "id=" + id, null);
         db.close();
     }
 
     public void addPerson(Person person) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", person.getName());
         contentValues.put("roomId", person.getRoomId());
@@ -337,10 +340,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Person getPerson(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("People", null, "id=" + id, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Person person = new Person();
         person.setId(Integer.parseInt(cursor.getString(0)));
         person.setName(cursor.getString(1));
@@ -351,7 +355,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Person> getAllPeople() {
         List<Person> people = new ArrayList<Person>();
         String selectQuery = "Select * From People";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -367,8 +371,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public List<Person> getPeopleInRoom(Integer roomId) {
         List<Person> people = new ArrayList<Person>();
-        String selectQuery = "Select * From People WHERE roomId = '" + roomId+"'";
-        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "Select * From People WHERE roomId = '" + roomId + "'";
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -384,14 +388,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public int getPeopleCount() {
         String countQuery = "SELECT * FROM People";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
         return cursor.getCount();
     }
 
     public int updatePerson(Person person) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", person.getName());
         values.put("roomId", person.getRoomId());
@@ -400,7 +404,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void deletePerson(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("People", "id=" + id, null);
         db.close();
     }
