@@ -18,6 +18,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.ResidentsRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
@@ -46,18 +49,17 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding activityMainBinding;
     BluetoothManager btManager;
     boolean started;
-    Integer currentClosestRoomNumber;
-    ArrayList<String> currentResidents;
+    String currentClosestRoomNumber = "";
+    String currentResidents = "";
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
-    //Button startScanningButton;
-    //Button stopScanningButton;
-    TextView closestRoom;
     TextView residents;
     Map<String, Device> devices;
     List<ScanFilter> filter;
     DatabaseHandler db;
     List<Room> rooms;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
     // Device scan callback.
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -69,17 +71,17 @@ public class MainActivity extends AppCompatActivity {
                 Room room = null;
                 try {
                     room = getPosition().getClosestRoom(rooms);
-                    currentClosestRoomNumber = room.getNumber();
-                    activityMainBinding.setClosestRoom(currentClosestRoomNumber.toString());
-                    //closestRoom.setText(currentClosestRoomNumber + "");
-                    residents.setText("");
-                    currentResidents = new ArrayList<String>();
-                    for (Person person : room.getPeople()) {
-                        residents.append(person.toString() + "\n");
-                        currentResidents.add(person.toString());
-                    }
+                    currentClosestRoomNumber = room.getNumber().toString();
+                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(room.getPeople());
+                    activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+
+                    //currentResidents = "";
+                    //for (Person person : room.getPeople()) {
+                    //  currentResidents += (person.toString() + "\n");
+                    //}
+                    activityMainBinding.setClosestRoom(currentClosestRoomNumber);
+                    //activityMainBinding.setResidents(currentResidents);
                 } catch (NoCloseBeaconException e) {
-                    //closestRoom.setText("No near Beacons found");
                 }
             }
         }
@@ -91,12 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        //setContentView(R.layout.activity_main);
-        //closestRoom = (TextView) findViewById(R.id.closestRoom);
-        residents = (TextView) findViewById(R.id.residents);
 
         devices = new HashMap<>();
-        db = new DatabaseHandler(this, "dobbipa13", 1);
+        db = new DatabaseHandler(getApplicationContext(), "dobbipa29", 1);
         if (db.getDeviceCount() < 1) {
             db.populateDatabase();
         }
@@ -115,12 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        //startScanningButton = (Button) findViewById(R.id.StartScanButton);
-        //startScanningButton.setOnClickListener(new View.OnClickListener() {
-        //  public void onClick(View v) {
-        //startScanning();
-        //}
-        //});
         activityMainBinding.StopScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 activityMainBinding.StartScanButton.setVisibility(View.VISIBLE);
@@ -128,14 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 stopScanning();
             }
         });
-        //stopScanningButton = (Button) findViewById(R.id.StopScanButton);
-        //stopScanningButton.setOnClickListener(new View.OnClickListener() {
-        //  public void onClick(View v) {
-        //     stopScanning();
-        // }
-        //});
-
-        //stopScanningButton.setVisibility(View.INVISIBLE);
 
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
@@ -161,16 +146,23 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+
+
         activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
         activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
         startScanning();
+
+        activityMainBinding.residentsRecyclerView.setHasFixedSize(true);
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        activityMainBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+        recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
+        activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+
         if (savedInstanceState != null) {
-            currentClosestRoomNumber = savedInstanceState.getInt(CLOSESTROOM);
-            currentResidents = savedInstanceState.getStringArrayList(RESIDENTS);
-            //closestRoom.setText(currentClosestRoomNumber + "");
-            for (String names : currentResidents) {
-                residents.append(names + "\n");
-            }
+            currentClosestRoomNumber = savedInstanceState.getString(CLOSESTROOM);
+            currentResidents = savedInstanceState.getString(RESIDENTS);
+            activityMainBinding.setClosestRoom(currentClosestRoomNumber);
+            activityMainBinding.setResidents(currentResidents);
             if (savedInstanceState.getBoolean(STARTED)) {
                 activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
                 activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
@@ -186,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if (currentClosestRoomNumber != null) {
-            savedInstanceState.putInt(CLOSESTROOM, currentClosestRoomNumber);
+            savedInstanceState.putString(CLOSESTROOM, currentClosestRoomNumber);
         }
         if (currentResidents != null) {
-            savedInstanceState.putStringArrayList(RESIDENTS, currentResidents);
+            savedInstanceState.putString(RESIDENTS, currentResidents);
         }
         savedInstanceState.putBoolean(STARTED, started);
 
@@ -300,8 +292,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startScanning() {
-        //startScanningButton.setVisibility(View.INVISIBLE);
-        //stopScanningButton.setVisibility(View.VISIBLE);
         started = true;
         filter = new ArrayList<ScanFilter>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
@@ -316,8 +306,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopScanning() {
-        //startScanningButton.setVisibility(View.VISIBLE);
-        //stopScanningButton.setVisibility(View.INVISIBLE);
         started = false;
         AsyncTask.execute(new Runnable() {
             @Override

@@ -7,7 +7,10 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.example.android.test.R;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public DatabaseHandler(Context context, String databaseName, Integer databaseVersion) {
         super(context, databaseName, null, databaseVersion);
+        this.context = context;
     }
 
     public DatabaseHandler(Context context) {
@@ -52,7 +56,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z INTEGER, comment TEXT, buildingid INTEGER)");
         db.execSQL("CREATE TABLE Device(id INTEGER PRIMARY KEY, baserssi INTEGER, mac TEXT, position INTEGER, alignment TEXT)");
         db.execSQL("CREATE TABLE Room(id INTEGER PRIMARY KEY, number INTEGER, position INTEGER)");
-        db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER)");
+        db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER, image TEXT)");
     }
 
     @Override
@@ -91,8 +95,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(4, 109, getPosition(8)));
 
         addRoom(new Room(5, 123, getPosition(9)));
-
-        addPerson(new Person(1, "Tóth Zsolt", 1));
+       /* addPerson(new Person(1, "Tóth Zsolt", 1));
 
         addPerson(new Person(2, "Tamás Judit", 1));
 
@@ -110,7 +113,45 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         addPerson(new Person(9, "Barabás Péter", 4));
 
-        addPerson(new Person(10, "Sasvári Péter", 4));
+        addPerson(new Person(10, "Sasvári Péter", 4));*/
+
+        addPerson(new Person(1, "Tóth Zsolt", 1, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(2, "Tamás Judit", 1, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(3, "Vincze Dávid", 1, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(4, "Kovács Szilveszter", 2, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(5, "Krizsán Zoltán", 2, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(6, "Bulla Dávid", 3, context.getDrawable(R.drawable.tzs0)));
+        addPerson(new Person(7, "Szűcs Miklós", 3, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(8, "Baksáné Varga Erika", 4, context.getDrawable(R.drawable.tzs0)));
+
+        addPerson(new Person(9, "Barabás Péter", 4, context.getDrawable(R.drawable.tzs0)));
+        addPerson(new Person(10, "Sasvári Péter", 4, context.getDrawable(R.drawable.tzs0)));
+
+//        addPerson(new Person(1, "Tóth Zsolt", 1, ContextCompat.getDrawable(context, R.drawable.)));
+//
+//        addPerson(new Person(2, "Tamás Judit", 1, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(3, "Vincze Dávid", 1, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(4, "Kovács Szilveszter", 2, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(5, "Krizsán Zoltán", 2, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(6, "Bulla Dávid", 3, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(7, "Szűcs Miklós", 3, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(8, "Baksáné Varga Erika", 4, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(9, "Barabás Péter", 4, ContextCompat.getDrawable(context, R.drawable.tzs0)));
+//
+//        addPerson(new Person(10, "Sasvári Péter", 4, ContextCompat.getDrawable(context, R.drawable.tzs0)));
     }
 
     public void addRoom(Room room) {
@@ -336,6 +377,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", person.getName());
         contentValues.put("roomId", person.getRoomId());
+        contentValues.put("image", "pina");
         db.insert("People", null, contentValues);
     }
 
@@ -363,6 +405,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 person.setId(Integer.parseInt(cursor.getString(0)));
                 person.setName(cursor.getString(1));
                 person.setRoomId(Integer.parseInt(cursor.getString(2)));
+                person.setImage(ContextCompat.getDrawable(context, R.drawable.tzs0));
                 people.add(person);
             } while (cursor.moveToNext());
         }
@@ -380,6 +423,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 person.setId(Integer.parseInt(cursor.getString(0)));
                 person.setName(cursor.getString(1));
                 person.setRoomId(Integer.parseInt(cursor.getString(2)));
+                person.setImage(ContextCompat.getDrawable(context, R.drawable.tzs0));
                 people.add(person);
             } while (cursor.moveToNext());
         }

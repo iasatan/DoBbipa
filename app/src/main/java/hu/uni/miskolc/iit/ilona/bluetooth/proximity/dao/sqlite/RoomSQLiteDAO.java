@@ -68,7 +68,7 @@ public class RoomSQLiteDAO extends SQLiteOpenHelper implements RoomDAO {
     }
 
     public void addRoom(Room room) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("number", room.getNumber());
         values.put("position", room.getPosition().getId());
@@ -77,23 +77,24 @@ public class RoomSQLiteDAO extends SQLiteOpenHelper implements RoomDAO {
     }
 
     public Room getRoom(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("Room", null, "id=" + id, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Position position = positionDAO.getPosition(Integer.parseInt(cursor.getString(2)));
         Room room = new Room();
         room.setId(Integer.parseInt(cursor.getString(0)));
         room.setPosition(position);
         room.setNumber(Integer.parseInt(cursor.getString(1)));
-        room.setPeople(personDAO.getPeopleInRoom(id));
+        //room.setPeople(personDAO.getPeopleInRoom(id));
         return room;
     }
 
     public List<Room> getAllRoom() {
         List<Room> rooms = new ArrayList<Room>();
         String selectQuery = "Select * From Room";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -101,7 +102,7 @@ public class RoomSQLiteDAO extends SQLiteOpenHelper implements RoomDAO {
                 room.setId(Integer.parseInt(cursor.getString(0)));
                 room.setNumber(Integer.parseInt(cursor.getString(1)));
                 room.setPosition(positionDAO.getPosition(Integer.parseInt(cursor.getString(2))));
-                room.setPeople(personDAO.getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
+                //room.setPeople(personDAO.getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
             } while (cursor.moveToNext());
         }
         return rooms;
@@ -109,14 +110,14 @@ public class RoomSQLiteDAO extends SQLiteOpenHelper implements RoomDAO {
 
     public int getRoomCount() {
         String countQuery = "SELECT * FROM Room";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
         return cursor.getCount();
     }
 
     public int updateRoom(Room room) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("number", room.getNumber());
         values.put("position", room.getPosition().getId());
@@ -124,7 +125,7 @@ public class RoomSQLiteDAO extends SQLiteOpenHelper implements RoomDAO {
     }
 
     public void deleteRoom(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("Room", "id=" + id, null);
     }
 }

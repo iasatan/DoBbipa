@@ -39,7 +39,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     }
 
     private void populateDatabase() {
-        addPerson(new Person(1, "Tóth Zsolt", 1));
+       /* addPerson(new Person(1, "Tóth Zsolt", 1));
 
         addPerson(new Person(2, "Tamás Judit", 1));
 
@@ -57,7 +57,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
 
         addPerson(new Person(9, "Barabás Péter", 4));
 
-        addPerson(new Person(10, "Sasvári Péter", 4));
+        addPerson(new Person(10, "Sasvári Péter", 4));*/
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     }
 
     public void addPerson(Person person) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", person.getName());
         contentValues.put("roomId", person.getRoomId());
@@ -76,10 +76,11 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     }
 
     public Person getPerson(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("People", null, "id=" + id, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
         Person person = new Person();
         person.setId(Integer.parseInt(cursor.getString(0)));
         person.setName(cursor.getString(1));
@@ -90,7 +91,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     public List<Person> getAllPeople() {
         List<Person> people = new ArrayList<Person>();
         String selectQuery = "Select * From People";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -107,7 +108,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     public List<Person> getPeopleInRoom(int roomId) {
         List<Person> people = new ArrayList<Person>();
         String selectQuery = "Select * From People WHERE roomId = " + roomId;
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -123,14 +124,14 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
 
     public int getPeopleCount() {
         String countQuery = "SELECT * FROM People";
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
         return cursor.getCount();
     }
 
     public int updatePerson(Person person) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", person.getName());
         values.put("roomId", person.getRoomId());
@@ -139,7 +140,7 @@ public class PersonSQLiteDAO extends SQLiteOpenHelper implements PersonDAO {
     }
 
     public void deletePerson(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete("People", "id=" + id, null);
         db.close();
     }
