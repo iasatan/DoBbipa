@@ -21,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityMainBinding;
@@ -41,19 +40,17 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String CLOSESTROOM = "closestRoom";
-    static final String RESIDENTS = "residents";
+    static final String CLOSESTROOMNUMBER = "closestRoomNumber";
+    static final String CLOSESTROOMID = "closestRoomId";
     static final String STARTED = "started";
     private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     ActivityMainBinding activityMainBinding;
     BluetoothManager btManager;
     boolean started;
-    String currentClosestRoomNumber = "";
-    String currentResidents = "";
+    Room currentClosestRoom;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
-    TextView residents;
     Map<String, Device> devices;
     List<ScanFilter> filter;
     DatabaseHandler db;
@@ -71,11 +68,10 @@ public class MainActivity extends AppCompatActivity {
                 Room room = null;
                 try {
                     room = getPosition().getClosestRoom(rooms);
-                    currentClosestRoomNumber = room.getNumber().toString();
-                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(room.getPeople());
+                    currentClosestRoom = room;
+                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
                     activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
-
-                    activityMainBinding.setClosestRoom(currentClosestRoomNumber);
+                    activityMainBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
                 } catch (NoCloseBeaconException e) {
                 }
             }
@@ -88,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
+        currentClosestRoom = new Room();
         devices = new HashMap<>();
         db = new DatabaseHandler(getApplicationContext(), "dobbipa33", 1);
         if (db.getDeviceCount() < 1) {
@@ -154,10 +150,12 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
         if (savedInstanceState != null) {
-            currentClosestRoomNumber = savedInstanceState.getString(CLOSESTROOM);
-            currentResidents = savedInstanceState.getString(RESIDENTS);
-            activityMainBinding.setClosestRoom(currentClosestRoomNumber);
-            activityMainBinding.setResidents(currentResidents);
+            currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));
+            recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
+            activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+
+            activityMainBinding.setClosestRoom(savedInstanceState.getString(CLOSESTROOMNUMBER));
+
             if (savedInstanceState.getBoolean(STARTED)) {
                 activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
                 activityMainBinding.StopScanButton.setVisibility(View.VISIBLE);
@@ -172,11 +170,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        if (currentClosestRoomNumber != null) {
-            savedInstanceState.putString(CLOSESTROOM, currentClosestRoomNumber);
-        }
-        if (currentResidents != null) {
-            savedInstanceState.putString(RESIDENTS, currentResidents);
+        if (currentClosestRoom != null) {
+            savedInstanceState.putString(CLOSESTROOMNUMBER, currentClosestRoom.getNumber().toString());
+            savedInstanceState.putInt(CLOSESTROOMID, currentClosestRoom.getId());
         }
         savedInstanceState.putBoolean(STARTED, started);
 
@@ -295,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                btScanner.startScan(filter, new ScanSettings.Builder().setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE).build(), leScanCallback);
+                btScanner.startScan(filter, new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(), leScanCallback);
             }
         });
     }

@@ -7,93 +7,91 @@
         <variable
             name="closestRoom"
             type="String" />
-
-        <variable
-            name="residents"
-            type="String" />
-
-        <variable
-            name="person"
-            type="hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person" />
+        
     </data>
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context="hu.uni.miskolc.iit.ilona.bluetooth.proximity.MainActivity">
 
-        <TextView
-            android:id="@+id/textView2"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/appBasicInfo"
-            android:textAlignment="center"
-            android:textSize="22sp" />
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/StartScanButton"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/textView2"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="16dp"
-            android:text="@string/startScan" />
 
-        <Button
-            android:id="@+id/StopScanButton"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_alignBaseline="@+id/StartScanButton"
-            android:layout_alignBottom="@+id/StartScanButton"
-            android:layout_centerInParent="true"
-            android:text="@string/stopScan" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/appBasicInfo"
+                android:textAlignment="center"
+                android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/closestRoomText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/StopScanButton"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/closestRoom"
-            android:textSize="22sp" />
+            <Button
+                android:id="@+id/StartScanButton"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/textView2"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="16dp"
+                android:text="@string/startScan" />
 
-        <TextView
-            android:id="@+id/closestRoom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/closestRoomText"
-            android:layout_toEndOf="@+id/textView2"
-            android:text="@{closestRoom}"
-            android:textSize="22sp" />
+            <Button
+                android:id="@+id/StopScanButton"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_alignBaseline="@+id/StartScanButton"
+                android:layout_alignBottom="@+id/StartScanButton"
+                android:layout_centerInParent="true"
+                android:text="@string/stopScan" />
 
-        <TextView
-            android:id="@+id/residentsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/closestRoomText"
-            android:layout_below="@+id/closestRoomText"
-            android:layout_marginTop="24dp"
-            android:text="@string/residents"
-            android:textSize="22sp" />
+            <TextView
+                android:id="@+id/closestRoomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/StopScanButton"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/closestRoom"
+                android:textSize="22sp" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/residentsText">
+            <TextView
+                android:id="@+id/closestRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/closestRoomText"
+                android:layout_marginLeft="3dp"
+                android:layout_toEndOf="@+id/closestRoomText"
+                android:text="@{closestRoom}"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/residentsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/closestRoomText"
+                android:layout_below="@+id/closestRoomText"
+                android:layout_marginTop="24dp"
+                android:text="@string/residents"
+                android:textSize="22sp" />
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/residentsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="23dp"
-                android:scrollbars="vertical" />
-        </ScrollView>
+                android:layout_alignStart="@id/residentsText"
+                android:layout_below="@+id/residentsText"
 
-    </RelativeLayout>
+                android:layout_marginTop="5dp"
+                android:scrollbars="vertical" />
+
+        </RelativeLayout>
+    </ScrollView>
 
 
 </layout>
