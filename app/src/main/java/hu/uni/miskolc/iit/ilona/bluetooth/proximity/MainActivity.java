@@ -75,12 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     recyclerViewAdapter = new ResidentsRecycleViewAdapter(room.getPeople());
                     activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
-                    //currentResidents = "";
-                    //for (Person person : room.getPeople()) {
-                    //  currentResidents += (person.toString() + "\n");
-                    //}
                     activityMainBinding.setClosestRoom(currentClosestRoomNumber);
-                    //activityMainBinding.setResidents(currentResidents);
                 } catch (NoCloseBeaconException e) {
                 }
             }
@@ -95,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         devices = new HashMap<>();
-        db = new DatabaseHandler(getApplicationContext(), "dobbipa29", 1);
+        db = new DatabaseHandler(getApplicationContext(), "dobbipa33", 1);
         if (db.getDeviceCount() < 1) {
             db.populateDatabase();
         }
@@ -188,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private Map<String, Device> filter(Map<String, Device> devices) {
+    private Map<String, Device> getNearDevices(Map<String, Device> devices) {
         Map<String, Device> nearDevices = new HashMap<String, Device>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             if (device.getValue().getAverageRSSI() != 0) {
@@ -221,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         Position position = new Position();
         position.setId(0);
         position.setZ(4.4);
-        Map<String, Device> nearDevices = filter(devices);
+        Map<String, Device> nearDevices = getNearDevices(devices);
 
         if (nearDevices.size() == 0) {
             throw new NoCloseBeaconException();

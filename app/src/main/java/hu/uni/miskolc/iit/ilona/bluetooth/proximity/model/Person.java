@@ -1,5 +1,6 @@
 package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -7,19 +8,42 @@ import android.graphics.drawable.Drawable;
  */
 
 public class Person {
+    Context context;
     private Integer id;
     private String name;
     private Integer roomId;
     private Drawable image;
+    private Integer imageId;
+    private String title;
 
-    public Person() {
+    public Person(Context context) {
+        this.context = context;
     }
 
-    public Person(Integer id, String name, Integer roomId, Drawable image) {
+    public Person(Integer id, String name, Integer roomId, Integer image, String title, Context context) {
         this.id = id;
+        this.context = context;
         this.name = name;
         this.roomId = roomId;
-        this.image = image;
+        this.image = context.getDrawable(image);
+        this.title = title;
+        imageId = image;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
     }
 
     public Integer getId() {
@@ -50,8 +74,8 @@ public class Person {
         return image;
     }
 
-    public void setImage(Drawable image) {
-        this.image = image;
+    public void setImage(Integer image) {
+        this.image = context.getDrawable(image);
     }
 
     @Override
