@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         devices = new HashMap<>();
-        db = new DatabaseHandler(getApplicationContext(), "dobbipa34", 1);
+        db = new DatabaseHandler(getApplicationContext(), getString(R.string.databaseName), 1);
         if (db.getDeviceCount() < 1) {
             db.populateDatabase();
         }
@@ -133,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("This app needs location access");
-            builder.setMessage("Please grant location access so this app can detect peripherals.");
+            builder.setTitle(getString(R.string.locationAccess));
+            builder.setMessage(getString(R.string.grantLocationAccess));
             builder.setPositiveButton(android.R.string.ok, null);
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
@@ -274,8 +274,8 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("coarse location permission granted");
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                    builder.setTitle(getString(R.string.limitedFunctionality));
+                    builder.setMessage(getString(R.string.noBackgroundRunning));
                     builder.setPositiveButton(android.R.string.ok, null);
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 

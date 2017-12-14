@@ -33,7 +33,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new DatabaseHandler(getApplicationContext(), "dobbipa34", 1);
+        db = new DatabaseHandler(getApplicationContext(), getString(R.string.databaseName), 1);
         searchBindingHelper = new SearchBindingHelper();
         activitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         activitySearchBinding.seachButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +50,9 @@ public class SearchActivity extends AppCompatActivity {
                         if (StringUtils.containsIgnoreCase(person.getName(), searchTerm)) {
                             searchPerson.add(person);
                         }
+                    }
+                    if (searchPerson.size() == 0) {
+                        searchPerson.add(new Person(0, getString(R.string.noSuchPerson), 0, R.drawable.nf404, "", getApplicationContext()));
                     }
                     recyclerViewAdapter = new ResidentsRecycleViewAdapter(searchPerson);
 

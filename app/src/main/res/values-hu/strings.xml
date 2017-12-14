@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DoBbipa</string>
+    <string name="startScan">Keresés Indítása</string>
+    <string name="stopScan">Keresés Leállítása</string>
+    <string name="appBasicInfo">Belső Helymeghatározás</string>
+    <string name="closestRoom">Legközelebbi Szoba: </string>
+    <string name="roomNumber">Szoba Szám: </string>
+    <string name="residents">Lakosok: </string>
+    <string name="search">Keresés</string>
+    <string name="databaseName">dobbipa35</string>
+    <string name="noSuchPerson">Nincs ilyen ember</string>
+    <string name="noSuchRoom">Nincs ilyen szoba</string>
+    <string name="locationAccess">Az alkalmazásnak szüksége van helymeghatározási engedélyre</string>
+    <string name="grantLocationAccess">Kérlek engedélyezd a helymeghatározást, hogy az allkalmazás érzékelje az eszközöket.</string>
+    <string name="limitedFunctionality">Limitált használhatóság</string>
+    <string name="noBackgroundRunning">Mivel a helymeghatározási képesség nem lett engedélyezve, az alkalmazás nem lesz képes a háttérben Beaconöket keresni.</string>
+</resources>

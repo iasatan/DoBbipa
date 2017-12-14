@@ -146,7 +146,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0), new Person(0, "Nincs ilyen szoba", 0, R.drawable.nf404, "", context));
+        Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0), new Person(0, context.getString(R.string.noSuchRoom), 0, R.drawable.nf404, "", context));
         if (cursor.getCount() != 0) {
             room = new Room();
             Position position = getPosition(Integer.parseInt(cursor.getString(2)));
