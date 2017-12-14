@@ -87,7 +87,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         addRoom(new Room(1, 107, getPosition(5)));
 
-        addRoom(new Room(2, 107, getPosition(6)));
+        addRoom(new Room(2, 1072, getPosition(6)));
 
         addRoom(new Room(3, 108, getPosition(7)));
 
@@ -387,6 +387,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 person.setName(cursor.getString(1));
                 person.setRoomId(Integer.parseInt(cursor.getString(2)));
                 person.setImage(Integer.parseInt(cursor.getString(3)));
+                person.setTitle(cursor.getString(4));
                 people.add(person);
             } while (cursor.moveToNext());
         }

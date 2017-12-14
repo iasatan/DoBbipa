@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         devices = new HashMap<>();
-        db = new DatabaseHandler(getApplicationContext(), "dobbipa33", 1);
+        db = new DatabaseHandler(getApplicationContext(), "dobbipa34", 1);
         if (db.getDeviceCount() < 1) {
             db.populateDatabase();
         }
