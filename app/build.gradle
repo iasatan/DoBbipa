@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'my_alias'
+            keyPassword '123456'
+            storeFile file('/home/iasatan.dobbipa.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     dataBinding.enabled = true

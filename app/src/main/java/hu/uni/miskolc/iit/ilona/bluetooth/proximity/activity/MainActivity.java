@@ -1,5 +1,5 @@
 
-package hu.uni.miskolc.iit.ilona.bluetooth.proximity;
+package hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.ResidentsRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        currentClosestRoom = new Room();
         devices = new HashMap<>();
         db = new DatabaseHandler(getApplicationContext(), "dobbipa33", 1);
         if (db.getDeviceCount() < 1) {
@@ -110,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
                 activityMainBinding.StartScanButton.setVisibility(View.VISIBLE);
                 activityMainBinding.StopScanButton.setVisibility(View.INVISIBLE);
                 stopScanning();
+            }
+        });
+        activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
             }
         });
 
@@ -150,11 +157,14 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
         if (savedInstanceState != null) {
-            currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));
-            recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
-            activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+            try {
+                currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));
+                recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
+                activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
-            activityMainBinding.setClosestRoom(savedInstanceState.getString(CLOSESTROOMNUMBER));
+                activityMainBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+            } catch (Exception e) {
+            }
 
             if (savedInstanceState.getBoolean(STARTED)) {
                 activityMainBinding.StartScanButton.setVisibility(View.INVISIBLE);
@@ -171,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if (currentClosestRoom != null) {
-            savedInstanceState.putString(CLOSESTROOMNUMBER, currentClosestRoom.getNumber().toString());
             savedInstanceState.putInt(CLOSESTROOMID, currentClosestRoom.getId());
         }
         savedInstanceState.putBoolean(STARTED, started);

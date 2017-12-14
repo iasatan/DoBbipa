@@ -140,6 +140,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return room;
     }
 
+    public Room getRoomByNumber(int number) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Room", null, "number=" + number, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0), new Person(0, "Nincs ilyen szoba", 0, R.drawable.nf404, "", context));
+        if (cursor.getCount() != 0) {
+            room = new Room();
+            Position position = getPosition(Integer.parseInt(cursor.getString(2)));
+            room.setId(Integer.parseInt(cursor.getString(0)));
+            room.setPosition(position);
+            room.setNumber(Integer.parseInt(cursor.getString(1)));
+            room.setPeople(getPeopleInRoom(room.getId()));
+        }
+        return room;
+    }
+
     public List<Room> getAllRoom() {
         List<Room> rooms = new ArrayList<Room>();
         String selectQuery = "Select * From Room";

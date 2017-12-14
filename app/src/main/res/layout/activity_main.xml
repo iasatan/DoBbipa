@@ -7,13 +7,13 @@
         <variable
             name="closestRoom"
             type="String" />
-        
+
     </data>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="hu.uni.miskolc.iit.ilona.bluetooth.proximity.MainActivity">
+        tools:context="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.MainActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -38,6 +38,14 @@
                 android:layout_centerInParent="true"
                 android:layout_marginTop="16dp"
                 android:text="@string/startScan" />
+
+            <Button
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignTop="@+id/StartScanButton"
+                android:layout_toEndOf="@+id/StartScanButton"
+                android:text="@string/search" />
 
             <Button
                 android:id="@+id/StopScanButton"
@@ -89,6 +97,7 @@
 
                 android:layout_marginTop="5dp"
                 android:scrollbars="vertical" />
+
 
         </RelativeLayout>
     </ScrollView>
