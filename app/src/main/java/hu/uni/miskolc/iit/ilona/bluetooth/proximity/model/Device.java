@@ -1,8 +1,11 @@
 package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by iasatan on 2017.10.13..
@@ -36,6 +39,37 @@ public class Device {
         this.position = position;
         this.alignment = alignment;
         prevRSSI = new ArrayList<>();
+    }
+
+    public static List<Device> closestTwoDevice(Map<String, Device> nearDevices) {
+        if (nearDevices.values().size() == 2) {
+            return Arrays.asList((Device) nearDevices.values().toArray()[0], (Device) nearDevices.values().toArray()[1]);
+        }
+        Device[] result = new Device[2];
+        result[0] = (Device) nearDevices.values().toArray()[0];
+        result[1] = result[0];
+        for (Device currentDevice : nearDevices.values()) {
+            if (currentDevice.getDistanceFrom() < result[1].getDistanceFrom()) {
+                result[1] = currentDevice;
+            }
+            if (currentDevice.getDistanceFrom() < result[0].getDistanceFrom()) {
+                result[1] = result[0];
+                result[0] = currentDevice;
+            }
+        }
+        return Arrays.asList(result);
+    }
+
+    public static Map<String, Device> getNearDevices(Map<String, Device> devices) {
+        Map<String, Device> nearDevices = new HashMap<String, Device>();
+        for (Map.Entry<String, Device> device : devices.entrySet()) {
+            if (device.getValue().getAverageRSSI() != 0) {
+                if (device.getValue().getDistanceFrom() < 12) { //TODO szervezd ki a 12métert db-be, building szinten
+                    nearDevices.put(device.getKey(), device.getValue());
+                }
+            }
+        }
+        return nearDevices;
     }
 
     public void addRSSI(Integer RSSI) {

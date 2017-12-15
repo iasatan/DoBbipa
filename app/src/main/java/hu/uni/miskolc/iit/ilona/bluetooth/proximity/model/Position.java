@@ -77,12 +77,11 @@ public class Position {
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
-                ", comment='" + comment + '\'' +
                 '}';
     }
 
     public double getDistanceSquareFrom(Position position) {
-        return Math.pow(position.getX() - this.getX(), 2) + Math.pow(position.getY() - this.getY(), 2);
+        return Math.pow(position.getX() - getX(), 2) + Math.pow(position.getY() - getY(), 2);
 
     }
 

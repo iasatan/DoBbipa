@@ -75,7 +75,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPosition(new Position(5, 5, 6, 4.4));
         addPosition(new Position(6, 6, 6, 4.4));
         addPosition(new Position(7, 13, 7, 4.4));
-        addPosition(new Position(8, 18, 7, 4.4));
+        addPosition(new Position(8, 17, 7, 4.4));
         addPosition(new Position(9, 18, 8, 4.4, "Teakonyha"));
         addDevice(new Device(1, 70, "0C:F3:EE:00:96:A0", getPosition(1), Alignment.LEFT));
         addDevice(new Device(2, 57, "0C:F3:EE:00:82:4B", getPosition(2), Alignment.BEHIND));

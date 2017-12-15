@@ -26,7 +26,6 @@ import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +37,10 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String CLOSESTROOMNUMBER = "closestRoomNumber";
     static final String CLOSESTROOMID = "closestRoomId";
     static final String STARTED = "started";
     private final static int REQUEST_ENABLE_BT = 1;
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding activityMainBinding;
     BluetoothManager btManager;
     boolean started;
+    User user;
     Room currentClosestRoom;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
@@ -68,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
             if (device.getPrevRSSIs().size() >= 3) {
                 Room room = null;
                 try {
-                    room = getPosition().getClosestRoom(rooms);
+                    user.addPosition(devices);
+                    room = user.getClosestRoom(rooms);
+                    //activityMainBinding.position.setText(user.getPosition().toString());
                     currentClosestRoom = room;
                     recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
                     activityMainBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
@@ -80,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        user = new User(getApplicationContext());
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         devices = new HashMap<>();
         db = new DatabaseHandler(getApplicationContext(), getString(R.string.databaseName), 1);
@@ -184,36 +186,7 @@ public class MainActivity extends AppCompatActivity {
             savedInstanceState.putInt(CLOSESTROOMID, currentClosestRoom.getId());
         }
         savedInstanceState.putBoolean(STARTED, started);
-
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    private Map<String, Device> getNearDevices(Map<String, Device> devices) {
-        Map<String, Device> nearDevices = new HashMap<String, Device>();
-        for (Map.Entry<String, Device> device : devices.entrySet()) {
-            if (device.getValue().getAverageRSSI() != 0) {
-                if (device.getValue().getDistanceFrom() < 12) { //TODO szervezd ki a 12métert db-be, building szinten
-                    nearDevices.put(device.getKey(), device.getValue());
-                }
-            }
-        }
-        return nearDevices;
-    }
-
-    private List<Device> closestTwoDevice(Map<String, Device> nearDevices) {
-        Device[] result = new Device[2];
-        result[0] = (Device) nearDevices.values().toArray()[0];
-        result[1] = result[0];
-        for (Device currentDevice : nearDevices.values()) {
-            if (currentDevice.getDistanceFrom() < result[1].getDistanceFrom()) {
-                result[1] = currentDevice;
-            }
-            if (currentDevice.getDistanceFrom() < result[0].getDistanceFrom()) {
-                result[1] = result[0];
-                result[0] = currentDevice;
-            }
-        }
-        return Arrays.asList(result);
     }
 
 
@@ -221,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         Position position = new Position();
         position.setId(0);
         position.setZ(4.4);
-        Map<String, Device> nearDevices = getNearDevices(devices);
+        Map<String, Device> nearDevices = Device.getNearDevices(devices);
 
         if (nearDevices.size() == 0) {
             throw new NoCloseBeaconException();
@@ -249,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            List<Device> closestDevices = closestTwoDevice(nearDevices);
+            List<Device> closestDevices = Device.closestTwoDevice(nearDevices);
             if (closestDevices.get(0).getPosition().getX() == closestDevices.get(1).getPosition().getX()) {
                 double xCoordinate = 12 / (closestDevices.get(0).getDistanceFrom() + closestDevices.get(1).getDistanceFrom());
                 xCoordinate = xCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getX();

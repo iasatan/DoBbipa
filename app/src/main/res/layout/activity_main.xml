@@ -12,16 +12,16 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:context="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.MainActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -34,7 +34,7 @@
                 android:id="@+id/StartScanButton"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
-                android:layout_below="@+id/textView2"
+                android:layout_below="@+id/title"
                 android:layout_marginTop="16dp"
                 android:text="@string/startScan" />
 
@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/closestRoomText"
-                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
                 android:layout_toEndOf="@+id/closestRoomText"
                 android:text="@{closestRoom}"
                 android:textSize="22sp" />
@@ -85,7 +85,15 @@
                 android:text="@string/residents"
                 android:textSize="22sp" />
 
-
+            <!--<TextView
+                android:id="@+id/position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/residentsText"
+                android:layout_marginStart="21dp"
+                android:layout_toEndOf="@+id/residentsText"
+                android:text="" />
+-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/residentsRecyclerView"
                 android:layout_width="match_parent"
@@ -98,6 +106,8 @@
 
 
         </RelativeLayout>
+
+
     </ScrollView>
 
 

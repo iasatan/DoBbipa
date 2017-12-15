@@ -38,23 +38,6 @@ public class Room {
         people.add(person);
     }
 
-    public static Room getClosestRoom(List<Room> rooms, Position position) {
-        Double minDistance = position.getDistanceSquareFrom(rooms.get(0).getPosition());
-        Double distance;
-        int j = 0;
-
-
-        for (int i = 1; i < rooms.size(); i++) {
-            distance = position.getDistanceSquareFrom(rooms.get(i).getPosition());
-            if (distance < minDistance) {
-                minDistance = distance;
-                j = i;
-            }
-        }
-        return rooms.get(j);
-
-    }
-
     public int getId() {
         return id;
     }
