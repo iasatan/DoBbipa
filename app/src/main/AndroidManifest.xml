@@ -26,7 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.SearchActivity"></activity>
+        <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.SearchActivity" />
+        <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.ClosesetRoomActivity" />
+        <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.NavigationActivity"></activity>
     </application>
 
 </manifest>

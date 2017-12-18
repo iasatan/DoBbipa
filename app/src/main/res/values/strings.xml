@@ -7,11 +7,16 @@
     <string name="roomNumber">Room Number: </string>
     <string name="residents">Residents: </string>
     <string name="search">Search</string>
-    <string name="databaseName">dobbipa36</string>
+    <string name="databaseName">dobbipa37</string>
     <string name="noSuchPerson">No person found</string>
     <string name="noSuchRoom">No room found</string>
     <string name="locationAccess">This app needs location access</string>
     <string name="grantLocationAccess">Please grant location access so this app can detect peripherals.</string>
     <string name="limitedFunctionality">Functionality limited</string>
     <string name="noBackgroundRunning">Since location access has not been granted, this app will not be able to discover beacons when in the background.</string>
+    <string name="whatsNear">Whats near?</string>
+    <string name="starNavigation">Start Navigation</string>
+    <string name="position">Position: </string>
+
+
 </resources>

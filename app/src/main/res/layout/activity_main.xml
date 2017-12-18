@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -10,105 +9,37 @@
 
     </data>
 
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.MainActivity">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/appBasicInfo"
+            android:textAlignment="center"
+            android:textSize="22sp" />
 
+        <Button
+            android:id="@+id/whatNearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="40dp"
+            android:text="@string/whatsNear" />
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="@string/appBasicInfo"
-                android:textAlignment="center"
-                android:textSize="22sp" />
-
-            <Button
-                android:id="@+id/StartScanButton"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_below="@+id/title"
-                android:layout_marginTop="16dp"
-                android:text="@string/startScan" />
-
-            <Button
-                android:id="@+id/search_button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_alignTop="@+id/StartScanButton"
-                android:layout_toEndOf="@+id/StartScanButton"
-                android:text="@string/search" />
-
-            <Button
-                android:id="@+id/StopScanButton"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_alignBaseline="@+id/StartScanButton"
-                android:layout_alignBottom="@+id/StartScanButton"
-                android:text="@string/stopScan" />
-
-            <TextView
-                android:id="@+id/closestRoomText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/StopScanButton"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/closestRoom"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/closestRoom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/closestRoomText"
-                android:layout_marginStart="3dp"
-                android:layout_toEndOf="@+id/closestRoomText"
-                android:text="@{closestRoom}"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/residentsText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/closestRoomText"
-                android:layout_below="@+id/closestRoomText"
-                android:layout_marginTop="24dp"
-                android:text="@string/residents"
-                android:textSize="22sp" />
-
-            <!--<TextView
-                android:id="@+id/position"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/residentsText"
-                android:layout_marginStart="21dp"
-                android:layout_toEndOf="@+id/residentsText"
-                android:text="" />
--->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/residentsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignStart="@id/residentsText"
-                android:layout_below="@+id/residentsText"
-
-                android:layout_marginTop="5dp"
-                android:scrollbars="vertical" />
-
-
-        </RelativeLayout>
-
-
-    </ScrollView>
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/whatNearButton"
+            android:layout_marginTop="40dp"
+            android:text="@string/search" />
+    </RelativeLayout>
 
 
 </layout>

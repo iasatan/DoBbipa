@@ -50,6 +50,9 @@ public class User {
     }
 
     public void addPosition(Map<String, Device> devices) throws NoCloseBeaconException {
+        if (prevPositions.size() > 10) {
+            prevPositions.remove(0);
+        }
         Position position = new Position();
         position.setId(0);
         position.setZ(4.4);

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.ResidentsRecycleViewAdapter;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchBindingHelper;
@@ -33,16 +33,16 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new DatabaseHandler(getApplicationContext(), getString(R.string.databaseName), 1);
+        db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
         searchBindingHelper = new SearchBindingHelper();
         activitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         activitySearchBinding.seachButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 searchTerm = activitySearchBinding.searchText.getText().toString();
-                activitySearchBinding.residentsRecyclerView.setHasFixedSize(true);
+                activitySearchBinding.searchRecyclerView.setHasFixedSize(true);
                 recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
-                activitySearchBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+                activitySearchBinding.searchRecyclerView.setLayoutManager(recyclerViewLayoutManager);
                 if (!NumberUtils.isCreatable(searchTerm)) {
                     List<Person> people = db.getAllPeople();
                     List<Person> searchPerson = new ArrayList<>();
@@ -54,14 +54,14 @@ public class SearchActivity extends AppCompatActivity {
                     if (searchPerson.size() == 0) {
                         searchPerson.add(new Person(0, getString(R.string.noSuchPerson), 0, R.drawable.nf404, "", getApplicationContext()));
                     }
-                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(searchPerson);
+                    recyclerViewAdapter = new SearchRecycleViewAdapter(searchPerson);
 
                 } else {
                     Integer number = Integer.valueOf(searchTerm);
                     Room room = db.getRoomByNumber(number);
-                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(room.getPeople());
+                    recyclerViewAdapter = new SearchRecycleViewAdapter(room.getPeople());
                 }
-                activitySearchBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+                activitySearchBinding.searchRecyclerView.setAdapter(recyclerViewAdapter);
 
             }
         });

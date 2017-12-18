@@ -28,14 +28,14 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa";
-    private static final Integer databaseVersion = 4;
+    private static final String databaseName = "dobbipa37";
+    private static final Integer databaseVersion = 1;
     Context context;
 
-    public DatabaseHandler(Context context, String databaseName, Integer databaseVersion) {
+    /*public DatabaseHandler(Context context, String databaseName, Integer databaseVersion) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
-    }
+    }*/
 
     public DatabaseHandler(Context context) {
         super(context, databaseName, null, databaseVersion);
@@ -77,6 +77,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPosition(new Position(7, 13, 7, 4.4));
         addPosition(new Position(8, 17, 7, 4.4));
         addPosition(new Position(9, 18, 8, 4.4, "Teakonyha"));
+        addPosition(new Position(10, 8, 8, 4.4, "Elzárt folyosó labornál lévő ajtaja"));
+        addPosition(new Position(11, 8, 20, 4.4));
+        addPosition(new Position(12, 35, 20, 4.4));
+        addPosition(new Position(13, 35, 12, 4.4));
+        addPosition(new Position(14, 35, 8, 4.4));
         addDevice(new Device(1, 70, "0C:F3:EE:00:96:A0", getPosition(1), Alignment.LEFT));
         addDevice(new Device(2, 57, "0C:F3:EE:00:82:4B", getPosition(2), Alignment.BEHIND));
         addDevice(new Device(3, 65, "0C:F3:EE:00:63:8C", getPosition(3), Alignment.LEFT));
