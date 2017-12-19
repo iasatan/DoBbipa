@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
                     if (searchPeople.size() == 0 && searchRooms.size() == 0) {
-                        searchPeople.add(new Person(0, getString(R.string.noSuchPerson), 0, R.drawable.nf404, "", getApplicationContext()));
+                        searchPeople.add(new Person(0, getString(R.string.nothingFound), 0, R.drawable.nf404, "", getApplicationContext()));
                     }
                     peopleRecyclerViewAdapter = new SearchPersonRecycleViewAdapter(searchPeople);
                     if (searchRooms.size() != 0) {

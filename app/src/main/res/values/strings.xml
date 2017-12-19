@@ -7,8 +7,7 @@
     <string name="roomNumber">Room Number: </string>
     <string name="residents">Residents: </string>
     <string name="search">Search</string>
-    <string name="databaseName">dobbipa37</string>
-    <string name="noSuchPerson">No person found</string>
+    <string name="nothingFound">Nothing found</string>
     <string name="noSuchRoom">No room found</string>
     <string name="locationAccess">This app needs location access</string>
     <string name="grantLocationAccess">Please grant location access so this app can detect peripherals.</string>

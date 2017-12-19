@@ -158,6 +158,30 @@ public class ClosesetRoomActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopScanning();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startScanning();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopScanning();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startScanning();
+    }
+
 
     public void startScanning() {
         started = true;

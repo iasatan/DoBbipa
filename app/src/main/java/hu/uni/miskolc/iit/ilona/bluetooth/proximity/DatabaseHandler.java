@@ -4,10 +4,8 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.android.test.R;
 
@@ -28,26 +26,13 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa39";
+    private static final String databaseName = "dobbipa40";
     private static final Integer databaseVersion = 1;
     Context context;
-
-    /*public DatabaseHandler(Context context, String databaseName, Integer databaseVersion) {
-        super(context, databaseName, null, databaseVersion);
-        this.context = context;
-    }*/
 
     public DatabaseHandler(Context context) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
-    }
-
-    public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-    public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
     }
 
     @Override
@@ -76,13 +61,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPosition(new Position(6, 6, 8, 4.4));
         addPosition(new Position(7, 13, 8, 4.4));
         addPosition(new Position(8, 17, 8, 4.4));
-        addPosition(new Position(9, 18, 8, 4.4, "Teakonyha"));
+        addPosition(new Position(9, 18, 8, 4.4));
         addPosition(new Position(10, 8, 8, 4.4, "Elzárt folyosó labornál lévő ajtaja"));
         addPosition(new Position(11, 8, 20, 4.4));
         addPosition(new Position(12, 35, 12, 4.4, "lépcső"));
         addPosition(new Position(13, 35, 8, 4.4));
-        addPosition(new Position(14, 8, 10, 4.4, "fiú wc"));
-        addPosition(new Position(15, 8, 15, 4.4, "lány wc"));
+        addPosition(new Position(14, 8, 10, 4.4));
+        addPosition(new Position(15, 8, 15, 4.4));
         addPosition(new Position(16, 20, 7, 4.4));
         addPosition(new Position(17, 20, 6, 4.4));
         addPosition(new Position(18, 20, 11, 4.4));
@@ -137,7 +122,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(23, 124, getPosition(31), "Raktár"));
         addRoom(new Room(24, 106, getPosition(32)));
 
-
         addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, "Egyetemi adjunktus", context));
         addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, "Doktorandusz", context));
         addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, "Egyetemi docens", context));
@@ -163,8 +147,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, "hallgató", context));
         addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, "hallgató", context));
         addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, "hallgató", context));
-
-
     }
 
     public void addRoom(Room room) {
@@ -232,27 +214,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return rooms;
     }
 
-    public int getRoomCount() {
-        String countQuery = "SELECT * FROM Room";
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-        return cursor.getCount();
-    }
-
-    public int updateRoom(Room room) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("number", room.getNumber());
-        values.put("position", room.getPosition().getId());
-        values.put("title", room.getTitle());
-        return db.update("Room", values, "id=" + room.getId(), null);
-    }
-
-    public void deleteRoom(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Room", "id=" + id, null);
-    }
 
     public void addPosition(Position position) {
         SQLiteDatabase db = getWritableDatabase();
@@ -294,30 +255,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return positions;
     }
 
-    public int getPositionCount() {
-        String countQuery = "SELECT * FROM Position";
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-        return cursor.getCount();
-    }
-
-    public int updatePosition(Position position) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("x", position.getX());
-        values.put("y", position.getY());
-        values.put("z", position.getZ());
-        values.put("comment", position.getComment());
-
-        return db.update("Position", values, "id=?", new String[]{String.valueOf(position.getId())});
-    }
-
-    public void deletePosition(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Position", "id=?", new String[]{String.valueOf(id)});
-        db.close();
-    }
 
     public void addDevice(Device device) {
 
@@ -331,38 +268,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Device getDevice(int id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("Device", null, "id=" + id, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        Position position = getPosition(Integer.parseInt(cursor.getString(3)));
-        Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), position, Alignment.valueOf(cursor.getString(4)));
-
-        return device;
-    }
-
-    public Device getDevice(String mac) {
-        SQLiteDatabase db = getReadableDatabase();
-        Device device = new Device();
-        Cursor cursor = db.query("Device", null, "mac=" + "'" + mac + "'", null, null, null, null);
-        if (cursor == null) {
-            Log.d("read", "null");
-            device.setId(0);
-            device.setPosition(new Position(0, 0, 0, 0));
-            device.setMAC("");
-            device.setBaseRSSI(0);
-            return device;
-        }
-        Log.d("read", "wtf? ha nem null miért működik");
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
-
-        return device;
-    }
 
     public Collection<Device> getAllDevice() {
         Collection<Device> devices = new HashSet<Device>();
@@ -393,21 +298,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return temp;
     }
 
-    public int updateDevice(Device device) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("baserssi", device.getBaseRSSI());
-        values.put("mac", device.getMAC());
-        values.put("position", device.getPosition().getId());
-
-        return db.update("Device", values, "id=" + device.getId(), null);
-    }
-
-    public void deleteDevice(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Device", "id=" + id, null);
-        db.close();
-    }
 
     public void addPerson(Person person) {
         SQLiteDatabase db = getWritableDatabase();
@@ -419,18 +309,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.insert("People", null, contentValues);
     }
 
-    public Person getPerson(int id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("People", null, "id=" + id, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        Person person = new Person(context);
-        person.setId(Integer.parseInt(cursor.getString(0)));
-        person.setName(cursor.getString(1));
-        person.setRoomId(Integer.parseInt(cursor.getString(2)));
-        return person;
-    }
 
     public List<Person> getAllPeople() {
         List<Person> people = new ArrayList<Person>();
@@ -470,6 +348,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return people;
     }
 
+
+
+    /*public int getRoomCount() {
+        String countQuery = "SELECT * FROM Room";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+        return cursor.getCount();
+    }
+
+
+    public int updateRoom(Room room) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("number", room.getNumber());
+        values.put("position", room.getPosition().getId());
+        values.put("title", room.getTitle());
+        return db.update("Room", values, "id=" + room.getId(), null);
+    }
+
+    public void deleteRoom(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Room", "id=" + id, null);
+    }
+
+
     public int getPeopleCount() {
         String countQuery = "SELECT * FROM People";
         SQLiteDatabase db = getReadableDatabase();
@@ -492,4 +396,91 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete("People", "id=" + id, null);
         db.close();
     }
+    public Person getPerson(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("People", null, "id=" + id, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Person person = new Person(context);
+        person.setId(Integer.parseInt(cursor.getString(0)));
+        person.setName(cursor.getString(1));
+        person.setRoomId(Integer.parseInt(cursor.getString(2)));
+        return person;
+    }
+
+     public int updateDevice(Device device) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("baserssi", device.getBaseRSSI());
+        values.put("mac", device.getMAC());
+        values.put("position", device.getPosition().getId());
+
+        return db.update("Device", values, "id=" + device.getId(), null);
+    }
+
+    public void deleteDevice(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Device", "id=" + id, null);
+        db.close();
+    }
+
+        public int getPositionCount() {
+        String countQuery = "SELECT * FROM Position";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+        return cursor.getCount();
+    }
+
+    public int updatePosition(Position position) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("x", position.getX());
+        values.put("y", position.getY());
+        values.put("z", position.getZ());
+        values.put("comment", position.getComment());
+
+        return db.update("Position", values, "id=?", new String[]{String.valueOf(position.getId())});
+    }
+
+    public void deletePosition(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Position", "id=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+    public Device getDevice(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Device", null, "id=" + id, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Position position = getPosition(Integer.parseInt(cursor.getString(3)));
+        Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), position, Alignment.valueOf(cursor.getString(4)));
+
+        return device;
+    }
+
+    public Device getDevice(String mac) {
+        SQLiteDatabase db = getReadableDatabase();
+        Device device = new Device();
+        Cursor cursor = db.query("Device", null, "mac=" + "'" + mac + "'", null, null, null, null);
+        if (cursor == null) {
+            Log.d("read", "null");
+            device.setId(0);
+            device.setPosition(new Position(0, 0, 0, 0));
+            device.setMAC("");
+            device.setBaseRSSI(0);
+            return device;
+        }
+        Log.d("read", "wtf? ha nem null miért működik");
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
+
+        return device;
+    }
+
+    */
 }

@@ -65,6 +65,7 @@ public class NavigationActivity extends AppCompatActivity {
         user = new User(getApplicationContext());
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
+
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
         }
