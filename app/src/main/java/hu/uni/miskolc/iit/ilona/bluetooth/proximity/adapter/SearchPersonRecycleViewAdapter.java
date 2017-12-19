@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.example.android.test.BR;
 import com.example.android.test.R;
-import com.example.android.test.databinding.SearchItemBinding;
+import com.example.android.test.databinding.SearchPersonItemBinding;
 
 import java.util.List;
 
@@ -20,16 +20,16 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
  * Created by iasatan on 2017.12.08..
  */
 
-public class SearchRecycleViewAdapter extends RecyclerView.Adapter<SearchRecycleViewAdapter.ResidentViewHolder> {
+public class SearchPersonRecycleViewAdapter extends RecyclerView.Adapter<SearchPersonRecycleViewAdapter.ResidentViewHolder> {
     private List<Person> people;
 
-    public SearchRecycleViewAdapter(List<Person> people) {
+    public SearchPersonRecycleViewAdapter(List<Person> people) {
         this.people = people;
     }
 
     @Override
     public ResidentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_person_item, parent, false);
         ResidentViewHolder holder = new ResidentViewHolder(view);
         return holder;
     }
@@ -55,15 +55,15 @@ public class SearchRecycleViewAdapter extends RecyclerView.Adapter<SearchRecycle
     }
 
     public static class ResidentViewHolder extends RecyclerView.ViewHolder {
-        private SearchItemBinding searchItemBinding;
+        private SearchPersonItemBinding searchPersonItemBinding;
 
         public ResidentViewHolder(View itemView) {
             super(itemView);
-            searchItemBinding = DataBindingUtil.bind(itemView);
+            searchPersonItemBinding = DataBindingUtil.bind(itemView);
         }
 
-        public SearchItemBinding getBinding() {
-            return searchItemBinding;
+        public SearchPersonItemBinding getBinding() {
+            return searchPersonItemBinding;
         }
     }
 

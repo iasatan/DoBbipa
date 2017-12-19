@@ -68,6 +68,7 @@ public class ClosesetRoomActivity extends AppCompatActivity {
                     recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
                     activityClosesetRoomBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
                     activityClosesetRoomBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+                    activityClosesetRoomBinding.setRoomTitle(currentClosestRoom.getTitle());
                 } catch (NoCloseBeaconException e) {
                 }
             }
@@ -132,6 +133,7 @@ public class ClosesetRoomActivity extends AppCompatActivity {
                 activityClosesetRoomBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
                 activityClosesetRoomBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+                activityClosesetRoomBinding.setRoomTitle(currentClosestRoom.getTitle());
             } catch (Exception e) {
             }
 

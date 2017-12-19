@@ -12,21 +12,33 @@ public class Room {
     int id;
     Integer number;
     Position position;
+    String title;
     List<Person> people;
 
     public Room() {
+    }
+
+    public Room(int id, Integer number, Position position, String title) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        this.title = title;
+        people = new ArrayList<>();
     }
 
     public Room(int id, int number, Position position) {
         this.id = id;
         this.number = number;
         this.position = position;
+        title = "";
+        people = new ArrayList<>();
     }
 
     public Room(int id, int number, Position position, List<Person> people) {
         this.id = id;
         this.number = number;
         this.position = position;
+        title = "";
         this.people = people;
     }
 
@@ -34,8 +46,21 @@ public class Room {
         this.id = id;
         this.number = number;
         this.position = position;
-        people = new ArrayList<Person>();
+        title = "";
+        people = new ArrayList<>();
         people.add(person);
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getId() {
@@ -74,6 +99,7 @@ public class Room {
     public String toString() {
         return "Room{" +
                 "number=" + number +
+                ", title= " + title +
                 ", people=" + people +
                 '}';
     }

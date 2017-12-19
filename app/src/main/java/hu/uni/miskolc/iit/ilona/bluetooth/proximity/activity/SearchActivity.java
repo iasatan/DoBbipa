@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchPersonRecycleViewAdapter;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRoomRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchBindingHelper;
@@ -27,8 +28,10 @@ public class SearchActivity extends AppCompatActivity {
     String searchTerm;
     SearchBindingHelper searchBindingHelper;
     DatabaseHandler db;
-    private RecyclerView.Adapter recyclerViewAdapter;
-    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private RecyclerView.Adapter peopleRecyclerViewAdapter;
+    private RecyclerView.Adapter roomRecyclerViewAdapter;
+    private RecyclerView.LayoutManager peopleRecyclerViewLayoutManager;
+    private RecyclerView.LayoutManager roomRecyclerViewLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,28 +43,42 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 searchTerm = activitySearchBinding.searchText.getText().toString();
-                activitySearchBinding.searchRecyclerView.setHasFixedSize(true);
-                recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
-                activitySearchBinding.searchRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+                activitySearchBinding.searchPeopleRecyclerView.setHasFixedSize(true);
+                activitySearchBinding.searchRoomRecyclerView.setHasFixedSize(true);
+                peopleRecyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
+                roomRecyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
+                activitySearchBinding.searchPeopleRecyclerView.setLayoutManager(peopleRecyclerViewLayoutManager);
+                activitySearchBinding.searchRoomRecyclerView.setLayoutManager(roomRecyclerViewLayoutManager);
                 if (!NumberUtils.isCreatable(searchTerm)) {
                     List<Person> people = db.getAllPeople();
-                    List<Person> searchPerson = new ArrayList<>();
+                    List<Person> searchPeople = new ArrayList<>();
+                    List<Room> rooms = db.getAllRoom();
+                    List<Room> searchRooms = new ArrayList<>();
                     for (Person person : people) {
                         if (StringUtils.containsIgnoreCase(person.getName(), searchTerm)) {
-                            searchPerson.add(person);
+                            searchPeople.add(person);
                         }
                     }
-                    if (searchPerson.size() == 0) {
-                        searchPerson.add(new Person(0, getString(R.string.noSuchPerson), 0, R.drawable.nf404, "", getApplicationContext()));
+                    for (Room room : rooms) {
+                        if (StringUtils.containsIgnoreCase(room.getTitle(), searchTerm)) {
+                            searchRooms.add(room);
+                        }
                     }
-                    recyclerViewAdapter = new SearchRecycleViewAdapter(searchPerson);
+                    if (searchPeople.size() == 0 && searchRooms.size() == 0) {
+                        searchPeople.add(new Person(0, getString(R.string.noSuchPerson), 0, R.drawable.nf404, "", getApplicationContext()));
+                    }
+                    peopleRecyclerViewAdapter = new SearchPersonRecycleViewAdapter(searchPeople);
+                    if (searchRooms.size() != 0) {
+                        roomRecyclerViewAdapter = new SearchRoomRecycleViewAdapter(searchRooms);
+                        activitySearchBinding.searchRoomRecyclerView.setAdapter(roomRecyclerViewAdapter);
+                    }
 
                 } else {
                     Integer number = Integer.valueOf(searchTerm);
                     Room room = db.getRoomByNumber(number);
-                    recyclerViewAdapter = new SearchRecycleViewAdapter(room.getPeople());
+                    peopleRecyclerViewAdapter = new SearchPersonRecycleViewAdapter(room.getPeople());
                 }
-                activitySearchBinding.searchRecyclerView.setAdapter(recyclerViewAdapter);
+                activitySearchBinding.searchPeopleRecyclerView.setAdapter(peopleRecyclerViewAdapter);
 
             }
         });

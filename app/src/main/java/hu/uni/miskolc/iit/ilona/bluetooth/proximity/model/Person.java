@@ -3,6 +3,8 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
+import com.example.android.test.R;
+
 /**
  * Created by iasatan on 2017.10.17..
  */
@@ -28,6 +30,26 @@ public class Person {
         this.image = context.getDrawable(image);
         this.title = title;
         imageId = image;
+    }
+
+    public Person(Integer id, String name, Integer roomId, Integer image, Context context) {
+        this.id = id;
+        this.context = context;
+        this.name = name;
+        this.roomId = roomId;
+        this.image = context.getDrawable(image);
+        title = "";
+        imageId = image;
+    }
+
+    public Person(Integer id, String name, Integer roomId, Context context) {
+        this.id = id;
+        this.context = context;
+        this.name = name;
+        this.roomId = roomId;
+        image = context.getDrawable(R.drawable.nf404);
+        title = "";
+        imageId = R.drawable.nf404;
     }
 
     public String getTitle() {

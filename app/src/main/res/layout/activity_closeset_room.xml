@@ -8,6 +8,10 @@
             name="closestRoom"
             type="String" />
 
+        <variable
+            name="roomTitle"
+            type="String" />
+
     </data>
 
     <ScrollView
@@ -69,12 +73,21 @@
                 android:textSize="22sp" />
 
             <TextView
+                android:id="@+id/roomTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/closestRoomText"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:text="@{roomTitle}" />
+
+            <TextView
                 android:id="@+id/residentsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/closestRoomText"
-                android:layout_below="@+id/closestRoomText"
-                android:layout_marginTop="24dp"
+                android:layout_alignStart="@+id/roomTitleTextView"
+                android:layout_below="@+id/roomTitleTextView"
+                android:layout_marginTop="10dp"
                 android:text="@string/residents"
                 android:textSize="22sp" />
 
