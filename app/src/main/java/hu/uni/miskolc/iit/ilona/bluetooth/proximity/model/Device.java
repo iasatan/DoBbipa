@@ -12,12 +12,12 @@ import java.util.Map;
  */
 
 public class Device {
-    int id;
-    int baseRSSI;
-    String MAC;
-    Position position;
-    List<Integer> prevRSSI;
-    Alignment alignment;
+    private int id;
+    private int baseRSSI;
+    private String MAC;
+    private Position position;
+    private List<Integer> prevRSSI;
+    private Alignment alignment;
 
 
     public Device() {
@@ -61,7 +61,7 @@ public class Device {
     }
 
     public static Map<String, Device> getNearDevices(Map<String, Device> devices) {
-        Map<String, Device> nearDevices = new HashMap<String, Device>();
+        Map<String, Device> nearDevices = new HashMap<>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             if (device.getValue().getAverageRSSI() != 0) {
                 if (device.getValue().getDistanceFrom() < 12) { //TODO szervezd ki a 12métert db-be, building szinten
@@ -87,7 +87,7 @@ public class Device {
         return prevRSSI;
     }
 
-    public Double getAverageRSSI() {
+    private Double getAverageRSSI() {
         if (prevRSSI.size() == 0) {
             return 0.0;
         }

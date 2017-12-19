@@ -21,13 +21,11 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchPersonRecycleV
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRoomRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchBindingHelper;
 
 public class SearchActivity extends AppCompatActivity {
-    ActivitySearchBinding activitySearchBinding;
-    String searchTerm;
-    SearchBindingHelper searchBindingHelper;
-    DatabaseHandler db;
+    private ActivitySearchBinding activitySearchBinding;
+    private String searchTerm;
+    private DatabaseHandler db;
     private RecyclerView.Adapter peopleRecyclerViewAdapter;
     private RecyclerView.Adapter roomRecyclerViewAdapter;
     private RecyclerView.LayoutManager peopleRecyclerViewLayoutManager;
@@ -37,7 +35,6 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
-        searchBindingHelper = new SearchBindingHelper();
         activitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         activitySearchBinding.seachButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -9,11 +9,11 @@ import java.util.List;
 
 public class Room {
 
-    int id;
-    Integer number;
-    Position position;
-    String title;
-    List<Person> people;
+    private int id;
+    private Integer number;
+    private Position position;
+    private String title;
+    private List<Person> people;
 
     public Room() {
     }

@@ -16,5 +16,8 @@
     <string name="whatsNear">Mi van a közelben?</string>
     <string name="starNavigation">Navigáció Indítása</string>
     <string name="position">Pozíció: </string>
+    <string name="defaultSearchText">106</string>
+    <string name="separator">Elválasztó</string>
+    <string name="faceImage">A lakos arcképe</string>
 
 </resources>

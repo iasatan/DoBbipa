@@ -21,7 +21,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
  */
 
 public class SearchRoomRecycleViewAdapter extends RecyclerView.Adapter<SearchRoomRecycleViewAdapter.RoomsViewHolder> {
-    private List<Room> rooms;
+    private final List<Room> rooms;
 
     public SearchRoomRecycleViewAdapter(List<Room> rooms) {
         this.rooms = rooms;
@@ -30,8 +30,7 @@ public class SearchRoomRecycleViewAdapter extends RecyclerView.Adapter<SearchRoo
     @Override
     public RoomsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_room_item, parent, false);
-        RoomsViewHolder holder = new RoomsViewHolder(view);
-        return holder;
+        return new RoomsViewHolder(view);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class SearchRoomRecycleViewAdapter extends RecyclerView.Adapter<SearchRoo
     }
 
     public static class RoomsViewHolder extends RecyclerView.ViewHolder {
-        private SearchRoomItemBinding searchRoomItemBinding;
+        private final SearchRoomItemBinding searchRoomItemBinding;
 
         public RoomsViewHolder(View itemView) {
             super(itemView);

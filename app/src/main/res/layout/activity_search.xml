@@ -63,7 +63,7 @@
                 android:layout_marginStart="28dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="107" />
+                android:text="@string/defaultSearchText" />
 
 
         </RelativeLayout>

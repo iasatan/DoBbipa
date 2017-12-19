@@ -19,17 +19,17 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-    ActivityMainBinding activityMainBinding;
-    DatabaseHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        DatabaseHandler db;
         db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
         if (db.getDeviceCount() < 1) {
             db.populateDatabase();
         }
+        ActivityMainBinding activityMainBinding;
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.whatNearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ClosesetRoomActivity.class));
+                startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
             }
         });
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

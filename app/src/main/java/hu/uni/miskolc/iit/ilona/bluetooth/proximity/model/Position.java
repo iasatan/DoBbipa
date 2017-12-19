@@ -7,11 +7,11 @@ import java.util.List;
  */
 
 public class Position {
-    int id;
-    double x;
-    double y;
-    double z;
-    String comment;
+    private int id;
+    private double x;
+    private double y;
+    private double z;
+    private String comment;
 
     public Position() {
     }
@@ -80,7 +80,7 @@ public class Position {
                 '}';
     }
 
-    public double getDistanceSquareFrom(Position position) {
+    private double getDistanceSquareFrom(Position position) {
         return Math.pow(position.getX() - getX(), 2) + Math.pow(position.getY() - getY(), 2);
 
     }

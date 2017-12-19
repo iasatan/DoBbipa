@@ -19,7 +19,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
  */
 
 public class ResidentsRecycleViewAdapter extends RecyclerView.Adapter<ResidentsRecycleViewAdapter.ResidentViewHolder> {
-    private List<Person> people;
+    private final List<Person> people;
 
     public ResidentsRecycleViewAdapter(List<Person> people) {
         this.people = people;
@@ -28,8 +28,7 @@ public class ResidentsRecycleViewAdapter extends RecyclerView.Adapter<ResidentsR
     @Override
     public ResidentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.residents_item, parent, false);
-        ResidentViewHolder holder = new ResidentViewHolder(view);
-        return holder;
+        return new ResidentViewHolder(view);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ResidentsRecycleViewAdapter extends RecyclerView.Adapter<ResidentsR
     }
 
     public static class ResidentViewHolder extends RecyclerView.ViewHolder {
-        private ResidentsItemBinding residentsItemBinding;
+        private final ResidentsItemBinding residentsItemBinding;
 
         public ResidentViewHolder(View itemView) {
             super(itemView);

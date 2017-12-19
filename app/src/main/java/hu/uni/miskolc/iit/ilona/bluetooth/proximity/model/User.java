@@ -13,9 +13,9 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconExcep
  */
 
 public class User {
-    Position position;
-    List<Position> prevPositions;
-    Context context;
+    private Position position;
+    private List<Position> prevPositions;
+    private Context context;
 
     public User(Context context) {
         prevPositions = new ArrayList<>();
@@ -62,7 +62,7 @@ public class User {
             throw new NoCloseBeaconException();
         }
         if (nearDevices.size() == 1) {
-            List<String> keys = new ArrayList<String>(nearDevices.keySet());
+            List<String> keys = new ArrayList<>(nearDevices.keySet());
             Device nearestDevice = nearDevices.get(keys.get(0));
             switch (nearestDevice.getAlignment()) {
                 case RIGHT:

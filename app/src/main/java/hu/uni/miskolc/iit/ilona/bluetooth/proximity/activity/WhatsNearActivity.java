@@ -18,7 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.example.android.test.R;
-import com.example.android.test.databinding.ActivityClosesetRoomBinding;
+import com.example.android.test.databinding.ActivityWhatsNearBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,25 +33,20 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
-public class ClosesetRoomActivity extends AppCompatActivity {
+public class WhatsNearActivity extends AppCompatActivity {
 
-    static final String CLOSESTROOMID = "closestRoomId";
-    static final String STARTED = "started";
+    private static final String STARTED = "started";
+    private static final String CLOSESTROOMID = "closestRoomId";
     private final static int REQUEST_ENABLE_BT = 1;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-    ActivityClosesetRoomBinding activityClosesetRoomBinding;
-    BluetoothManager btManager;
-    boolean started;
-    User user;
-    Room currentClosestRoom;
-    BluetoothAdapter btAdapter;
-    BluetoothLeScanner btScanner;
-    Map<String, Device> devices;
-    List<ScanFilter> filter;
-    DatabaseHandler db;
-    List<Room> rooms;
+    private List<Room> rooms;
+    private List<ScanFilter> filter;
+    private ActivityWhatsNearBinding activityWhatsNearBinding;
+    private boolean started;
+    private User user;
+    private Room currentClosestRoom;
+    private BluetoothLeScanner btScanner;
+    private Map<String, Device> devices;
     private RecyclerView.Adapter recyclerViewAdapter;
-    private RecyclerView.LayoutManager recyclerViewLayoutManager;
     // Device scan callback.
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -60,15 +55,13 @@ public class ClosesetRoomActivity extends AppCompatActivity {
             Device device = devices.get(address);
             device.addRSSI(result.getRssi());
             if (device.getPrevRSSIs().size() >= 3) {
-                Room room = null;
                 try {
                     user.addPosition(devices);
-                    room = user.getClosestRoom(rooms);
-                    currentClosestRoom = room;
+                    currentClosestRoom = user.getClosestRoom(rooms);
                     recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
-                    activityClosesetRoomBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
-                    activityClosesetRoomBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
-                    activityClosesetRoomBinding.setRoomTitle(currentClosestRoom.getTitle());
+                    activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+                    activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+                    activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
                 } catch (NoCloseBeaconException e) {
                 }
             }
@@ -77,10 +70,12 @@ public class ClosesetRoomActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        DatabaseHandler db;
+        BluetoothAdapter btAdapter;
+        BluetoothManager btManager;
         user = new User(getApplicationContext());
-        activityClosesetRoomBinding = DataBindingUtil.setContentView(this, R.layout.activity_closeset_room);
+        activityWhatsNearBinding = DataBindingUtil.setContentView(this, R.layout.activity_whats_near);
         devices = new HashMap<>();
         db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
         for (Device device : db.getAllDevice()) {
@@ -89,18 +84,18 @@ public class ClosesetRoomActivity extends AppCompatActivity {
         rooms = db.getAllRoom();
 
 
-        activityClosesetRoomBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
+        activityWhatsNearBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                activityClosesetRoomBinding.StartScanButton.setVisibility(View.INVISIBLE);
-                activityClosesetRoomBinding.StopScanButton.setVisibility(View.VISIBLE);
+                activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
+                activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
                 startScanning();
 
             }
         });
-        activityClosesetRoomBinding.StopScanButton.setOnClickListener(new View.OnClickListener() {
+        activityWhatsNearBinding.StopScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                activityClosesetRoomBinding.StartScanButton.setVisibility(View.VISIBLE);
-                activityClosesetRoomBinding.StopScanButton.setVisibility(View.INVISIBLE);
+                activityWhatsNearBinding.StartScanButton.setVisibility(View.VISIBLE);
+                activityWhatsNearBinding.StopScanButton.setVisibility(View.INVISIBLE);
                 stopScanning();
             }
         });
@@ -110,40 +105,41 @@ public class ClosesetRoomActivity extends AppCompatActivity {
         btScanner = btAdapter.getBluetoothLeScanner();
 
 
-        if (btAdapter != null && !btAdapter.isEnabled()) {
+        if (!btAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
 
 
-        activityClosesetRoomBinding.StartScanButton.setVisibility(View.INVISIBLE);
-        activityClosesetRoomBinding.StopScanButton.setVisibility(View.VISIBLE);
+        activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
+        activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
         startScanning();
+        RecyclerView.LayoutManager recyclerViewLayoutManager;
 
-        activityClosesetRoomBinding.residentsRecyclerView.setHasFixedSize(true);
+        activityWhatsNearBinding.residentsRecyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
-        activityClosesetRoomBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+        activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
         recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
-        activityClosesetRoomBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+        activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
         if (savedInstanceState != null) {
             try {
                 currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));
                 recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
-                activityClosesetRoomBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+                activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
 
-                activityClosesetRoomBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
-                activityClosesetRoomBinding.setRoomTitle(currentClosestRoom.getTitle());
+                activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+                activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
             } catch (Exception e) {
             }
 
             if (savedInstanceState.getBoolean(STARTED)) {
-                activityClosesetRoomBinding.StartScanButton.setVisibility(View.INVISIBLE);
-                activityClosesetRoomBinding.StopScanButton.setVisibility(View.VISIBLE);
+                activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
+                activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
                 startScanning();
             } else {
-                activityClosesetRoomBinding.StartScanButton.setVisibility(View.VISIBLE);
-                activityClosesetRoomBinding.StopScanButton.setVisibility(View.INVISIBLE);
+                activityWhatsNearBinding.StartScanButton.setVisibility(View.VISIBLE);
+                activityWhatsNearBinding.StopScanButton.setVisibility(View.INVISIBLE);
                 stopScanning();
             }
         }
@@ -183,9 +179,9 @@ public class ClosesetRoomActivity extends AppCompatActivity {
     }
 
 
-    public void startScanning() {
+    private void startScanning() {
         started = true;
-        filter = new ArrayList<ScanFilter>();
+        filter = new ArrayList<>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             filter.add(new ScanFilter.Builder().setDeviceAddress(device.getValue().getMAC()).build());
         }
@@ -197,7 +193,7 @@ public class ClosesetRoomActivity extends AppCompatActivity {
         });
     }
 
-    public void stopScanning() {
+    private void stopScanning() {
         started = false;
         AsyncTask.execute(new Runnable() {
             @Override

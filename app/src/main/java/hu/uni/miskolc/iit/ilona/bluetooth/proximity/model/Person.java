@@ -10,7 +10,7 @@ import com.example.android.test.R;
  */
 
 public class Person {
-    Context context;
+    private final Context context;
     private Integer id;
     private String name;
     private Integer roomId;

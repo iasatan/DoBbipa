@@ -32,16 +32,14 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 public class NavigationActivity extends AppCompatActivity {
 
     private final static int REQUEST_ENABLE_BT = 1;
-    ActivityNavigationBinding activityNavigationBinding;
-    DatabaseHandler db;
-    Room room;
-    User user;
-    BluetoothManager btManager;
-    BluetoothAdapter btAdapter;
-    Map<String, Device> devices;
-    List<ScanFilter> filter;
-    BluetoothLeScanner btScanner;
-    List<Position> positions;
+    private ActivityNavigationBinding activityNavigationBinding;
+    private Room room;
+    private User user;
+    private BluetoothAdapter btAdapter;
+    private Map<String, Device> devices;
+    private BluetoothLeScanner btScanner;
+    private List<ScanFilter> filter;
+    private List<Position> positions;
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -62,6 +60,8 @@ public class NavigationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DatabaseHandler db;
+        BluetoothManager btManager;
         user = new User(getApplicationContext());
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
@@ -96,7 +96,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     }
 
-    public void startScanning() {
+    private void startScanning() {
         filter = new ArrayList<>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             filter.add(new ScanFilter.Builder().setDeviceAddress(device.getValue().getMAC()).build());

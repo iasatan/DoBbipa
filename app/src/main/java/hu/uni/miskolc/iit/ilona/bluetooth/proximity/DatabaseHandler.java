@@ -22,13 +22,14 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 /**
  * Created by iasatan on 2017.10.17..
+ * Database for the application, contains the position, device, room and people entities.
  */
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String databaseName = "dobbipa40";
     private static final Integer databaseVersion = 1;
-    Context context;
+    private final Context context;
 
     public DatabaseHandler(Context context) {
         super(context, databaseName, null, databaseVersion);
@@ -171,6 +172,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         room.setNumber(Integer.parseInt(cursor.getString(1)));
         room.setTitle(cursor.getString(3));
         room.setPeople(getPeopleInRoom(id));
+        cursor.close();
         return room;
     }
 
@@ -191,11 +193,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             room.setTitle(cursor.getString(3));
 
         }
+        cursor.close();
         return room;
     }
 
     public List<Room> getAllRoom() {
-        List<Room> rooms = new ArrayList<Room>();
+        List<Room> rooms = new ArrayList<>();
         String selectQuery = "Select * From Room";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -211,6 +214,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 rooms.add(room);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return rooms;
     }
 
@@ -232,12 +236,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
         Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)), cursor.getString(4));
-
+        cursor.close();
         return position;
     }
 
     public List<Position> getAllPosition() {
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
         String selectQuery = "Select * From Position";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -252,6 +256,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 positions.add(position);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return positions;
     }
 
@@ -270,7 +275,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
     public Collection<Device> getAllDevice() {
-        Collection<Device> devices = new HashSet<Device>();
+        Collection<Device> devices = new HashSet<>();
         String selectQuery = "Select * From Device";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -286,6 +291,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 devices.add(device);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return devices;
     }
 
@@ -311,7 +317,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
     public List<Person> getAllPeople() {
-        List<Person> people = new ArrayList<Person>();
+        List<Person> people = new ArrayList<>();
         String selectQuery = "Select * From People";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -326,11 +332,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 people.add(person);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return people;
     }
 
     public List<Person> getPeopleInRoom(Integer roomId) {
-        List<Person> people = new ArrayList<Person>();
+        List<Person> people = new ArrayList<>();
         String selectQuery = "Select * From People WHERE roomId = '" + roomId + "'";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -345,6 +352,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 people.add(person);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return people;
     }
 

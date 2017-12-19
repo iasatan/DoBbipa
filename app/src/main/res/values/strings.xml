@@ -16,6 +16,9 @@
     <string name="whatsNear">Whats near?</string>
     <string name="starNavigation">Start Navigation</string>
     <string name="position">Position: </string>
+    <string name="defaultSearchText">106</string>
+    <string name="separator">Separator</string>
+    <string name="faceImage">Face of the resident</string>
 
 
 </resources>

@@ -21,7 +21,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
  */
 
 public class SearchPersonRecycleViewAdapter extends RecyclerView.Adapter<SearchPersonRecycleViewAdapter.ResidentViewHolder> {
-    private List<Person> people;
+    private final List<Person> people;
 
     public SearchPersonRecycleViewAdapter(List<Person> people) {
         this.people = people;
@@ -30,8 +30,7 @@ public class SearchPersonRecycleViewAdapter extends RecyclerView.Adapter<SearchP
     @Override
     public ResidentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_person_item, parent, false);
-        ResidentViewHolder holder = new ResidentViewHolder(view);
-        return holder;
+        return new ResidentViewHolder(view);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class SearchPersonRecycleViewAdapter extends RecyclerView.Adapter<SearchP
     }
 
     public static class ResidentViewHolder extends RecyclerView.ViewHolder {
-        private SearchPersonItemBinding searchPersonItemBinding;
+        private final SearchPersonItemBinding searchPersonItemBinding;
 
         public ResidentViewHolder(View itemView) {
             super(itemView);
