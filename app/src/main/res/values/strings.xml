@@ -19,6 +19,7 @@
     <string name="defaultSearchText">106</string>
     <string name="separator">Separator</string>
     <string name="faceImage">Face of the resident</string>
+    <string name="noResult">No result found</string>
 
 
 </resources>

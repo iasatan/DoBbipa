@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="room"
-            type="hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room" />
+            name="result"
+            type="hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchResult" />
     </data>
 
     <RelativeLayout
@@ -25,13 +25,31 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/horizontalLine">
 
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/faceImage"
+                android:scaleType="centerCrop"
+                android:src="@{result.image}" />
+
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/imageView"
+                android:text="@{result.name}"
+                android:textSize="22sp" />
+
             <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/imageView"
-                android:text="@{room.title}"
-                android:textSize="22sp" />
+                android:layout_below="@id/nameTextView"
+                android:text="@{result.title}"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/startNavigation"
@@ -39,15 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/titleTextView"
                 android:text="@string/starNavigation" />
-
-            <TextView
-                android:id="@+id/numberTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/titleTextView"
-                android:layout_toRightOf="@id/startNavigation"
-                android:text="@{room.number.toString()}"
-                android:textSize="18sp" />
 
         </RelativeLayout>
 

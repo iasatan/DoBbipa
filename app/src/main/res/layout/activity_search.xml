@@ -29,20 +29,12 @@
                 android:textSize="22sp" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/searchPeopleRecyclerView"
+                android:id="@+id/searchRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/textView2"
                 android:layout_marginTop="103dp"
-                android:scrollbars="vertical" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/searchRoomRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/searchPeopleRecyclerView"
                 android:scrollbars="vertical" />
 
             <Button

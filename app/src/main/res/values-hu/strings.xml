@@ -19,5 +19,6 @@
     <string name="defaultSearchText">106</string>
     <string name="separator">Elválasztó</string>
     <string name="faceImage">A lakos arcképe</string>
+    <string name="noResult">Nincs találat</string>
 
 </resources>
