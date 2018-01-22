@@ -80,6 +80,10 @@ public class Position {
                 '}';
     }
 
+    public double getDistance(Position position) {
+        return Math.sqrt(getDistanceSquareFrom(position));
+    }
+
     private double getDistanceSquareFrom(Position position) {
         return Math.pow(position.getX() - getX(), 2) + Math.pow(position.getY() - getY(), 2);
 

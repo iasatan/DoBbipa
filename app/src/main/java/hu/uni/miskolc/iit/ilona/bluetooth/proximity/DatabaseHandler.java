@@ -11,11 +11,14 @@ import com.example.android.test.R;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
@@ -27,7 +30,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa40";
+    private static final String databaseName = "dobbipa43";
     private static final Integer databaseVersion = 1;
     private final Context context;
 
@@ -38,10 +41,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z INTEGER, comment TEXT, buildingid INTEGER)");
+        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z DOUBLE, comment TEXT, buildingid INTEGER)");
         db.execSQL("CREATE TABLE Device(id INTEGER PRIMARY KEY, baserssi INTEGER, mac TEXT, position INTEGER, alignment TEXT)");
         db.execSQL("CREATE TABLE Room(id INTEGER PRIMARY KEY, number INTEGER, position INTEGER, title TEXT)");
         db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER, image INTEGER, title TEXT)");
+        db.execSQL("CREATE TABLE Edge(id INTEGER PRIMARY KEY, node1 INTEGER, node2 INTEGER, distance DOUBLE)");
     }
 
     @Override
@@ -50,45 +54,86 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Devices");
         db.execSQL("DROP TABLE IF EXISTS Room");
         db.execSQL("DROP TABLE IF EXISTS People");
+        db.execSQL("DROP TABLE IF EXISTS Edge");
         onCreate(db);
     }
 
     public void populateDatabase() {
-        addPosition(new Position(1, 35, 20, 6, "101 előtt"));
-        addPosition(new Position(2, 35, 8, 6, "KL előtt"));
-        addPosition(new Position(3, 18, 8, 6, "Konyha előtt"));
-        addPosition(new Position(4, 6, 8, 6, "labor előtt"));
-        addPosition(new Position(5, 5, 8, 4.4));
-        addPosition(new Position(6, 6, 8, 4.4));
-        addPosition(new Position(7, 13, 8, 4.4));
-        addPosition(new Position(8, 17, 8, 4.4));
-        addPosition(new Position(9, 18, 8, 4.4));
-        addPosition(new Position(10, 8, 8, 4.4, "Elzárt folyosó labornál lévő ajtaja"));
-        addPosition(new Position(11, 8, 20, 4.4));
-        addPosition(new Position(12, 35, 12, 4.4, "lépcső"));
-        addPosition(new Position(13, 35, 8, 4.4));
-        addPosition(new Position(14, 8, 10, 4.4));
-        addPosition(new Position(15, 8, 15, 4.4));
-        addPosition(new Position(16, 20, 7, 4.4));
-        addPosition(new Position(17, 20, 6, 4.4));
-        addPosition(new Position(18, 20, 11, 4.4));
-        addPosition(new Position(19, 20, 12, 4.4));
-        addPosition(new Position(20, 20, 19, 4.4));
-        addPosition(new Position(21, 20, 21, 4.4));
-        addPosition(new Position(22, 20, 28, 4.4));
-        addPosition(new Position(23, 20, 33, 4.4));
-        addPosition(new Position(24, 20, 39, 4.4));
-        addPosition(new Position(25, 8, 39, 4.4));
-        addPosition(new Position(26, 8, 36, 4.4));
-        addPosition(new Position(27, 8, 32, 4.4));
-        addPosition(new Position(28, 8, 28, 4.4));
-        addPosition(new Position(29, 8, 26, 4.4));
-        addPosition(new Position(30, 8, 23, 4.4));
-        addPosition(new Position(31, 8, 21, 4.4));
-        addPosition(new Position(32, 8, 6, 4.4));
-        addPosition(new Position(33, 23, 20, 6));
-        addPosition(new Position(34, 11, 20, 6));
-        addPosition(new Position(35, 15, 8, 6));
+        Map<Integer, Position> positions = new HashMap<>();
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
+        positions.put(2, new Position(2, 35, 8, 6, "KL előtt"));
+        positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
+        positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
+        positions.put(5, new Position(5, 5, 8, 4.4));
+        positions.put(6, new Position(6, 7, 8, 4.4));
+        positions.put(7, new Position(7, 13, 8, 4.4));
+        positions.put(8, new Position(8, 17, 8, 4.4));
+        positions.put(9, new Position(9, 18, 8, 4.4));
+        positions.put(10, new Position(10, 8, 8, 4.4, "Elzárt folyosó labornál lévő ajtaja"));
+        positions.put(11, new Position(11, 8, 20, 4.4));
+        positions.put(12, new Position(12, 35, 12, 4.4, "lépcső"));
+        positions.put(13, new Position(13, 35, 8, 4.4));
+        positions.put(14, new Position(14, 8, 10, 4.4));
+        positions.put(15, new Position(15, 8, 15, 4.4));
+        positions.put(16, new Position(16, 7, 7, 4.4));
+        positions.put(17, new Position(17, 6, 6, 4.4));
+        positions.put(18, new Position(18, 11, 20, 4.4));
+        positions.put(19, new Position(19, 12, 20, 4.4));
+        positions.put(20, new Position(20, 19, 20, 4.4));
+        positions.put(21, new Position(21, 21, 20, 4.4));
+        positions.put(22, new Position(22, 28, 20, 4.4));
+        positions.put(23, new Position(23, 33, 20, 4.4));
+        positions.put(24, new Position(24, 39, 20, 4.4));
+        positions.put(25, new Position(25, 39, 8, 4.4));
+        positions.put(26, new Position(26, 36, 8, 4.4));
+        positions.put(27, new Position(27, 32, 8, 4.4));
+        positions.put(28, new Position(28, 28, 8, 4.4));
+        positions.put(29, new Position(29, 26, 8, 4.4));
+        positions.put(30, new Position(30, 23, 8, 4.4));
+        positions.put(31, new Position(31, 21, 8, 4.4));
+        positions.put(32, new Position(32, 6, 8, 4.4));
+        positions.put(33, new Position(33, 23, 20, 6));
+        positions.put(34, new Position(34, 11, 20, 6));
+        positions.put(35, new Position(35, 8, 15, 6));
+        positions.put(36, new Position(36, 14, 8, 4.4));
+        positions.put(37, new Position(37, 15, 8, 4.4));
+        for (Map.Entry<Integer, Position> position : positions.entrySet()) {
+            addPosition(position.getValue());
+        }
+
+        addEdge(new Edge(1, positions.get(5), positions.get(32)));
+        addEdge(new Edge(2, positions.get(32), positions.get(6)));
+        addEdge(new Edge(3, positions.get(6), positions.get(10)));
+        addEdge(new Edge(4, positions.get(7), positions.get(10)));
+        addEdge(new Edge(5, positions.get(7), positions.get(37)));
+        addEdge(new Edge(6, positions.get(37), positions.get(36)));
+        addEdge(new Edge(7, positions.get(36), positions.get(8)));
+        addEdge(new Edge(8, positions.get(8), positions.get(9)));
+        addEdge(new Edge(9, positions.get(9), positions.get(31)));
+        addEdge(new Edge(10, positions.get(31), positions.get(30)));
+        addEdge(new Edge(11, positions.get(28), positions.get(30)));
+        addEdge(new Edge(12, positions.get(28), positions.get(29)));
+        addEdge(new Edge(13, positions.get(29), positions.get(27)));
+        addEdge(new Edge(14, positions.get(27), positions.get(13)));
+        addEdge(new Edge(15, positions.get(13), positions.get(26)));
+        addEdge(new Edge(16, positions.get(26), positions.get(25)));
+        addEdge(new Edge(17, positions.get(13), positions.get(12)));
+        addEdge(new Edge(18, positions.get(12), positions.get(2)));
+        addEdge(new Edge(19, positions.get(2), positions.get(24)));
+        addEdge(new Edge(20, positions.get(2), positions.get(23)));
+        addEdge(new Edge(21, positions.get(22), positions.get(23)));
+        addEdge(new Edge(22, positions.get(22), positions.get(33)));
+        addEdge(new Edge(23, positions.get(33), positions.get(21)));
+        addEdge(new Edge(24, positions.get(21), positions.get(20)));
+        addEdge(new Edge(25, positions.get(20), positions.get(19)));
+        addEdge(new Edge(26, positions.get(19), positions.get(18)));
+        addEdge(new Edge(27, positions.get(18), positions.get(11)));
+        addEdge(new Edge(28, positions.get(11), positions.get(16)));
+        addEdge(new Edge(29, positions.get(16), positions.get(17)));
+        addEdge(new Edge(30, positions.get(11), positions.get(15)));
+        addEdge(new Edge(31, positions.get(14), positions.get(15)));
+        addEdge(new Edge(32, positions.get(14), positions.get(10)));
+
 
         addDevice(new Device(1, 70, "0C:F3:EE:00:96:A0", getPosition(1), Alignment.LEFT));
         addDevice(new Device(2, 57, "0C:F3:EE:00:82:4B", getPosition(2), Alignment.LEFT));
@@ -122,32 +167,79 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(22, 110, getPosition(30)));
         addRoom(new Room(23, 124, getPosition(31), "Raktár"));
         addRoom(new Room(24, 106, getPosition(32)));
+        addRoom(new Room(25, 117, getPosition(37), "Tanári Női Mozsdó"));
+        addRoom(new Room(26, 118, getPosition(38), "Tanári Férfi Mozsdó"));
 
-        addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, "Egyetemi adjunktus", context));
-        addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, "Doktorandusz", context));
-        addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, "Egyetemi docens", context));
-        addPerson(new Person(4, "Kovács Szilveszter", 2, R.drawable.ksz0, "Egyetemi docens", context));
-        addPerson(new Person(5, "Krizsán Zoltán", 2, R.drawable.kz0, "Egyetemi docens", context));
+        addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer), context));
+        addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, context.getString(R.string.phdStudentOne), context));
+        addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, context.getString(R.string.associateProfessor), context));
+        addPerson(new Person(4, "Kovács Szilveszter", 2, R.drawable.ksz0, context.getString(R.string.associateProfessor), context));
+        addPerson(new Person(5, "Krizsán Zoltán", 2, R.drawable.kz0, context.getString(R.string.associateProfessor), context));
         addPerson(new Person(6, "Bulla Dávid", 3, R.drawable.bd0, "Mérnöktanár", context));
         addPerson(new Person(7, "Szűcs Miklós", 3, R.drawable.szm0, "Mesteroktató", context));
-        addPerson(new Person(8, "Baksáné Varga Erika", 4, R.drawable.bve0, "Egyetemi docens", context));
-        addPerson(new Person(9, "Barabás Péter", 4, R.drawable.bp0, "Egyetemi adjunktus", context));
-        addPerson(new Person(10, "Sasvári Péter", 4, R.drawable.sp0, "Egyetemi docens", context));
-        addPerson(new Person(11, "Tompa Tamás", 9, R.drawable.tt0, "PhD hallgató", context)); //kép
-        addPerson(new Person(12, "Nagy Miklósné", 17, R.drawable.nf404, "Könyvtáros", context));
+        addPerson(new Person(8, "Baksáné Varga Erika", 4, R.drawable.bve0, context.getString(R.string.associateProfessor), context));
+        addPerson(new Person(9, "Barabás Péter", 4, R.drawable.bp0, context.getString(R.string.seniorLecturer), context));
+        addPerson(new Person(10, "Sasvári Péter", 4, R.drawable.sp0, context.getString(R.string.associateProfessor), context));
+        addPerson(new Person(11, "Tompa Tamás", 9, R.drawable.tt0, context.getString(R.string.phdStudentTwo), context)); //kép
+        addPerson(new Person(12, "Nagy Miklósné", 17, R.drawable.nf404, context.getString(R.string.librarian), context));
         addPerson(new Person(13, "Göncziné Halász Éva", 18, R.drawable.ghe0, "Tanulmányi igazgatási ügyintéző", context));
-        addPerson(new Person(14, "Kovács László", 19, R.drawable.kl0, "Egyetemi Docens", context));
+        addPerson(new Person(14, "Kovács László", 19, R.drawable.kl0, context.getString(R.string.associateProfessor), context));
         addPerson(new Person(15, "Wagner György", 20, R.drawable.wgy0, "Mesteroktató", context));
-        addPerson(new Person(16, "Mileff Péter", 22, R.drawable.mp0, "Egyetemi Docens", context));
-        addPerson(new Person(17, "Smid László", 22, R.drawable.sl0, "Egyetemi Tanársegéd", context));
-        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa0, "hallgató", context));
-        addPerson(new Person(19, "Bogdándy Bence", 24, R.drawable.bb0, "hallgató", context));
-        addPerson(new Person(20, "Molnár Dávid", 24, R.drawable.md0, "hallgató", context));
-        addPerson(new Person(21, "Pintér Tamás", 24, R.drawable.pt0, "hallgató", context));
-        addPerson(new Person(22, "Boros Tamás", 24, R.drawable.bt0, "hallgató", context));
-        addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, "hallgató", context));
-        addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, "hallgató", context));
-        addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, "hallgató", context));
+        addPerson(new Person(16, "Mileff Péter", 22, R.drawable.mp0, context.getString(R.string.associateProfessor), context));
+        addPerson(new Person(17, "Smid László", 22, R.drawable.sl0, context.getString(R.string.assistantLecturer), context));
+        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa0, context.getString(R.string.student), context));
+        addPerson(new Person(19, "Bogdándy Bence", 24, R.drawable.bb0, context.getString(R.string.student), context));
+        addPerson(new Person(20, "Molnár Dávid", 24, R.drawable.md0, context.getString(R.string.student), context));
+        addPerson(new Person(21, "Pintér Tamás", 24, R.drawable.pt0, context.getString(R.string.student), context));
+        addPerson(new Person(22, "Boros Tamás", 24, R.drawable.bt0, context.getString(R.string.student), context));
+        addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, context.getString(R.string.student), context));
+        addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student), context));
+        addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student), context));
+    }
+
+    public void addEdge(Edge edge) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("node1", edge.getNode1().getId());
+        values.put("node2", edge.getNode2().getId());
+        values.put("distance", edge.getDistance());
+        db.insert("Edge", null, values);
+    }
+
+    public List<Edge> getAllEdge() {
+        List<Edge> edges = new ArrayList<>();
+        String selectQuery = "Select * From Edge";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Edge edge = new Edge();
+                edge.setId(Integer.parseInt(cursor.getString(0)));
+                edge.setNode1(getPosition(Integer.parseInt(cursor.getString(1))));
+                edge.setNode2(getPosition(Integer.parseInt(cursor.getString(2))));
+                edge.setDistance(Double.parseDouble(cursor.getString(3)));
+                edges.add(edge);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return edges;
+    }
+
+    public Edge getEdgeById(Integer id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Edge", null, "id=" + id, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Edge edge = new Edge();
+        if (cursor.getCount() != 0) {
+            edge.setId(Integer.parseInt(cursor.getString(0)));
+            edge.setNode1(getPosition(Integer.parseInt(cursor.getString(1))));
+            edge.setNode2(getPosition(Integer.parseInt(cursor.getString(2))));
+            edge.setDistance(Double.parseDouble(cursor.getString(3)));
+        }
+        cursor.close();
+        return edge;
     }
 
     public void addRoom(Room room) {
@@ -158,6 +250,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("title", room.getTitle());
         db.insert("Room", null, values);
     }
+
 
     public Room getRoom(int id) {
         SQLiteDatabase db = getReadableDatabase();

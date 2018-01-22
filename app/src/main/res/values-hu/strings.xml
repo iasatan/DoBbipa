@@ -20,5 +20,13 @@
     <string name="separator">Elválasztó</string>
     <string name="faceImage">A lakos arcképe</string>
     <string name="noResult">Nincs találat</string>
+    <string name="universityAssistant">Egyetemi adjunktus</string>
+    <string name="student">Hallgató</string>
+    <string name="assistantLecturer">Egyetemi Tanársegéd</string>
+    <string name="associateProfessor">Egyetemi Docens</string>
+    <string name="phdStudentOne">Doktorandusz</string>
+    <string name="phdStudentTwo">PhD hallgató</string>
+    <string name="librarian">Könyvtáros</string>
+
 
 </resources>

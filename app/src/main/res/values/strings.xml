@@ -20,6 +20,13 @@
     <string name="separator">Separator</string>
     <string name="faceImage">Face of the resident</string>
     <string name="noResult">No result found</string>
+    <string name="seniorLecturer">Senior Lecturer</string>
+    <string name="student">Student</string>
+    <string name="assistantLecturer">Assistant Lecturer</string>
+    <string name="associateProfessor">Associate Professor</string>
+    <string name="phdStudentOne">PhD student</string>
+    <string name="phdStudentTwo">PhD student</string>
+    <string name="librarian">Librarian</string>
 
 
 </resources>
