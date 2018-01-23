@@ -67,35 +67,36 @@ public class User {
             switch (nearestDevice.getAlignment()) {
                 case RIGHT:
                     position.setY(nearestDevice.getPosition().getY());
-                    position.setX(nearestDevice.getPosition().getX() - nearestDevice.getDistanceFrom());
+                    position.setX(nearestDevice.getPosition().getX() - nearestDevice.getDistanceFromDevice());
                     break;
                 case LEFT:
                     position.setY(nearestDevice.getPosition().getY());
-                    position.setX(nearestDevice.getPosition().getX() + nearestDevice.getDistanceFrom());
+                    position.setX(nearestDevice.getPosition().getX() + nearestDevice.getDistanceFromDevice());
                     break;
                 case FRONT:
-                    position.setY(nearestDevice.getPosition().getY() - nearestDevice.getDistanceFrom());
+                    position.setY(nearestDevice.getPosition().getY() - nearestDevice.getDistanceFromDevice());
                     position.setX(nearestDevice.getPosition().getX());
 
                     break;
                 case BEHIND:
-                    position.setY(nearestDevice.getPosition().getY() + nearestDevice.getDistanceFrom());
+                    position.setY(nearestDevice.getPosition().getY() + nearestDevice.getDistanceFromDevice());
                     position.setX(nearestDevice.getPosition().getX());
                     break;
             }
         } else {
             List<Device> closestDevices = Device.closestTwoDevice(nearDevices);
+            Double distanceBetweenBeacons = closestDevices.get(0).getPosition().getDistance(closestDevices.get(1).getPosition());
             List<Double> distances = new ArrayList<>();
-            distances.add(closestDevices.get(0).getDistanceFrom());
-            distances.add(closestDevices.get(1).getDistanceFrom());
+            distances.add(closestDevices.get(0).getDistanceFromDevice());
+            distances.add(closestDevices.get(1).getDistanceFromDevice());
             if (closestDevices.get(0).getPosition().getY() == closestDevices.get(1).getPosition().getY()) {
-                double xCoordinate = 12 / (distances.get(0) + distances.get(1));
-                xCoordinate = xCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getX();
+                double xCoordinate = distanceBetweenBeacons / (distances.get(0) + distances.get(1));
+                xCoordinate = xCoordinate * closestDevices.get(0).getDistanceFromDevice() + closestDevices.get(0).getPosition().getX();
                 position.setX(xCoordinate);
                 position.setY(closestDevices.get(0).getPosition().getY());
             } else if (closestDevices.get(0).getPosition().getX() == closestDevices.get(1).getPosition().getX()) {
-                double yCoordinate = 12 / (closestDevices.get(0).getDistanceFrom() + closestDevices.get(1).getDistanceFrom());
-                yCoordinate = yCoordinate * closestDevices.get(0).getDistanceFrom() + closestDevices.get(0).getPosition().getY();
+                double yCoordinate = distanceBetweenBeacons / (closestDevices.get(0).getDistanceFromDevice() + closestDevices.get(1).getDistanceFromDevice());
+                yCoordinate = yCoordinate * closestDevices.get(0).getDistanceFromDevice() + closestDevices.get(0).getPosition().getY();
                 position.setY(yCoordinate);
                 position.setX(closestDevices.get(0).getPosition().getX());
             }

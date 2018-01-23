@@ -24,14 +24,6 @@ public class Device {
         prevRSSI = new ArrayList<>();
     }
 
-    public Device(int baseRSSI, String MAC, Position position, Alignment alignment) {
-        this.baseRSSI = baseRSSI;
-        this.MAC = MAC;
-        this.position = position;
-        prevRSSI = new ArrayList<>();
-        this.alignment = alignment;
-    }
-
     public Device(int id, int baseRSSI, String MAC, Position position, Alignment alignment) {
         this.id = id;
         this.baseRSSI = baseRSSI;
@@ -49,10 +41,10 @@ public class Device {
         result[0] = (Device) nearDevices.values().toArray()[0];
         result[1] = result[0];
         for (Device currentDevice : nearDevices.values()) {
-            if (currentDevice.getDistanceFrom() < result[1].getDistanceFrom()) {
+            if (currentDevice.getDistanceFromDevice() < result[1].getDistanceFromDevice()) {
                 result[1] = currentDevice;
             }
-            if (currentDevice.getDistanceFrom() < result[0].getDistanceFrom()) {
+            if (currentDevice.getDistanceFromDevice() < result[0].getDistanceFromDevice()) {
                 result[1] = result[0];
                 result[0] = currentDevice;
             }
@@ -64,7 +56,7 @@ public class Device {
         Map<String, Device> nearDevices = new HashMap<>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             if (device.getValue().getAverageRSSI() != 0) {
-                if (device.getValue().getDistanceFrom() < 12) { //TODO szervezd ki a 12métert db-be, building szinten
+                if (device.getValue().getDistanceFromDevice() < 12) { //12m is the maximum range that produce good results of the bluetooth beacons
                     nearDevices.put(device.getKey(), device.getValue());
                 }
             }
@@ -88,13 +80,14 @@ public class Device {
     }
 
     private Double getAverageRSSI() {
-        if (prevRSSI.size() == 0) {
-            return 0.0;
+        Double average = 0.0;
+        if (prevRSSI.size() == 0) { //if no previous RSSI measured than returns 0
+            return average;
         }
         if (prevRSSI.size() > 5) {
-            removeOutstandingRSSIs();
+            removeOutstandingRSSIs(); //filters out the maximum and minimum value from the list
         }
-        Double average = 0.0;
+
         for (int previousRSSI : prevRSSI) {
             average += previousRSSI;
         }
@@ -103,11 +96,12 @@ public class Device {
         return average;
     }
 
-    public double getDistanceFrom() {
-        if (getAverageRSSI() == 0) {
+    public double getDistanceFromDevice() {
+        Double averageRSSI = getAverageRSSI();
+        if (averageRSSI == 0) {
             return 1000.0;
         }
-        Double distance = Math.pow(10, (getAverageRSSI() + baseRSSI) / (-20));
+        Double distance = Math.pow(10, (averageRSSI + baseRSSI) / (-20)); //Log-Distance Path Loss model
         if (distance < 1.6) {
             return distance;
         } else {

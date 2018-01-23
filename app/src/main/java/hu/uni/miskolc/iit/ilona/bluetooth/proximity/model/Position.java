@@ -85,7 +85,7 @@ public class Position {
     }
 
     private double getDistanceSquareFrom(Position position) {
-        return Math.pow(position.getX() - getX(), 2) + Math.pow(position.getY() - getY(), 2);
+        return Math.pow(position.getX() - x, 2) + Math.pow(position.getY() - y, 2);
 
     }
 
