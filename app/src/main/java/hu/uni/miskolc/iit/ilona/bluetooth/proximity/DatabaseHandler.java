@@ -197,6 +197,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student), context));
         addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student), context));
     }
+    //region Edge
 
     public void addEdge(Edge edge) {
         SQLiteDatabase db = getWritableDatabase();
@@ -244,6 +245,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return edge;
     }
 
+    //endregion
+    //region Room
     public void addRoom(Room room) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -313,7 +316,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return rooms;
     }
 
+    public int getRoomCount() {
+        String countQuery = "SELECT * FROM Room";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        Integer count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
 
+
+    public int updateRoom(Room room) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("number", room.getNumber());
+        values.put("position", room.getPosition().getId());
+        values.put("title", room.getTitle());
+        return db.update("Room", values, "id=" + room.getId(), null);
+    }
+
+    public void deleteRoom(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Room", "id=" + id, null);
+    }
+
+    //endregion
+    //region Position
     public void addPosition(Position position) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -354,7 +382,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return positions;
     }
-
+    //endregion
+    //region Device
 
     public void addDevice(Device device) {
 
@@ -399,7 +428,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return temp;
     }
 
-
+    //endregion
+    //region Person
     public void addPerson(Person person) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -450,140 +480,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return people;
     }
-
-
-
-    /*public int getRoomCount() {
-        String countQuery = "SELECT * FROM Room";
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-        return cursor.getCount();
-    }
-
-
-    public int updateRoom(Room room) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("number", room.getNumber());
-        values.put("position", room.getPosition().getId());
-        values.put("title", room.getTitle());
-        return db.update("Room", values, "id=" + room.getId(), null);
-    }
-
-    public void deleteRoom(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Room", "id=" + id, null);
-    }
-
-
-    public int getPeopleCount() {
-        String countQuery = "SELECT * FROM People";
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-        return cursor.getCount();
-    }
-
-    public int updatePerson(Person person) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("name", person.getName());
-        values.put("roomId", person.getRoomId());
-
-        return db.update("People", values, "id=" + person.getId(), null);
-    }
-
-    public void deletePerson(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("People", "id=" + id, null);
-        db.close();
-    }
-    public Person getPerson(int id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("People", null, "id=" + id, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        Person person = new Person(context);
-        person.setId(Integer.parseInt(cursor.getString(0)));
-        person.setName(cursor.getString(1));
-        person.setRoomId(Integer.parseInt(cursor.getString(2)));
-        return person;
-    }
-
-     public int updateDevice(Device device) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("baserssi", device.getBaseRSSI());
-        values.put("mac", device.getMAC());
-        values.put("position", device.getPosition().getId());
-
-        return db.update("Device", values, "id=" + device.getId(), null);
-    }
-
-    public void deleteDevice(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Device", "id=" + id, null);
-        db.close();
-    }
-
-        public int getPositionCount() {
-        String countQuery = "SELECT * FROM Position";
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-        return cursor.getCount();
-    }
-
-    public int updatePosition(Position position) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("x", position.getX());
-        values.put("y", position.getY());
-        values.put("z", position.getZ());
-        values.put("comment", position.getComment());
-
-        return db.update("Position", values, "id=?", new String[]{String.valueOf(position.getId())});
-    }
-
-    public void deletePosition(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("Position", "id=?", new String[]{String.valueOf(id)});
-        db.close();
-    }
-    public Device getDevice(int id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("Device", null, "id=" + id, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        Position position = getPosition(Integer.parseInt(cursor.getString(3)));
-        Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), position, Alignment.valueOf(cursor.getString(4)));
-
-        return device;
-    }
-
-    public Device getDevice(String mac) {
-        SQLiteDatabase db = getReadableDatabase();
-        Device device = new Device();
-        Cursor cursor = db.query("Device", null, "mac=" + "'" + mac + "'", null, null, null, null);
-        if (cursor == null) {
-            Log.d("read", "null");
-            device.setId(0);
-            device.setPosition(new Position(0, 0, 0, 0));
-            device.setMAC("");
-            device.setBaseRSSI(0);
-            return device;
-        }
-        Log.d("read", "wtf? ha nem null miért működik");
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
-
-        return device;
-    }
-
-    */
+    //endregion
 }

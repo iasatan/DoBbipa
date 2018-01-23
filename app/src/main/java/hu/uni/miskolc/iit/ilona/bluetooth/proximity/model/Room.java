@@ -8,13 +8,15 @@ import java.util.List;
  */
 
 public class Room {
-
+    //region variables
     private int id;
     private Integer number;
     private Position position;
     private String title;
     private List<Person> people;
 
+    //endregion
+    //region constructors
     public Room() {
     }
 
@@ -34,14 +36,6 @@ public class Room {
         people = new ArrayList<>();
     }
 
-    public Room(int id, int number, Position position, List<Person> people) {
-        this.id = id;
-        this.number = number;
-        this.position = position;
-        title = "";
-        this.people = people;
-    }
-
     public Room(int id, int number, Position position, Person person) {
         this.id = id;
         this.number = number;
@@ -51,6 +45,8 @@ public class Room {
         people.add(person);
     }
 
+    //endregion
+    //region getters & setters
     public void setNumber(Integer number) {
         this.number = number;
     }
@@ -95,6 +91,7 @@ public class Room {
         this.people = people;
     }
 
+    //endregion
     @Override
     public String toString() {
         return "Room{" +

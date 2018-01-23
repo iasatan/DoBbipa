@@ -12,6 +12,7 @@ import java.util.Map;
  */
 
 public class Device {
+    //region variables
     private int id;
     private int baseRSSI;
     private String MAC;
@@ -19,7 +20,8 @@ public class Device {
     private List<Integer> prevRSSI;
     private Alignment alignment;
 
-
+    //endregion
+    //region constructors
     public Device() {
         prevRSSI = new ArrayList<>();
     }
@@ -32,6 +34,7 @@ public class Device {
         this.alignment = alignment;
         prevRSSI = new ArrayList<>();
     }
+    //endregion
 
     public static List<Device> closestTwoDevice(Map<String, Device> nearDevices) {
         if (nearDevices.values().size() == 2) {
@@ -109,6 +112,7 @@ public class Device {
         }
     }
 
+    //region getter & setter
     public int getId() {
         return id;
     }
@@ -149,6 +153,7 @@ public class Device {
         this.alignment = alignment;
     }
 
+    //endregion
     @Override
     public String toString() {
         return "Device{" +

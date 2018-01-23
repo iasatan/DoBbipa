@@ -7,12 +7,13 @@ import android.graphics.drawable.Drawable;
  */
 
 public class SearchResult {
-
+    //region variables
     private Drawable image;
     private String name;
     private String title;
     private Integer roomId;
 
+    //endregion
     public SearchResult(Drawable image, String name, String title, Integer roomId) {
         this.image = image;
         this.name = name;
@@ -20,6 +21,7 @@ public class SearchResult {
         this.roomId = roomId;
     }
 
+    //region getters & setters
     public Drawable getImage() {
         return image;
     }
@@ -51,4 +53,5 @@ public class SearchResult {
     public void setRoomId(Integer roomId) {
         this.roomId = roomId;
     }
+    //endregion
 }

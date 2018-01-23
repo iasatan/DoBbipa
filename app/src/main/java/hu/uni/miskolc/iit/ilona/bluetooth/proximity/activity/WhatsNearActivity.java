@@ -34,7 +34,20 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class WhatsNearActivity extends AppCompatActivity {
+    //region ble transmission
+    /*AdvertiseCallback advertisingCallback = new AdvertiseCallback() {
+        @Override
+        public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+            super.onStartSuccess(settingsInEffect);
+        }
 
+        @Override
+        public void onStartFailure(int errorCode) {
+            super.onStartFailure(errorCode);
+        }
+    };*/
+    //endregion
+    //region variables
     private static final String STARTED = "started";
     private static final String CLOSESTROOMID = "closestRoomId";
     private final static int REQUEST_ENABLE_BT = 1;
@@ -45,9 +58,10 @@ public class WhatsNearActivity extends AppCompatActivity {
     private User user;
     private Room currentClosestRoom;
     private BluetoothLeScanner btScanner;
+    private BluetoothAdapter btAdapter;
     private Map<String, Device> devices;
     private RecyclerView.Adapter recyclerViewAdapter;
-    // Device scan callback.
+    //endregion
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -72,18 +86,37 @@ public class WhatsNearActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DatabaseHandler db;
-        BluetoothAdapter btAdapter;
+        //region bluetooth init
         BluetoothManager btManager;
-        user = new User(getApplicationContext());
-        activityWhatsNearBinding = DataBindingUtil.setContentView(this, R.layout.activity_whats_near);
+        btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        btAdapter = btManager.getAdapter();
+        if (!btAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+        }
+        btScanner = btAdapter.getBluetoothLeScanner();
+        //endregion
+        user = new User();
         devices = new HashMap<>();
-        db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
+        db = new DatabaseHandler(getApplicationContext());
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
         }
         rooms = db.getAllRoom();
-
-
+        //region ble advertising
+        /*if (!BluetoothAdapter.getDefaultAdapter().isMultipleAdvertisementSupported()) {
+            Toast.makeText(this, "Multiple advertisement not supported", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Multiple advertisement is supported", Toast.LENGTH_SHORT).show();
+            BluetoothLeAdvertiser advertiser = btAdapter.getBluetoothLeAdvertiser();
+            AdvertiseSettings settings = new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED).setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM).setConnectable(false).build();
+            ParcelUuid parcelUuid = new ParcelUuid(UUID.fromString("CDB7950D-73F1-4D4D-8E47-C090502DBD63"));
+            AdvertiseData data = new AdvertiseData.Builder().setIncludeDeviceName(true).addServiceUuid(parcelUuid).addServiceData(parcelUuid, "Data".getBytes(Charset.forName("UTF-8"))).build();
+            advertiser.startAdvertising(settings, data, advertisingCallback);
+        }
+        */
+        //endregion
+        //region button listeners
         activityWhatsNearBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
@@ -99,17 +132,9 @@ public class WhatsNearActivity extends AppCompatActivity {
                 stopScanning();
             }
         });
-
-        btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        btAdapter = btManager.getAdapter();
-        btScanner = btAdapter.getBluetoothLeScanner();
-
-
-        if (!btAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-        }
-
+        //endregion
+        //region contenView
+        activityWhatsNearBinding = DataBindingUtil.setContentView(this, R.layout.activity_whats_near);
 
         activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
         activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
@@ -121,7 +146,7 @@ public class WhatsNearActivity extends AppCompatActivity {
         activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
         recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
         activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
-
+        //endregion
         if (savedInstanceState != null) {
             try {
                 currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));

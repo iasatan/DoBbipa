@@ -5,19 +5,15 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
  */
 
 public class Edge {
+    //region variables
     private Integer id;
     private Position node1;
     private Position node2;
     private Double distance;
 
+    //endregion
+    //region constructors
     public Edge() {
-    }
-
-    public Edge(Integer id, Position node1, Position node2, Double distance) {
-        this.id = id;
-        this.node1 = node1;
-        this.node2 = node2;
-        this.distance = distance;
     }
 
     public Edge(Integer id, Position node1, Position node2) {
@@ -27,6 +23,8 @@ public class Edge {
         distance = node1.getDistance(node2);
     }
 
+    //endregion
+    //region getters & setters
     public Position getNode1() {
         return node1;
     }
@@ -58,4 +56,5 @@ public class Edge {
     public void setDistance(Double distance) {
         this.distance = distance;
     }
+    //endregion
 }

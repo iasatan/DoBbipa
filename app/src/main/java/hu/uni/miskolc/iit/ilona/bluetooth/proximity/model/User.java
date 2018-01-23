@@ -1,7 +1,5 @@
 package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,19 +13,12 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconExcep
 public class User {
     private Position position;
     private List<Position> prevPositions;
-    private Context context;
 
-    public User(Context context) {
+    public User() {
         prevPositions = new ArrayList<>();
-        this.context = context;
     }
 
-    public User(Position position, List<Position> prevPositions) {
-        this.position = position;
-        this.prevPositions = prevPositions;
-        prevPositions.add(position);
-    }
-
+    //region getters & setters
     public List<Position> getPrevPositions() {
         return prevPositions;
     }
@@ -45,6 +36,7 @@ public class User {
         this.position = position;
     }
 
+    //endregion
     public void addPosition(Position position) {
         prevPositions.add(position);
     }

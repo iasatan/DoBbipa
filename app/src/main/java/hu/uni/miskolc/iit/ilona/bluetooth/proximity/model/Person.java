@@ -10,6 +10,7 @@ import com.example.android.test.R;
  */
 
 public class Person {
+    //region variables
     private final Context context;
     private Integer id;
     private String name;
@@ -18,6 +19,8 @@ public class Person {
     private Integer imageId;
     private String title;
 
+    //endregion
+    //region constructors
     public Person(Context context) {
         this.context = context;
     }
@@ -52,6 +55,8 @@ public class Person {
         imageId = R.drawable.nf404;
     }
 
+    //endregion
+    //region getters & setters
     public String getTitle() {
         return title;
     }
@@ -100,6 +105,7 @@ public class Person {
         this.image = context.getDrawable(image);
     }
 
+    //endregion
     @Override
     public String toString() {
         return name;

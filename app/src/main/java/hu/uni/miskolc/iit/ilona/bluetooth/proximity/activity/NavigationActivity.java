@@ -62,7 +62,7 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         DatabaseHandler db;
         BluetoothManager btManager;
-        user = new User(getApplicationContext());
+        user = new User();
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
 

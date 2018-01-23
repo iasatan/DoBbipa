@@ -7,12 +7,15 @@ import java.util.List;
  */
 
 public class Position {
+    //region variables
     private int id;
     private double x;
     private double y;
     private double z;
     private String comment;
 
+    //endregion
+    //region constructors
     public Position() {
     }
 
@@ -31,6 +34,8 @@ public class Position {
         this.z = z;
     }
 
+    //endregion
+    //region getters & setters
     public int getId() {
         return id;
     }
@@ -71,6 +76,7 @@ public class Position {
         this.comment = comment;
     }
 
+    //endregion
     @Override
     public String toString() {
         return "Position{" +

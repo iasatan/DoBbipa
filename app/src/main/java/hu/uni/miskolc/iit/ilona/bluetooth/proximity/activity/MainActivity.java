@@ -20,18 +20,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         DatabaseHandler db;
-        db = new DatabaseHandler(getApplicationContext());//, getString(R.string.databaseName), 1);
-        if (db.getDeviceCount() < 1) {
+        db = new DatabaseHandler(getApplicationContext());
+        if (db.getDeviceCount() < 1) { //inits db if empty
             db.populateDatabase();
         }
-        ActivityMainBinding activityMainBinding;
-        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        //region contentView
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         activityMainBinding.macAddress.setText(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
-
+        //endregion
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.locationAccess));
