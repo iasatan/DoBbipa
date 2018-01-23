@@ -30,7 +30,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa43";
+    private static final String databaseName = "dobbipa46";
     private static final Integer databaseVersion = 1;
     private final Context context;
 
@@ -167,8 +167,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(22, 110, getPosition(30)));
         addRoom(new Room(23, 124, getPosition(31), "Raktár"));
         addRoom(new Room(24, 106, getPosition(32)));
-        addRoom(new Room(25, 117, getPosition(37), "Tanári Női Mozsdó"));
-        addRoom(new Room(26, 118, getPosition(38), "Tanári Férfi Mozsdó"));
+        addRoom(new Room(25, 117, getPosition(36), "Tanári Női Mozsdó"));
+        addRoom(new Room(26, 118, getPosition(37), "Tanári Férfi Mozsdó"));
+        addRoom(new Room(27, 0, getPosition(12), "Lépcső"));
 
         addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer), context));
         addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, context.getString(R.string.phdStudentOne), context));
@@ -200,6 +201,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void addEdge(Edge edge) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put("id", edge.getId());
         values.put("node1", edge.getNode1().getId());
         values.put("node2", edge.getNode2().getId());
         values.put("distance", edge.getDistance());
