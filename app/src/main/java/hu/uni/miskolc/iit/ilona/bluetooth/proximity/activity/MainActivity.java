@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
             }
         });
+
+        activityMainBinding.macAddress.setText(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
+
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.locationAccess));
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
