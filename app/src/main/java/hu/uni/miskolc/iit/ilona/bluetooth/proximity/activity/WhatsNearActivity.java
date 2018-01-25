@@ -85,7 +85,6 @@ public class WhatsNearActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseHandler db;
         //region bluetooth init
         BluetoothManager btManager;
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -96,13 +95,16 @@ public class WhatsNearActivity extends AppCompatActivity {
         }
         btScanner = btAdapter.getBluetoothLeScanner();
         //endregion
-        user = new User();
+        //region database
+        DatabaseHandler db;
         devices = new HashMap<>();
         db = new DatabaseHandler(getApplicationContext());
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
         }
+        user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
         rooms = db.getAllRoom();
+        //endregion
         //region ble advertising
         /*if (!BluetoothAdapter.getDefaultAdapter().isMultipleAdvertisementSupported()) {
             Toast.makeText(this, "Multiple advertisement not supported", Toast.LENGTH_SHORT).show();

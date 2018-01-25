@@ -62,9 +62,9 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         DatabaseHandler db;
         BluetoothManager btManager;
-        user = new User();
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
+        user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
 
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);

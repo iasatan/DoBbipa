@@ -16,12 +16,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.UserAlreadyExist;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SecurityClearance;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 /**
  * Created by iasatan on 2017.10.17..
@@ -30,7 +33,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa46";
+    private static final String databaseName = "dobbipa52";
     private static final Integer databaseVersion = 1;
     private final Context context;
 
@@ -41,11 +44,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z DOUBLE, comment TEXT, buildingid INTEGER)");
+        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z DOUBLE, comment TEXT, buildingid INTEGER, clearance TEXT)");
         db.execSQL("CREATE TABLE Device(id INTEGER PRIMARY KEY, baserssi INTEGER, mac TEXT, position INTEGER, alignment TEXT)");
         db.execSQL("CREATE TABLE Room(id INTEGER PRIMARY KEY, number INTEGER, position INTEGER, title TEXT)");
         db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER, image INTEGER, title TEXT)");
         db.execSQL("CREATE TABLE Edge(id INTEGER PRIMARY KEY, node1 INTEGER, node2 INTEGER, distance DOUBLE)");
+        db.execSQL("CREATE TABLE User(macaddressbl TEXT PRIMARY KEY, clearance TEXT)");
     }
 
     @Override
@@ -55,21 +59,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Room");
         db.execSQL("DROP TABLE IF EXISTS People");
         db.execSQL("DROP TABLE IF EXISTS Edge");
+        db.execSQL("DROP TABLE IF EXISTS User");
         onCreate(db);
     }
 
     public void populateDatabase() {
+        try {
+            addUser(new User("00:7F:00:E2:BF:CA".replace(":", ""), "Satan Adam", SecurityClearance.LEVEl1));
+        } catch (UserAlreadyExist userAlreadyExist) {
+        }
         Map<Integer, Position> positions = new HashMap<>();
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
         positions.put(2, new Position(2, 35, 8, 6, "KL előtt"));
-        positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
-        positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
-        positions.put(5, new Position(5, 5, 8, 4.4));
-        positions.put(6, new Position(6, 7, 8, 4.4));
-        positions.put(7, new Position(7, 13, 8, 4.4));
-        positions.put(8, new Position(8, 17, 8, 4.4));
-        positions.put(9, new Position(9, 18, 8, 4.4));
-        positions.put(10, new Position(10, 8, 8, 4.4, "Elzárt folyosó labornál lévő ajtaja"));
+        positions.put(3, new Position(3, 18, 8, 6, SecurityClearance.LEVEl1, "Konyha előtt"));
+        positions.put(4, new Position(4, 6, 8, 6, SecurityClearance.LEVEl1, "labor előtt"));
+        positions.put(5, new Position(5, 5, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(6, new Position(6, 7, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(7, new Position(7, 13, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(8, new Position(8, 17, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(9, new Position(9, 18, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(10, new Position(10, 8, 8, 4.4, SecurityClearance.LEVEl1, "Elzárt folyosó labornál lévő ajtaja"));
         positions.put(11, new Position(11, 8, 20, 4.4));
         positions.put(12, new Position(12, 35, 12, 4.4, "lépcső"));
         positions.put(13, new Position(13, 35, 8, 4.4));
@@ -87,16 +96,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(25, new Position(25, 39, 8, 4.4));
         positions.put(26, new Position(26, 36, 8, 4.4));
         positions.put(27, new Position(27, 32, 8, 4.4));
-        positions.put(28, new Position(28, 28, 8, 4.4));
-        positions.put(29, new Position(29, 26, 8, 4.4));
-        positions.put(30, new Position(30, 23, 8, 4.4));
-        positions.put(31, new Position(31, 21, 8, 4.4));
-        positions.put(32, new Position(32, 6, 8, 4.4));
+        positions.put(28, new Position(28, 28, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(29, new Position(29, 26, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(30, new Position(30, 23, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(31, new Position(31, 21, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(32, new Position(32, 6, 8, 4.4, SecurityClearance.LEVEl1));
         positions.put(33, new Position(33, 23, 20, 6));
         positions.put(34, new Position(34, 11, 20, 6));
         positions.put(35, new Position(35, 8, 15, 6));
-        positions.put(36, new Position(36, 14, 8, 4.4));
-        positions.put(37, new Position(37, 15, 8, 4.4));
+        positions.put(36, new Position(36, 14, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(37, new Position(37, 15, 8, 4.4, SecurityClearance.LEVEl1));
         for (Map.Entry<Integer, Position> position : positions.entrySet()) {
             addPosition(position.getValue());
         }
@@ -197,6 +206,49 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student), context));
         addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student), context));
     }
+
+    //region User
+    public void addUser(User user) throws UserAlreadyExist {
+        if (userExists(user.getMacAddressBL())) {
+            throw new UserAlreadyExist();
+        }
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("macaddressbl", user.getMacAddressBL());
+        contentValues.put("clearance", user.getSecurityClearance().name());
+        db.insert("User", null, contentValues);
+        db.close();
+    }
+
+
+    public User getUser(String macAddressBL) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("User", null, "macaddressbl=?", new String[]{macAddressBL}, null, null, null);
+        User user = new User("00:00:00:00:00", "new", SecurityClearance.NONE);
+        if (cursor != null && cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            user = new User(cursor.getString(0), cursor.getString(2), SecurityClearance.valueOf(cursor.getString(1)));
+        }
+
+
+        cursor.close();
+        return user;
+    }
+
+    public boolean userExists(String macAddressBL) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("User", null, "macaddressbl=?", new String[]{macAddressBL}, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Integer count = cursor.getCount();
+        if (count == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    //endregion
     //region Edge
 
     public void addEdge(Edge edge) {
@@ -349,6 +401,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put("y", position.getY());
         contentValues.put("z", position.getZ());
         contentValues.put("comment", position.getComment());
+        contentValues.put("clearance", position.getSecurityClearance().name());
         db.insert("Position", null, contentValues);
     }
 

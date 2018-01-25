@@ -27,6 +27,7 @@
     <string name="phdStudentOne">Doktorandusz</string>
     <string name="phdStudentTwo">PhD hallgató</string>
     <string name="librarian">Könyvtáros</string>
+    <string name="settings">Beállítások</string>
 
 
 </resources>

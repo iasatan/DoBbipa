@@ -13,10 +13,28 @@ public class Position {
     private double y;
     private double z;
     private String comment;
+    private SecurityClearance securityClearance;
 
     //endregion
     //region constructors
     public Position() {
+    }
+
+    public Position(int id, double x, double y, double z, SecurityClearance securityClearance, String comment) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.securityClearance = securityClearance;
+        this.comment = comment;
+    }
+
+    public Position(int id, double x, double y, double z, SecurityClearance securityClearance) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.securityClearance = securityClearance;
     }
 
     public Position(int id, double x, double y, double z, String comment) {
@@ -24,6 +42,7 @@ public class Position {
         this.x = x;
         this.y = y;
         this.z = z;
+        securityClearance = SecurityClearance.NONE;
         this.comment = comment;
     }
 
@@ -32,10 +51,20 @@ public class Position {
         this.x = x;
         this.y = y;
         this.z = z;
+        securityClearance = SecurityClearance.NONE;
     }
 
     //endregion
     //region getters & setters
+
+    public SecurityClearance getSecurityClearance() {
+        return securityClearance;
+    }
+
+    public void setSecurityClearance(SecurityClearance securityClearance) {
+        this.securityClearance = securityClearance;
+    }
+
     public int getId() {
         return id;
     }
