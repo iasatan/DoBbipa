@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             db.populateDatabase();
         }
         try {
-            db.addUser(new User(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address").replace(":", ""), "", SecurityClearance.NONE));
+            db.addUser(new User(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address").replace(":", ""), SecurityClearance.NONE));
         } catch (UserAlreadyExist userAlreadyExist) {
 
         }

@@ -42,6 +42,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         this.context = context;
     }
 
+    public DatabaseHandler() {
+        super(null, databaseName, null, databaseVersion);
+        context = null;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z DOUBLE, comment TEXT, buildingid INTEGER, clearance TEXT)");
@@ -65,7 +70,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void populateDatabase() {
         try {
-            addUser(new User("00:7F:00:E2:BF:CA".replace(":", ""), "Satan Adam", SecurityClearance.LEVEl1));
+            addUser(new User("00:7F:00:E2:BF:CA".replace(":", ""), SecurityClearance.LEVEl1));
         } catch (UserAlreadyExist userAlreadyExist) {
         }
         Map<Integer, Position> positions = new HashMap<>();
@@ -127,9 +132,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addEdge(new Edge(15, positions.get(13), positions.get(26)));
         addEdge(new Edge(16, positions.get(26), positions.get(25)));
         addEdge(new Edge(17, positions.get(13), positions.get(12)));
-        addEdge(new Edge(18, positions.get(12), positions.get(2)));
-        addEdge(new Edge(19, positions.get(2), positions.get(24)));
-        addEdge(new Edge(20, positions.get(2), positions.get(23)));
+        addEdge(new Edge(18, positions.get(12), positions.get(1)));
+        addEdge(new Edge(19, positions.get(1), positions.get(24)));
+        addEdge(new Edge(20, positions.get(1), positions.get(23)));
         addEdge(new Edge(21, positions.get(22), positions.get(23)));
         addEdge(new Edge(22, positions.get(22), positions.get(33)));
         addEdge(new Edge(23, positions.get(33), positions.get(21)));
@@ -224,10 +229,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public User getUser(String macAddressBL) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("User", null, "macaddressbl=?", new String[]{macAddressBL}, null, null, null);
-        User user = new User("00:00:00:00:00", "new", SecurityClearance.NONE);
+        User user = new User("00:00:00:00:00", SecurityClearance.NONE);
         if (cursor != null && cursor.getCount() != 0) {
             cursor.moveToFirst();
-            user = new User(cursor.getString(0), cursor.getString(2), SecurityClearance.valueOf(cursor.getString(1)));
+            user = new User(cursor.getString(0), SecurityClearance.valueOf(cursor.getString(1)));
         }
 
 

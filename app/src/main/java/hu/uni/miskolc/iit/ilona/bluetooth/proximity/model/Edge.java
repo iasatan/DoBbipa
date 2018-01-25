@@ -57,4 +57,14 @@ public class Edge {
         this.distance = distance;
     }
     //endregion
+
+
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "node1=" + node1 +
+                ", node2=" + node2 +
+                ", distance=" + distance +
+                '}';
+    }
 }

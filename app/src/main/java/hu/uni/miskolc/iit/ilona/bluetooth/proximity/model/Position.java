@@ -109,6 +109,7 @@ public class Position {
     @Override
     public String toString() {
         return "Position{" +
+                "id: " + id +
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +

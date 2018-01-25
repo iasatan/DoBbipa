@@ -12,14 +12,12 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconExcep
 
 public class User {
     private String macAddressBL;
-    private String name;
     private Position position;
     private List<Position> prevPositions;
     private SecurityClearance securityClearance;
 
-    public User(String macAddressBL, String name, SecurityClearance securityClearance) {
+    public User(String macAddressBL, SecurityClearance securityClearance) {
         prevPositions = new ArrayList<>();
-        this.name = name;
         this.macAddressBL = macAddressBL;
         this.securityClearance = securityClearance;
     }
@@ -33,14 +31,6 @@ public class User {
 
     public void setMacAddressBL(String macAddressBL) {
         this.macAddressBL = macAddressBL;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<Position> getPrevPositions() {
@@ -137,7 +127,6 @@ public class User {
     public String toString() {
         return "User{" +
                 "macAddressBL='" + macAddressBL + '\'' +
-                ", name='" + name + '\'' +
                 ", position=" + position +
                 ", securityClearance=" + securityClearance +
                 '}';
