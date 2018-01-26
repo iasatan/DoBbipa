@@ -3,10 +3,13 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
@@ -17,8 +20,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 
 public class DijkstraAlgorithm {
     private final List<Edge> edges;
-    //private Set<Position> settledNodes;
-    private Map<Integer, Position> settledNodes;
+    private Set<Position> settledNodes;
     private List<Position> unSettledNodes;
     private Map<Position, Position> predecessors;
     private Map<Position, Double> distances;
@@ -28,9 +30,8 @@ public class DijkstraAlgorithm {
         unSettledNodes = new ArrayList<>(nodes);
     }
 
-    public void calculateFromDestination(Position destination) throws NodeNotFoundException {
-        //settledNodes = new HashSet<>();
-        settledNodes = new HashMap<>();
+    public void buildShortestPaths(Position destination) throws NodeNotFoundException {
+        settledNodes = new HashSet<>();
         distances = new HashMap<>();
         predecessors = new HashMap<>();
         Position position = null;
@@ -47,15 +48,15 @@ public class DijkstraAlgorithm {
         unSettledNodes.add(destination);
         while (unSettledNodes.size() > 0) {
             Position node = getMinimum(unSettledNodes);
-            settledNodes.put(node.getId(), node);
+            settledNodes.add(node);
             unSettledNodes.remove(node);
             findMinimalDistances(node);
         }
     }
 
     private void findMinimalDistances(Position node) {
-        List<Position> adjacentNodes = getNeighbors(node);
-        for (Position target : adjacentNodes) {
+        List<Position> neighborNodes = getNeighbors(node);
+        for (Position target : neighborNodes) {
             if (getShortestDistance(target) > getShortestDistance(node) + getDistance(node, target)) {
                 distances.put(target, distances.get(node) + getDistance(node, target));
                 predecessors.put(target, node);
@@ -87,7 +88,7 @@ public class DijkstraAlgorithm {
     }
 
     private boolean isSettled(Position position) {
-        return settledNodes.entrySet().contains(position);
+        return settledNodes.contains(position);
     }
 
     private Position getMinimum(List<Position> positions) {
@@ -113,22 +114,28 @@ public class DijkstraAlgorithm {
         }
     }
 
-    public LinkedList<Position> getPath(Position target) throws NodeNotFoundException {
+    /**
+     * Returns the path to the source node from the destination node set in buildShortestPaths*
+     *
+     * @param source
+     * @return
+     * @throws NodeNotFoundException
+     * @throws NoPathFoundException
+     */
+    public LinkedList<Position> getPath(Position source) throws NodeNotFoundException, NoPathFoundException {
         LinkedList<Position> path = new LinkedList<>();
         Position step = null;
-        /*for (Map.Entry<Integer, Position> position1 : settledNodes.entrySet()) {
-            if (position1.getValue().equals(target)) {
-                step = position1.getValue();
+        for (Position position1 : settledNodes) {
+            if (position1.equals(source)) {
+                step = position1;
                 break;
             }
-        }*/
-        step = settledNodes.get(target.getId());
+        }
         if (step == null) {
             throw new NodeNotFoundException();
         }
-        // check if a even path exists
         if (predecessors.get(step) == null) {
-            return null;
+            throw new NoPathFoundException();
         }
         path.add(step);
         while (predecessors.get(step) != null) {

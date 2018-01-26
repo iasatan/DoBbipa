@@ -26,6 +26,7 @@ import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
@@ -37,6 +38,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 public class NavigationActivity extends AppCompatActivity {
 
     private final static int REQUEST_ENABLE_BT = 1;
+    private List<Edge> edges;
     private ActivityNavigationBinding activityNavigationBinding;
     private Room room;
     private User user;
@@ -45,7 +47,6 @@ public class NavigationActivity extends AppCompatActivity {
     private BluetoothLeScanner btScanner;
     private List<ScanFilter> filter;
     private List<Position> positions;
-    private List<Edge> edges;
     private Position proximityPosition;
     private DijkstraAlgorithm dijkstraAlgorithm;
 
@@ -60,21 +61,21 @@ public class NavigationActivity extends AppCompatActivity {
                     user.addPosition(devices);
                     proximityPosition = user.getClosestPosition(positions);
                     if (proximityPosition.equals(room.getPosition())) {
-                        activityNavigationBinding.nextPositon.setText("Megérkeztél");
+                        activityNavigationBinding.nextPositon.setText(R.string.arrived);
                     } else {
 
                         LinkedList<Position> path = dijkstraAlgorithm.getPath(proximityPosition);
                         if (path != null) {
                             activityNavigationBinding.nextPositon.setText(path.get(path.size() - 2).toString());
-                        } else {
-                            activityNavigationBinding.nextPositon.setText("nope");
                         }
                         activityNavigationBinding.setPosition(proximityPosition.toString());
                     }
-
                 } catch (NoCloseBeaconException e) {
                 } catch (NodeNotFoundException e) {
                     activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                } catch (NoPathFoundException e) {
+                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+
                 }
             }
         }
@@ -109,7 +110,7 @@ public class NavigationActivity extends AppCompatActivity {
         activityNavigationBinding.setRoomNumber(room.getNumber().toString());
         activityNavigationBinding.setPosition("");
         try {
-            dijkstraAlgorithm.calculateFromDestination(room.getPosition());
+            dijkstraAlgorithm.buildShortestPaths(room.getPosition());
         } catch (NodeNotFoundException e) {
             activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
         }
@@ -120,6 +121,8 @@ public class NavigationActivity extends AppCompatActivity {
                 try {
                     path = dijkstraAlgorithm.getPath(proximityPosition);
                 } catch (NodeNotFoundException e) {
+                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                } catch (NoPathFoundException e) {
                     activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
                 }
                 if (path != null) {

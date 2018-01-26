@@ -9,16 +9,23 @@ import java.util.List;
 
 public class Room {
     //region variables
-    private int id;
-    private Integer number;
-    private Position position;
-    private String title;
-    private List<Person> people;
+    private final int id;
+    private final Integer number;
+    private final Position position;
+    private final String title;
+    private final List<Person> people;
 
     //endregion
     //region constructors
-    public Room() {
+
+    public Room(int id, Integer number, Position position, String title, List<Person> people) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        this.title = title;
+        this.people = people;
     }
+
 
     public Room(int id, Integer number, Position position, String title) {
         this.id = id;
@@ -47,48 +54,24 @@ public class Room {
 
     //endregion
     //region getters & setters
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Integer getNumber() {
         return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public Position getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
     public List<Person> getPeople() {
         return people;
-    }
-
-    public void setPeople(List<Person> people) {
-        this.people = people;
     }
 
     //endregion

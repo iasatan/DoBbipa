@@ -11,7 +11,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconExcep
  */
 
 public class User {
-    private String macAddressBL;
+    private final String macAddressBL;
     private Position position;
     private List<Position> prevPositions;
     private SecurityClearance securityClearance;
@@ -25,13 +25,8 @@ public class User {
 
     //region getters & setters
 
-
     public String getMacAddressBL() {
         return macAddressBL;
-    }
-
-    public void setMacAddressBL(String macAddressBL) {
-        this.macAddressBL = macAddressBL;
     }
 
     public List<Position> getPrevPositions() {
@@ -76,7 +71,6 @@ public class User {
         if (prevPositions.size() > 10) {
             prevPositions.remove(0);
         }
-        position.setId(0); //id is 0, because it's only temporary
         position.setZ(4.4); //average height a user holds it's phone
         Map<String, Device> nearDevices = Device.getNearDevices(devices);
 

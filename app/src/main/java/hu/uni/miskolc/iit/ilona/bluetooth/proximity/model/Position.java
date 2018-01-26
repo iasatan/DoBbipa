@@ -8,16 +8,19 @@ import java.util.List;
 
 public class Position {
     //region variables
-    private int id;
+    private final int id;
+    private final SecurityClearance securityClearance;
+    private final String comment;
     private double x;
     private double y;
     private double z;
-    private String comment;
-    private SecurityClearance securityClearance;
 
     //endregion
     //region constructors
     public Position() {
+        securityClearance = SecurityClearance.NONE;
+        id = 0;
+        comment = "";
     }
 
     public Position(int id, double x, double y, double z, SecurityClearance securityClearance, String comment) {
@@ -35,6 +38,7 @@ public class Position {
         this.y = y;
         this.z = z;
         this.securityClearance = securityClearance;
+        comment = "";
     }
 
     public Position(int id, double x, double y, double z, String comment) {
@@ -51,16 +55,17 @@ public class Position {
         this.x = x;
         this.y = y;
         this.z = z;
+        comment = "";
         securityClearance = SecurityClearance.NONE;
     }
 
     public Position(Position position) {
-        setId(position.getId());
+        id = position.getId();
         setX(position.getX());
         setY(position.getY());
         setZ(position.getZ());
-        setComment(position.getComment());
-        setSecurityClearance(position.getSecurityClearance());
+        comment = position.comment;
+        securityClearance = position.getSecurityClearance();
     }
 
     //endregion
@@ -70,17 +75,11 @@ public class Position {
         return securityClearance;
     }
 
-    public void setSecurityClearance(SecurityClearance securityClearance) {
-        this.securityClearance = securityClearance;
-    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public double getX() {
         return x;
@@ -110,9 +109,6 @@ public class Position {
         return comment;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 
     //endregion
     @Override

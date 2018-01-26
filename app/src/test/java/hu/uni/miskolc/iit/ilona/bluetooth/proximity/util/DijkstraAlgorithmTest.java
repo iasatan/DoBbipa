@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SecurityClearance;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by iasatan on 2018.01.25..
@@ -24,7 +24,7 @@ public class DijkstraAlgorithmTest {
     private List<Edge> edges;
 
     @Test
-    public void execute() throws Exception {
+    public void execute() throws NodeNotFoundException, NoPathFoundException {
         nodes = new ArrayList<>();
         Map<Integer, Position> positions = new HashMap<>();
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
@@ -96,10 +96,9 @@ public class DijkstraAlgorithmTest {
         edges.add(new Edge(31, positions.get(11), positions.get(2)));
         edges.add(new Edge(32, positions.get(11), positions.get(1)));
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(edges, nodes);
-        dijkstra.calculateFromDestination(new Position(0, 6, 8, 6));
+        dijkstra.buildShortestPaths(new Position(0, 6, 8, 6));
         LinkedList<Position> path = dijkstra.getPath(new Position(0, 8, 15, 4.4));
 
-        assertNotNull(path);
         Assert.assertTrue(path.size() > 0);
 
         for (Position position : path) {

@@ -34,7 +34,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa56";
+    private static final String databaseName = "dobbipa57";
     private static final Integer databaseVersion = 1;
     private final Context context;
 
@@ -357,13 +357,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        Position position = getPosition(Integer.parseInt(cursor.getString(2)));
-        Room room = new Room();
-        room.setId(Integer.parseInt(cursor.getString(0)));
-        room.setPosition(position);
-        room.setNumber(Integer.parseInt(cursor.getString(1)));
-        room.setTitle(cursor.getString(3));
-        room.setPeople(getPeopleInRoom(id));
+        Room room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(id));
         cursor.close();
         return room;
     }
@@ -376,14 +370,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0), new Person(0, context.getString(R.string.noSuchRoom), 0, R.drawable.nf404, "", context));
         if (cursor.getCount() != 0) {
-            room = new Room();
-            Position position = getPosition(Integer.parseInt(cursor.getString(2)));
-            room.setId(Integer.parseInt(cursor.getString(0)));
-            room.setPosition(position);
-            room.setNumber(Integer.parseInt(cursor.getString(1)));
-            room.setPeople(getPeopleInRoom(room.getId()));
-            room.setTitle(cursor.getString(3));
-
+            room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
         }
         cursor.close();
         return room;
@@ -396,13 +383,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Room room = new Room();
-                room.setId(Integer.parseInt(cursor.getString(0)));
-                room.setNumber(Integer.parseInt(cursor.getString(1)));
-                room.setPosition(getPosition(Integer.parseInt(cursor.getString(2))));
-                room.setPeople(getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
-                room.setTitle(cursor.getString(3));
-
+                Room room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
                 rooms.add(room);
             } while (cursor.moveToNext());
         }
@@ -466,12 +447,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Position position = new Position();
-                position.setId(Integer.parseInt(cursor.getString(0)));
-                position.setX(Double.parseDouble(cursor.getString(1)));
-                position.setY(Double.parseDouble(cursor.getString(2)));
-                position.setZ(Double.parseDouble(cursor.getString(3)));
-                position.setComment(cursor.getString(4));
+                Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)), cursor.getString(4));
                 positions.add(position);
             } while (cursor.moveToNext());
         }
@@ -544,12 +520,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Person person = new Person(context);
-                person.setId(Integer.parseInt(cursor.getString(0)));
-                person.setName(cursor.getString(1));
-                person.setRoomId(Integer.parseInt(cursor.getString(2)));
-                person.setImage(Integer.parseInt(cursor.getString(3)));
-                person.setTitle(cursor.getString(4));
+                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4), context);
                 people.add(person);
             } while (cursor.moveToNext());
         }
@@ -564,12 +535,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Person person = new Person(context);
-                person.setId(Integer.parseInt(cursor.getString(0)));
-                person.setName(cursor.getString(1));
-                person.setRoomId(Integer.parseInt(cursor.getString(2)));
-                person.setImage(Integer.parseInt(cursor.getString(3)));
-                person.setTitle(cursor.getString(4));
+                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4), context);
                 people.add(person);
             } while (cursor.moveToNext());
         }

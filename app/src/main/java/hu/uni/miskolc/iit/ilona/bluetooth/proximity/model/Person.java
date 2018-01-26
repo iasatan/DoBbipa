@@ -12,19 +12,15 @@ import com.example.android.test.R;
 public class Person {
     //region variables
     private final Context context;
-    private Integer id;
-    private String name;
-    private Integer roomId;
-    private Drawable image;
-    private Integer imageId;
-    private String title;
+    private final Integer id;
+    private final String name;
+    private final Integer roomId;
+    private final String title;
+    private final Drawable image;
+    private final Integer imageId;
 
     //endregion
     //region constructors
-    public Person(Context context) {
-        this.context = context;
-    }
-
     public Person(Integer id, String name, Integer roomId, Integer image, String title, Context context) {
         this.id = id;
         this.context = context;
@@ -61,48 +57,24 @@ public class Person {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Integer getImageId() {
         return imageId;
-    }
-
-    public void setImageId(Integer imageId) {
-        this.imageId = imageId;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Integer roomId) {
-        this.roomId = roomId;
-    }
-
     public Drawable getImage() {
         return image;
-    }
-
-    public void setImage(Integer image) {
-        this.image = context.getDrawable(image);
     }
 
     //endregion
