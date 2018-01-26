@@ -13,18 +13,18 @@ import java.util.Map;
 
 public class Device {
     //region variables
-    private int id;
-    private int baseRSSI;
-    private String MAC;
-    private Position position;
+    private final int id;
+    private final int baseRSSI;
+    private final String MAC;
+    private final Position position;
+    private final Alignment alignment;
     private List<Integer> prevRSSI;
-    private Alignment alignment;
 
     //endregion
     //region constructors
-    public Device() {
+    /*public Device() {
         prevRSSI = new ArrayList<>();
-    }
+    }*/
 
     public Device(int id, int baseRSSI, String MAC, Position position, Alignment alignment) {
         this.id = id;
@@ -117,40 +117,20 @@ public class Device {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getBaseRSSI() {
         return baseRSSI;
-    }
-
-    public void setBaseRSSI(int baseRSSI) {
-        this.baseRSSI = baseRSSI;
     }
 
     public String getMAC() {
         return MAC;
     }
 
-    public void setMAC(String MAC) {
-        this.MAC = MAC;
-    }
-
     public Position getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
     public Alignment getAlignment() {
         return alignment;
-    }
-
-    public void setAlignment(Alignment alignment) {
-        this.alignment = alignment;
     }
 
     //endregion

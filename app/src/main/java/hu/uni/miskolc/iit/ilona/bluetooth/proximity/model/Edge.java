@@ -6,15 +6,13 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
 public class Edge {
     //region variables
-    private Integer id;
-    private Position node1;
-    private Position node2;
-    private Double distance;
+    private final Integer id;
+    private final Position node1;
+    private final Position node2;
+    private final Double distance;
 
     //endregion
     //region constructors
-    public Edge() {
-    }
 
     public Edge(Integer id, Position node1, Position node2) {
         this.id = id;
@@ -29,33 +27,18 @@ public class Edge {
         return node1;
     }
 
-    public void setNode1(Position node1) {
-        this.node1 = node1;
-    }
-
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Position getNode2() {
         return node2;
     }
 
-    public void setNode2(Position node2) {
-        this.node2 = node2;
-    }
-
     public Double getDistance() {
         return distance;
     }
 
-    public void setDistance(Double distance) {
-        this.distance = distance;
-    }
     //endregion
 
 

@@ -20,6 +20,7 @@ public class User {
         prevPositions = new ArrayList<>();
         this.macAddressBL = macAddressBL;
         this.securityClearance = securityClearance;
+        position = new Position();
     }
 
     //region getters & setters
@@ -54,6 +55,10 @@ public class User {
         return position.getClosestRoom(rooms);
     }
 
+    public Position getClosestPosition(List<Position> positions) {
+        return position.getClosestPosition(positions);
+    }
+
     public SecurityClearance getSecurityClearance() {
         return securityClearance;
     }
@@ -71,9 +76,8 @@ public class User {
         if (prevPositions.size() > 10) {
             prevPositions.remove(0);
         }
-        Position position = new Position();
-        position.setId(0);
-        position.setZ(4.4);
+        position.setId(0); //id is 0, because it's only temporary
+        position.setZ(4.4); //average height a user holds it's phone
         Map<String, Device> nearDevices = Device.getNearDevices(devices);
 
         if (nearDevices.size() == 0) {
@@ -81,27 +85,8 @@ public class User {
         }
         if (nearDevices.size() == 1) {
             List<String> keys = new ArrayList<>(nearDevices.keySet());
-            Device nearestDevice = nearDevices.get(keys.get(0));
-            switch (nearestDevice.getAlignment()) {
-                case RIGHT:
-                    position.setY(nearestDevice.getPosition().getY());
-                    position.setX(nearestDevice.getPosition().getX() - nearestDevice.getDistanceFromDevice());
-                    break;
-                case LEFT:
-                    position.setY(nearestDevice.getPosition().getY());
-                    position.setX(nearestDevice.getPosition().getX() + nearestDevice.getDistanceFromDevice());
-                    break;
-                case FRONT:
-                    position.setY(nearestDevice.getPosition().getY() - nearestDevice.getDistanceFromDevice());
-                    position.setX(nearestDevice.getPosition().getX());
-
-                    break;
-                case BEHIND:
-                    position.setY(nearestDevice.getPosition().getY() + nearestDevice.getDistanceFromDevice());
-                    position.setX(nearestDevice.getPosition().getX());
-                    break;
-            }
-        } else {
+            closeToOneBeacon(nearDevices.get(keys.get(0)));
+        } else { //checkes if the user is between beacons
             List<Device> closestDevices = Device.closestTwoDevice(nearDevices);
             Double distanceBetweenBeacons = closestDevices.get(0).getPosition().getDistance(closestDevices.get(1).getPosition());
             List<Double> distances = new ArrayList<>();
@@ -117,10 +102,38 @@ public class User {
                 yCoordinate = yCoordinate * closestDevices.get(0).getDistanceFromDevice() + closestDevices.get(0).getPosition().getY();
                 position.setY(yCoordinate);
                 position.setX(closestDevices.get(0).getPosition().getX());
+            } else { //if they do not share coordinates, it calculates the position from the closer beacon
+                if (distances.get(0) <= distances.get(1)) {
+                    closeToOneBeacon(closestDevices.get(0));
+                } else {
+                    closeToOneBeacon(closestDevices.get(1));
+                }
             }
+
         }
-        this.position = position;
         prevPositions.add(position);
+    }
+
+    private void closeToOneBeacon(Device nearestDevice) {
+        switch (nearestDevice.getAlignment()) {
+            case RIGHT:
+                position.setY(nearestDevice.getPosition().getY());
+                position.setX(nearestDevice.getPosition().getX() - nearestDevice.getDistanceFromDevice());
+                break;
+            case LEFT:
+                position.setY(nearestDevice.getPosition().getY());
+                position.setX(nearestDevice.getPosition().getX() + nearestDevice.getDistanceFromDevice());
+                break;
+            case FRONT:
+                position.setY(nearestDevice.getPosition().getY() - nearestDevice.getDistanceFromDevice());
+                position.setX(nearestDevice.getPosition().getX());
+
+                break;
+            case BEHIND:
+                position.setY(nearestDevice.getPosition().getY() + nearestDevice.getDistanceFromDevice());
+                position.setX(nearestDevice.getPosition().getX());
+                break;
+        }
     }
 
     @Override

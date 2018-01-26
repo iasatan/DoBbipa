@@ -3,12 +3,11 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 
@@ -18,27 +17,37 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 
 public class DijkstraAlgorithm {
     private final List<Edge> edges;
-    private final List<Position> nodes;
-    private Set<Position> settledNodes;
+    //private Set<Position> settledNodes;
+    private Map<Integer, Position> settledNodes;
     private List<Position> unSettledNodes;
     private Map<Position, Position> predecessors;
     private Map<Position, Double> distances;
 
     public DijkstraAlgorithm(List<Edge> edges, List<Position> nodes) {
         this.edges = edges;
-        this.nodes = nodes;
+        unSettledNodes = new ArrayList<>(nodes);
     }
 
-    public void execute(Position source) {
-        unSettledNodes = new ArrayList<>(nodes);
-        settledNodes = new HashSet<>();
+    public void calculateFromDestination(Position destination) throws NodeNotFoundException {
+        //settledNodes = new HashSet<>();
+        settledNodes = new HashMap<>();
         distances = new HashMap<>();
         predecessors = new HashMap<>();
-        distances.put(source, 0.0);
-        unSettledNodes.add(source);
+        Position position = null;
+        for (Position position1 : unSettledNodes) {
+            if (position1.equals(destination)) {
+                position = position1;
+                break;
+            }
+        }
+        if (position == null) {
+            throw new NodeNotFoundException();
+        }
+        distances.put(destination, 0.0);
+        unSettledNodes.add(destination);
         while (unSettledNodes.size() > 0) {
             Position node = getMinimum(unSettledNodes);
-            settledNodes.add(node);
+            settledNodes.put(node.getId(), node);
             unSettledNodes.remove(node);
             findMinimalDistances(node);
         }
@@ -78,7 +87,7 @@ public class DijkstraAlgorithm {
     }
 
     private boolean isSettled(Position position) {
-        return settledNodes.contains(position);
+        return settledNodes.entrySet().contains(position);
     }
 
     private Position getMinimum(List<Position> positions) {
@@ -104,10 +113,20 @@ public class DijkstraAlgorithm {
         }
     }
 
-    public LinkedList<Position> getPath(Position target) {
+    public LinkedList<Position> getPath(Position target) throws NodeNotFoundException {
         LinkedList<Position> path = new LinkedList<>();
-        Position step = target;
-        // check if a path exists
+        Position step = null;
+        /*for (Map.Entry<Integer, Position> position1 : settledNodes.entrySet()) {
+            if (position1.getValue().equals(target)) {
+                step = position1.getValue();
+                break;
+            }
+        }*/
+        step = settledNodes.get(target.getId());
+        if (step == null) {
+            throw new NodeNotFoundException();
+        }
+        // check if a even path exists
         if (predecessors.get(step) == null) {
             return null;
         }

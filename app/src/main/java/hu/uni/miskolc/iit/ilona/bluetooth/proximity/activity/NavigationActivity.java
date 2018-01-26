@@ -13,21 +13,26 @@ import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityNavigationBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -40,6 +45,9 @@ public class NavigationActivity extends AppCompatActivity {
     private BluetoothLeScanner btScanner;
     private List<ScanFilter> filter;
     private List<Position> positions;
+    private List<Edge> edges;
+    private Position proximityPosition;
+    private DijkstraAlgorithm dijkstraAlgorithm;
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -50,8 +58,23 @@ public class NavigationActivity extends AppCompatActivity {
             if (device.getPrevRSSIs().size() >= 3) {
                 try {
                     user.addPosition(devices);
-                    activityNavigationBinding.setPosition(user.getPosition().toString());
+                    proximityPosition = user.getClosestPosition(positions);
+                    if (proximityPosition.equals(room.getPosition())) {
+                        activityNavigationBinding.nextPositon.setText("Megérkeztél");
+                    } else {
+
+                        LinkedList<Position> path = dijkstraAlgorithm.getPath(proximityPosition);
+                        if (path != null) {
+                            activityNavigationBinding.nextPositon.setText(path.get(path.size() - 2).toString());
+                        } else {
+                            activityNavigationBinding.nextPositon.setText("nope");
+                        }
+                        activityNavigationBinding.setPosition(proximityPosition.toString());
+                    }
+
                 } catch (NoCloseBeaconException e) {
+                } catch (NodeNotFoundException e) {
+                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
                 }
             }
         }
@@ -70,6 +93,8 @@ public class NavigationActivity extends AppCompatActivity {
             devices.put(device.getMAC(), device);
         }
         positions = db.getAllPosition();
+        edges = db.getAllEdge();
+
 
         try {
             room = db.getRoom(getIntent().getExtras().getInt("room"));
@@ -77,10 +102,33 @@ public class NavigationActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             startActivity(new Intent(NavigationActivity.this, SearchActivity.class));
         }
+        dijkstraAlgorithm = new DijkstraAlgorithm(edges, positions);
+
 
         activityNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_navigation);
         activityNavigationBinding.setRoomNumber(room.getNumber().toString());
         activityNavigationBinding.setPosition("");
+        try {
+            dijkstraAlgorithm.calculateFromDestination(room.getPosition());
+        } catch (NodeNotFoundException e) {
+            activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+        }
+        activityNavigationBinding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinkedList<Position> path = null;
+                try {
+                    path = dijkstraAlgorithm.getPath(proximityPosition);
+                } catch (NodeNotFoundException e) {
+                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                }
+                if (path != null) {
+                    activityNavigationBinding.nextPositon.setText(path.getFirst().toString());
+                } else {
+                    activityNavigationBinding.nextPositon.setText("nope");
+                }
+            }
+        });
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             btAdapter = btManager.getAdapter();

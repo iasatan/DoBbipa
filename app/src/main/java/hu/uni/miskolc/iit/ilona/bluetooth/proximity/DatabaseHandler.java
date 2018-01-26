@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoEdgeFound;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.UserAlreadyExist;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
@@ -33,7 +34,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa52";
+    private static final String databaseName = "dobbipa56";
     private static final Integer databaseVersion = 1;
     private final Context context;
 
@@ -73,7 +74,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             addUser(new User("00:7F:00:E2:BF:CA".replace(":", ""), SecurityClearance.LEVEl1));
         } catch (UserAlreadyExist userAlreadyExist) {
         }
+        //region position
         Map<Integer, Position> positions = new HashMap<>();
+        /*
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
         positions.put(2, new Position(2, 35, 8, 6, "KL előtt"));
         positions.put(3, new Position(3, 18, 8, 6, SecurityClearance.LEVEl1, "Konyha előtt"));
@@ -90,7 +93,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(14, new Position(14, 8, 10, 4.4));
         positions.put(15, new Position(15, 8, 15, 4.4));
         positions.put(16, new Position(16, 7, 7, 4.4));
-        positions.put(17, new Position(17, 6, 6, 4.4));
+        positions.put(17, new Position(17, 6, 8, 4.4));
         positions.put(18, new Position(18, 11, 20, 4.4));
         positions.put(19, new Position(19, 12, 20, 4.4));
         positions.put(20, new Position(20, 19, 20, 4.4));
@@ -102,7 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(26, new Position(26, 36, 8, 4.4));
         positions.put(27, new Position(27, 32, 8, 4.4));
         positions.put(28, new Position(28, 28, 8, 4.4, SecurityClearance.LEVEl1));
-        positions.put(29, new Position(29, 26, 8, 4.4, SecurityClearance.LEVEl1));
+        positions.put(29, new Position(29, 29, 8, 4.4, SecurityClearance.LEVEl1));
         positions.put(30, new Position(30, 23, 8, 4.4, SecurityClearance.LEVEl1));
         positions.put(31, new Position(31, 21, 8, 4.4, SecurityClearance.LEVEl1));
         positions.put(32, new Position(32, 6, 8, 4.4, SecurityClearance.LEVEl1));
@@ -111,80 +114,117 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(35, new Position(35, 8, 15, 6));
         positions.put(36, new Position(36, 14, 8, 4.4, SecurityClearance.LEVEl1));
         positions.put(37, new Position(37, 15, 8, 4.4, SecurityClearance.LEVEl1));
+        */
+
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
+        positions.put(2, new Position(2, 35, 8, 6, "KL előtt"));
+        positions.put(3, new Position(3, 18, 8, 6, SecurityClearance.LEVEl1, "Konyha előtt"));
+        positions.put(4, new Position(4, 6, 8, 6, SecurityClearance.LEVEl1, "labor előtt"));
+        positions.put(5, new Position(5, 5, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(6, new Position(6, 7, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(7, new Position(7, 13, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(8, new Position(8, 17, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(9, new Position(9, 8, 8, 6, SecurityClearance.LEVEl1, "Elzárt folyosó labornál lévő ajtaja"));
+        positions.put(10, new Position(10, 8, 20, 6));
+        positions.put(11, new Position(11, 35, 12, 6, "lépcső"));
+        positions.put(12, new Position(12, 8, 10, 6));
+        positions.put(13, new Position(13, 8, 15, 6));
+        positions.put(14, new Position(14, 7, 20, 6));
+        positions.put(15, new Position(15, 23, 20, 6));
+        positions.put(16, new Position(16, 11, 20, 6));
+        positions.put(17, new Position(17, 12, 20, 6));
+        positions.put(18, new Position(18, 19, 20, 6));
+        positions.put(19, new Position(19, 21, 20, 6));
+        positions.put(20, new Position(20, 28, 20, 6));
+        positions.put(21, new Position(21, 33, 20, 6));
+        positions.put(22, new Position(22, 39, 20, 6));
+        positions.put(23, new Position(23, 39, 8, 6));
+        positions.put(24, new Position(24, 36, 8, 6));
+        positions.put(25, new Position(25, 32, 8, 6));
+        positions.put(27, new Position(27, 28, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(26, new Position(26, 29, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(28, new Position(28, 23, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(29, new Position(29, 21, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(30, new Position(30, 14, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(31, new Position(31, 15, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(32, new Position(32, 6, 20, 6));
         for (Map.Entry<Integer, Position> position : positions.entrySet()) {
             addPosition(position.getValue());
         }
-
-        addEdge(new Edge(1, positions.get(5), positions.get(32)));
-        addEdge(new Edge(2, positions.get(32), positions.get(6)));
-        addEdge(new Edge(3, positions.get(6), positions.get(10)));
-        addEdge(new Edge(4, positions.get(7), positions.get(10)));
-        addEdge(new Edge(5, positions.get(7), positions.get(37)));
-        addEdge(new Edge(6, positions.get(37), positions.get(36)));
-        addEdge(new Edge(7, positions.get(36), positions.get(8)));
-        addEdge(new Edge(8, positions.get(8), positions.get(9)));
-        addEdge(new Edge(9, positions.get(9), positions.get(31)));
-        addEdge(new Edge(10, positions.get(31), positions.get(30)));
-        addEdge(new Edge(11, positions.get(28), positions.get(30)));
-        addEdge(new Edge(12, positions.get(28), positions.get(29)));
-        addEdge(new Edge(13, positions.get(29), positions.get(27)));
-        addEdge(new Edge(14, positions.get(27), positions.get(13)));
-        addEdge(new Edge(15, positions.get(13), positions.get(26)));
-        addEdge(new Edge(16, positions.get(26), positions.get(25)));
-        addEdge(new Edge(17, positions.get(13), positions.get(12)));
-        addEdge(new Edge(18, positions.get(12), positions.get(1)));
-        addEdge(new Edge(19, positions.get(1), positions.get(24)));
-        addEdge(new Edge(20, positions.get(1), positions.get(23)));
-        addEdge(new Edge(21, positions.get(22), positions.get(23)));
-        addEdge(new Edge(22, positions.get(22), positions.get(33)));
-        addEdge(new Edge(23, positions.get(33), positions.get(21)));
-        addEdge(new Edge(24, positions.get(21), positions.get(20)));
-        addEdge(new Edge(25, positions.get(20), positions.get(19)));
-        addEdge(new Edge(26, positions.get(19), positions.get(18)));
-        addEdge(new Edge(27, positions.get(18), positions.get(11)));
-        addEdge(new Edge(28, positions.get(11), positions.get(16)));
-        addEdge(new Edge(29, positions.get(16), positions.get(17)));
-        addEdge(new Edge(30, positions.get(11), positions.get(15)));
-        addEdge(new Edge(31, positions.get(14), positions.get(15)));
-        addEdge(new Edge(32, positions.get(14), positions.get(10)));
-
-
+        //endregion
+        //region Edge
+        addEdge(new Edge(1, positions.get(22), positions.get(1)));
+        addEdge(new Edge(2, positions.get(1), positions.get(21)));
+        addEdge(new Edge(3, positions.get(21), positions.get(20)));
+        addEdge(new Edge(4, positions.get(20), positions.get(15)));
+        addEdge(new Edge(5, positions.get(15), positions.get(19)));
+        addEdge(new Edge(6, positions.get(19), positions.get(18)));
+        addEdge(new Edge(7, positions.get(18), positions.get(17)));
+        addEdge(new Edge(8, positions.get(17), positions.get(16)));
+        addEdge(new Edge(9, positions.get(16), positions.get(10)));
+        addEdge(new Edge(10, positions.get(10), positions.get(14)));
+        addEdge(new Edge(11, positions.get(14), positions.get(32)));
+        addEdge(new Edge(12, positions.get(10), positions.get(13)));
+        addEdge(new Edge(13, positions.get(13), positions.get(12)));
+        addEdge(new Edge(14, positions.get(12), positions.get(9)));
+        addEdge(new Edge(15, positions.get(9), positions.get(6)));
+        addEdge(new Edge(16, positions.get(6), positions.get(4)));
+        addEdge(new Edge(17, positions.get(4), positions.get(5)));
+        addEdge(new Edge(18, positions.get(9), positions.get(7)));
+        addEdge(new Edge(19, positions.get(30), positions.get(7)));
+        addEdge(new Edge(20, positions.get(30), positions.get(31)));
+        addEdge(new Edge(21, positions.get(31), positions.get(8)));
+        addEdge(new Edge(22, positions.get(8), positions.get(3)));
+        addEdge(new Edge(23, positions.get(3), positions.get(29)));
+        addEdge(new Edge(24, positions.get(29), positions.get(28)));
+        addEdge(new Edge(25, positions.get(28), positions.get(27)));
+        addEdge(new Edge(26, positions.get(28), positions.get(27)));
+        addEdge(new Edge(27, positions.get(26), positions.get(25)));
+        addEdge(new Edge(28, positions.get(25), positions.get(2)));
+        addEdge(new Edge(29, positions.get(2), positions.get(24)));
+        addEdge(new Edge(30, positions.get(24), positions.get(23)));
+        addEdge(new Edge(31, positions.get(11), positions.get(2)));
+        addEdge(new Edge(32, positions.get(11), positions.get(1)));
+        //endregion
+        //region Device
         addDevice(new Device(1, 70, "0C:F3:EE:00:96:A0", getPosition(1), Alignment.LEFT));
         addDevice(new Device(2, 57, "0C:F3:EE:00:82:4B", getPosition(2), Alignment.LEFT));
         addDevice(new Device(3, 65, "0C:F3:EE:00:63:8C", getPosition(3), Alignment.LEFT));
         addDevice(new Device(4, 63, "0C:F3:EE:00:96:44", getPosition(4), Alignment.RIGHT));
-        addDevice(new Device(5, 51, "0C:F3:EE:00:83:96", getPosition(35), Alignment.FRONT));
-        addDevice(new Device(6, 73, "0C:F3:EE:00:87:EC", getPosition(34), Alignment.RIGHT));
-        addDevice(new Device(7, 77, "0C:F3:EE:00:87:A8", getPosition(33), Alignment.LEFT));
-
+        addDevice(new Device(5, 51, "0C:F3:EE:00:83:96", getPosition(13), Alignment.FRONT));
+        addDevice(new Device(6, 73, "0C:F3:EE:00:87:EC", getPosition(16), Alignment.RIGHT));
+        addDevice(new Device(7, 77, "0C:F3:EE:00:87:A8", getPosition(15), Alignment.LEFT));
+        //endregion
+        //region Room
         addRoom(new Room(1, 107, getPosition(5)));
         addRoom(new Room(2, 1072, getPosition(6)));
         addRoom(new Room(3, 108, getPosition(7)));
         addRoom(new Room(4, 109, getPosition(8)));
-        addRoom(new Room(5, 123, getPosition(9), "Teakonyha"));
-        addRoom(new Room(6, 121, getPosition(14), "Fiú WC"));
-        addRoom(new Room(7, 122, getPosition(15), "Lány WC"));
-        addRoom(new Room(8, 104, getPosition(16)));
-        addRoom(new Room(9, 105, getPosition(17)));
-        addRoom(new Room(10, 119, getPosition(18)));
-        addRoom(new Room(11, 103, getPosition(19), "Számítógépes Laboratórium"));
-        addRoom(new Room(12, 116, getPosition(20), "Családbarát Helyiség"));
-        addRoom(new Room(13, 115, getPosition(21), "Technikai Előkészítő"));
-        addRoom(new Room(14, 102, getPosition(22), "Számítógépes Laboratórium"));
-        addRoom(new Room(15, 101, getPosition(23), "Számítógépes Laboratórium"));
-        addRoom(new Room(16, 100, getPosition(24)));
-        addRoom(new Room(17, 114, getPosition(25), "Könyvtár tárgyaló"));
-        addRoom(new Room(18, 113, getPosition(26), "Adminisztráció"));
-        addRoom(new Room(19, 112, getPosition(27), "Tanszékvezető"));
-        addRoom(new Room(20, 111, getPosition(28)));
-        addRoom(new Room(21, 125, getPosition(29), "Fénymásoló Helyiség"));
-        addRoom(new Room(22, 110, getPosition(30)));
-        addRoom(new Room(23, 124, getPosition(31), "Raktár"));
-        addRoom(new Room(24, 106, getPosition(32)));
-        addRoom(new Room(25, 117, getPosition(36), "Tanári Női Mozsdó"));
-        addRoom(new Room(26, 118, getPosition(37), "Tanári Férfi Mozsdó"));
-        addRoom(new Room(27, 0, getPosition(12), "Lépcső"));
-
+        addRoom(new Room(5, 123, getPosition(3), "Teakonyha"));
+        addRoom(new Room(6, 121, getPosition(12), "Fiú WC"));
+        addRoom(new Room(7, 122, getPosition(13), "Lány WC"));
+        addRoom(new Room(8, 104, getPosition(14)));
+        addRoom(new Room(9, 105, getPosition(32)));
+        addRoom(new Room(10, 119, getPosition(16)));
+        addRoom(new Room(11, 103, getPosition(17), "Számítógépes Laboratórium"));
+        addRoom(new Room(12, 116, getPosition(18), "Családbarát Helyiség"));
+        addRoom(new Room(13, 115, getPosition(19), "Technikai Előkészítő"));
+        addRoom(new Room(14, 102, getPosition(20), "Számítógépes Laboratórium"));
+        addRoom(new Room(15, 101, getPosition(21), "Számítógépes Laboratórium"));
+        addRoom(new Room(16, 100, getPosition(22)));
+        addRoom(new Room(17, 114, getPosition(23), "Könyvtár tárgyaló"));
+        addRoom(new Room(18, 113, getPosition(24), "Adminisztráció"));
+        addRoom(new Room(19, 112, getPosition(25), "Tanszékvezető"));
+        addRoom(new Room(20, 111, getPosition(27)));
+        addRoom(new Room(21, 125, getPosition(26), "Fénymásoló Helyiség"));
+        addRoom(new Room(22, 110, getPosition(28)));
+        addRoom(new Room(23, 124, getPosition(29), "Raktár"));
+        addRoom(new Room(24, 106, getPosition(4)));
+        addRoom(new Room(25, 117, getPosition(31), "Tanári Női Mozsdó"));
+        addRoom(new Room(26, 118, getPosition(30), "Tanári Férfi Mozsdó"));
+        addRoom(new Room(27, 0, getPosition(11), "Lépcső"));
+        //endregion
+        //region Person
         addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer), context));
         addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, context.getString(R.string.phdStudentOne), context));
         addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, context.getString(R.string.associateProfessor), context));
@@ -210,6 +250,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, context.getString(R.string.student), context));
         addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student), context));
         addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student), context));
+        //endregion
     }
 
     //region User
@@ -273,11 +314,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Edge edge = new Edge();
-                edge.setId(Integer.parseInt(cursor.getString(0)));
-                edge.setNode1(getPosition(Integer.parseInt(cursor.getString(1))));
-                edge.setNode2(getPosition(Integer.parseInt(cursor.getString(2))));
-                edge.setDistance(Double.parseDouble(cursor.getString(3)));
+                Edge edge = new Edge(Integer.parseInt(cursor.getString(0)), getPosition(Integer.parseInt(cursor.getString(1))), getPosition(Integer.parseInt(cursor.getString(2))));
                 edges.add(edge);
             } while (cursor.moveToNext());
         }
@@ -285,20 +322,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return edges;
     }
 
-    public Edge getEdgeById(Integer id) {
+    public Edge getEdgeById(Integer id) throws NoEdgeFound {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("Edge", null, "id=" + id, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        Edge edge = new Edge();
+        Edge edge = null;
         if (cursor.getCount() != 0) {
-            edge.setId(Integer.parseInt(cursor.getString(0)));
-            edge.setNode1(getPosition(Integer.parseInt(cursor.getString(1))));
-            edge.setNode2(getPosition(Integer.parseInt(cursor.getString(2))));
-            edge.setDistance(Double.parseDouble(cursor.getString(3)));
+            edge = new Edge(Integer.parseInt(cursor.getString(0)), getPosition(Integer.parseInt(cursor.getString(1))), getPosition(Integer.parseInt(cursor.getString(2))));
         }
         cursor.close();
+        if (edge == null) {
+            throw new NoEdgeFound();
+        }
         return edge;
     }
 
@@ -402,6 +439,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void addPosition(Position position) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put("id", position.getId());
         contentValues.put("x", position.getX());
         contentValues.put("y", position.getY());
         contentValues.put("z", position.getZ());
@@ -412,7 +450,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Position getPosition(int id) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("Position", null/*new String[]{"id", "x", "y", "z", "comment"}*/, "id=" + id, null/*new String[]{String.valueOf(id)}*/, null, null, null);
+        Cursor cursor = db.query("Position", null, "id=" + id, null/*new String[]{String.valueOf(id)}*/, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -463,13 +501,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Device device = new Device();
-                device.setId(Integer.parseInt(cursor.getString(0)));
+                Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
+                /*device.setId(Integer.parseInt(cursor.getString(0)));
                 device.setBaseRSSI(Integer.parseInt(cursor.getString(1)));
                 device.setMAC(cursor.getString(2));
                 Position position = getPosition(Integer.parseInt(cursor.getString(3)));
                 device.setAlignment(Alignment.valueOf(cursor.getString(4)));
-                device.setPosition(position);
+                device.setPosition(position);*/
                 devices.add(device);
             } while (cursor.moveToNext());
         }
