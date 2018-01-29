@@ -16,7 +16,6 @@ import com.example.android.test.databinding.ActivityMainBinding;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.UserAlreadyExist;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SecurityClearance;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
         User user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address").replace(":", ""));
+
         //region contentView
         ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
@@ -49,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.whatNearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
+                startActivity(new Intent(MainActivity.this, NavigationsActivity.class));
             }
         });
+        activityMainBinding.macAddress.setText(user.getMacAddressBL());
 
         //endregion
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

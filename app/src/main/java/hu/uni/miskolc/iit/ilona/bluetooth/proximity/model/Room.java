@@ -14,6 +14,7 @@ public class Room {
     private final Position position;
     private final String title;
     private final List<Person> people;
+    private final Integer buildingId;
 
     //endregion
     //region constructors
@@ -24,6 +25,7 @@ public class Room {
         this.position = position;
         this.title = title;
         this.people = people;
+        buildingId = 1;
     }
 
 
@@ -33,6 +35,7 @@ public class Room {
         this.position = position;
         this.title = title;
         people = new ArrayList<>();
+        buildingId = 1;
     }
 
     public Room(int id, int number, Position position) {
@@ -41,6 +44,7 @@ public class Room {
         this.position = position;
         title = "";
         people = new ArrayList<>();
+        buildingId = 1;
     }
 
     public Room(int id, int number, Position position, Person person) {
@@ -50,6 +54,45 @@ public class Room {
         title = "";
         people = new ArrayList<>();
         people.add(person);
+        buildingId = 1;
+    }
+
+    public Room(int id, Integer number, Position position, String title, List<Person> people, Integer buildingId) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        this.title = title;
+        this.people = people;
+        this.buildingId = buildingId;
+    }
+
+
+    public Room(int id, Integer number, Position position, String title, Integer buildingId) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        this.title = title;
+        people = new ArrayList<>();
+        this.buildingId = buildingId;
+    }
+
+    public Room(int id, int number, Position position, Integer buildingId) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        title = "";
+        people = new ArrayList<>();
+        this.buildingId = buildingId;
+    }
+
+    public Room(int id, int number, Position position, Person person, Integer buildingId) {
+        this.id = id;
+        this.number = number;
+        this.position = position;
+        title = "";
+        people = new ArrayList<>();
+        people.add(person);
+        this.buildingId = buildingId;
     }
 
     //endregion

@@ -9,8 +9,12 @@ import java.util.List;
 public class Position {
     //region variables
     private final int id;
-    private final SecurityClearance securityClearance;
     private final String comment;
+    private final Integer buildingId;
+    private final Integer frontId;
+    private final Integer rightId;
+    private final Integer behindId;
+    private final Integer leftId;
     private double x;
     private double y;
     private double z;
@@ -18,46 +22,68 @@ public class Position {
     //endregion
     //region constructors
     public Position() {
-        securityClearance = SecurityClearance.NONE;
         id = 0;
         comment = "";
+        buildingId = 0;
+        frontId = 0;
+        rightId = 0;
+        behindId = 0;
+        leftId = 0;
     }
 
-    public Position(int id, double x, double y, double z, SecurityClearance securityClearance, String comment) {
+    public Position(int id, double x, double y, double z, String comment, int buildingId, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
         this.id = id;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.securityClearance = securityClearance;
         this.comment = comment;
-    }
-
-    public Position(int id, double x, double y, double z, SecurityClearance securityClearance) {
-        this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.securityClearance = securityClearance;
+        this.frontId = frontId;
+        this.rightId = rightId;
+        this.behindId = behindId;
+        this.leftId = leftId;
+        this.buildingId = buildingId;
+    }
+
+    public Position(int id, double x, double y, double z, int buildingId, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
+        this.id = id;
         comment = "";
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.frontId = frontId;
+        this.rightId = rightId;
+        this.behindId = behindId;
+        this.leftId = leftId;
+        this.buildingId = buildingId;
     }
 
-    public Position(int id, double x, double y, double z, String comment) {
+    public Position(int id, double x, double y, double z, String comment, int buildingId) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
-        securityClearance = SecurityClearance.NONE;
         this.comment = comment;
+        this.buildingId = buildingId;
+        frontId = 0;
+        rightId = 0;
+        behindId = 0;
+        leftId = 0;
+
     }
 
-    public Position(int id, double x, double y, double z) {
+    public Position(int id, double x, double y, double z, int buildingId) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
         comment = "";
-        securityClearance = SecurityClearance.NONE;
+        this.buildingId = buildingId;
+        frontId = 0;
+        rightId = 0;
+        behindId = 0;
+        leftId = 0;
     }
+
 
     public Position(Position position) {
         id = position.getId();
@@ -65,16 +91,16 @@ public class Position {
         setY(position.getY());
         setZ(position.getZ());
         comment = position.comment;
-        securityClearance = position.getSecurityClearance();
+        buildingId = position.buildingId;
+        frontId = position.frontId;
+        rightId = position.rightId;
+        behindId = position.behindId;
+        leftId = position.leftId;
+
     }
 
     //endregion
     //region getters & setters
-
-    public SecurityClearance getSecurityClearance() {
-        return securityClearance;
-    }
-
 
     public int getId() {
         return id;
@@ -109,6 +135,25 @@ public class Position {
         return comment;
     }
 
+    public Integer getBuildingId() {
+        return buildingId;
+    }
+
+    public Integer getFrontId() {
+        return frontId;
+    }
+
+    public Integer getRightId() {
+        return rightId;
+    }
+
+    public Integer getBehindId() {
+        return behindId;
+    }
+
+    public Integer getLeftId() {
+        return leftId;
+    }
 
     //endregion
     @Override
@@ -198,7 +243,6 @@ public class Position {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(z);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (securityClearance != null ? securityClearance.hashCode() : 0);
         return result;
     }
 }

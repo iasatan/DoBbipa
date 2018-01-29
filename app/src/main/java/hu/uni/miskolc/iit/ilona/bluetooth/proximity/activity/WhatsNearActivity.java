@@ -105,18 +105,19 @@ public class WhatsNearActivity extends AppCompatActivity {
         user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
         rooms = db.getAllRoom();
         //endregion
-        //region ble advertising
-        /*if (!BluetoothAdapter.getDefaultAdapter().isMultipleAdvertisementSupported()) {
-            Toast.makeText(this, "Multiple advertisement not supported", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Multiple advertisement is supported", Toast.LENGTH_SHORT).show();
-            BluetoothLeAdvertiser advertiser = btAdapter.getBluetoothLeAdvertiser();
-            AdvertiseSettings settings = new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED).setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM).setConnectable(false).build();
-            ParcelUuid parcelUuid = new ParcelUuid(UUID.fromString("CDB7950D-73F1-4D4D-8E47-C090502DBD63"));
-            AdvertiseData data = new AdvertiseData.Builder().setIncludeDeviceName(true).addServiceUuid(parcelUuid).addServiceData(parcelUuid, "Data".getBytes(Charset.forName("UTF-8"))).build();
-            advertiser.startAdvertising(settings, data, advertisingCallback);
-        }
-        */
+        //region contenView
+        activityWhatsNearBinding = DataBindingUtil.setContentView(this, R.layout.activity_whats_near);
+
+        activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
+        activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
+        startScanning();
+        RecyclerView.LayoutManager recyclerViewLayoutManager;
+
+        activityWhatsNearBinding.residentsRecyclerView.setHasFixedSize(true);
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+        recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
+        activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
         //endregion
         //region button listeners
         activityWhatsNearBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
@@ -134,20 +135,6 @@ public class WhatsNearActivity extends AppCompatActivity {
                 stopScanning();
             }
         });
-        //endregion
-        //region contenView
-        activityWhatsNearBinding = DataBindingUtil.setContentView(this, R.layout.activity_whats_near);
-
-        activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
-        activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
-        startScanning();
-        RecyclerView.LayoutManager recyclerViewLayoutManager;
-
-        activityWhatsNearBinding.residentsRecyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(this);
-        activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
-        activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
         //endregion
         if (savedInstanceState != null) {
             try {

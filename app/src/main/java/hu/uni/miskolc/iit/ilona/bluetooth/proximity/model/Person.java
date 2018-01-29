@@ -11,45 +11,46 @@ import com.example.android.test.R;
 
 public class Person {
     //region variables
-    private final Context context;
     private final Integer id;
     private final String name;
     private final Integer roomId;
     private final String title;
     private final Drawable image;
     private final Integer imageId;
+    private final Integer buildingId;
 
     //endregion
     //region constructors
-    public Person(Integer id, String name, Integer roomId, Integer image, String title, Context context) {
+    public Person(Integer id, String name, Integer roomId, Integer image, String title, Context context, Integer buildingId) {
         this.id = id;
-        this.context = context;
         this.name = name;
         this.roomId = roomId;
         this.image = context.getDrawable(image);
         this.title = title;
         imageId = image;
+        this.buildingId = buildingId;
     }
 
-    public Person(Integer id, String name, Integer roomId, Integer image, Context context) {
+    public Person(Integer id, String name, Integer roomId, Integer image, Context context, Integer buildingId) {
         this.id = id;
-        this.context = context;
         this.name = name;
         this.roomId = roomId;
         this.image = context.getDrawable(image);
         title = "";
         imageId = image;
+        this.buildingId = buildingId;
     }
 
-    public Person(Integer id, String name, Integer roomId, Context context) {
+    public Person(Integer id, String name, Integer roomId, Context context, Integer buildingId) {
         this.id = id;
-        this.context = context;
         this.name = name;
         this.roomId = roomId;
         image = context.getDrawable(R.drawable.nf404);
         title = "";
         imageId = R.drawable.nf404;
+        this.buildingId = buildingId;
     }
+
 
     //endregion
     //region getters & setters
@@ -76,6 +77,11 @@ public class Person {
     public Drawable getImage() {
         return image;
     }
+
+    public Integer getBuildingId() {
+        return buildingId;
+    }
+
 
     //endregion
     @Override

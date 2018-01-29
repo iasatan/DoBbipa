@@ -10,15 +10,25 @@ public class Edge {
     private final Position node1;
     private final Position node2;
     private final Double distance;
+    private final Integer buildingId;
 
     //endregion
     //region constructors
+
+    public Edge(Integer id, Position node1, Position node2, Integer buildingId) {
+        this.id = id;
+        this.node1 = node1;
+        this.node2 = node2;
+        distance = node1.getDistance(node2);
+        this.buildingId = buildingId;
+    }
 
     public Edge(Integer id, Position node1, Position node2) {
         this.id = id;
         this.node1 = node1;
         this.node2 = node2;
         distance = node1.getDistance(node2);
+        buildingId = 1;
     }
 
     //endregion
@@ -39,6 +49,9 @@ public class Edge {
         return distance;
     }
 
+    public Integer getBuildingId() {
+        return buildingId;
+    }
     //endregion
 
 

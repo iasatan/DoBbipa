@@ -14,7 +14,6 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundExcepti
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SecurityClearance;
 
 /**
  * Created by iasatan on 2018.01.25..

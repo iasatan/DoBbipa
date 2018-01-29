@@ -11,23 +11,16 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconExcep
  */
 
 public class User {
-    private final String macAddressBL;
     private Position position;
     private List<Position> prevPositions;
-    private SecurityClearance securityClearance;
 
-    public User(String macAddressBL, SecurityClearance securityClearance) {
+    public User() {
         prevPositions = new ArrayList<>();
-        this.macAddressBL = macAddressBL;
-        this.securityClearance = securityClearance;
         position = new Position();
     }
 
     //region getters & setters
 
-    public String getMacAddressBL() {
-        return macAddressBL;
-    }
 
     public List<Position> getPrevPositions() {
         return prevPositions;
@@ -54,13 +47,6 @@ public class User {
         return position.getClosestPosition(positions);
     }
 
-    public SecurityClearance getSecurityClearance() {
-        return securityClearance;
-    }
-
-    public void setSecurityClearance(SecurityClearance securityClearance) {
-        this.securityClearance = securityClearance;
-    }
 
     //endregion
     public void addPosition(Position position) {
@@ -133,9 +119,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "macAddressBL='" + macAddressBL + '\'' +
                 ", position=" + position +
-                ", securityClearance=" + securityClearance +
                 '}';
     }
 }
