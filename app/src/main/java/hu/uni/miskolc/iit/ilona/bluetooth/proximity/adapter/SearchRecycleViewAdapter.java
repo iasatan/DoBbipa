@@ -13,7 +13,7 @@ import com.example.android.test.databinding.SearchItemBinding;
 
 import java.util.List;
 
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.NavigationsActivity;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.NavigationActivity;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchResult;
 
 /**
@@ -43,7 +43,7 @@ public class SearchRecycleViewAdapter extends RecyclerView.Adapter<SearchRecycle
             holder.getBinding().startNavigation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(), NavigationsActivity.class);
+                    Intent intent = new Intent(view.getContext(), NavigationActivity.class);
                     intent.putExtra("room", result.getRoomId());
                     view.getContext().startActivity(intent);
 

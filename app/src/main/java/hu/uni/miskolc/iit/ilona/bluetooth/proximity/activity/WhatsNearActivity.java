@@ -26,11 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.ResidentsRecycleViewAdapter;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchResult;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class WhatsNearActivity extends AppCompatActivity {
@@ -60,7 +61,8 @@ public class WhatsNearActivity extends AppCompatActivity {
     private BluetoothLeScanner btScanner;
     private BluetoothAdapter btAdapter;
     private Map<String, Device> devices;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    private RecyclerView.Adapter searchRecyclerViewAdapter;
+
     //endregion
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -72,8 +74,13 @@ public class WhatsNearActivity extends AppCompatActivity {
                 try {
                     user.addPosition(devices);
                     currentClosestRoom = user.getClosestRoom(rooms);
-                    recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
-                    activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+                    List<Person> people = currentClosestRoom.getPeople();
+                    List<SearchResult> results = new ArrayList<>();
+                    for (Person person : people) {
+                        results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), currentClosestRoom.getId()));
+                    }
+                    searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
+                    activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
                     activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
                     activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
                 } catch (NoCloseBeaconException e) {
@@ -102,7 +109,7 @@ public class WhatsNearActivity extends AppCompatActivity {
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
         }
-        user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
+        user = new User();
         rooms = db.getAllRoom();
         //endregion
         //region contenView
@@ -111,13 +118,13 @@ public class WhatsNearActivity extends AppCompatActivity {
         activityWhatsNearBinding.StartScanButton.setVisibility(View.INVISIBLE);
         activityWhatsNearBinding.StopScanButton.setVisibility(View.VISIBLE);
         startScanning();
-        RecyclerView.LayoutManager recyclerViewLayoutManager;
+        RecyclerView.LayoutManager searchRecyclerViewLayoutManager;
 
         activityWhatsNearBinding.residentsRecyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(this);
-        activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new ResidentsRecycleViewAdapter(new ArrayList<Person>());
-        activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+        searchRecyclerViewLayoutManager = new LinearLayoutManager(this);
+        activityWhatsNearBinding.residentsRecyclerView.setLayoutManager(searchRecyclerViewLayoutManager);
+        searchRecyclerViewAdapter = new SearchRecycleViewAdapter(new ArrayList<SearchResult>());
+        activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
         //endregion
         //region button listeners
         activityWhatsNearBinding.StartScanButton.setOnClickListener(new View.OnClickListener() {
@@ -139,8 +146,13 @@ public class WhatsNearActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             try {
                 currentClosestRoom = db.getRoom(savedInstanceState.getInt(CLOSESTROOMID));
-                recyclerViewAdapter = new ResidentsRecycleViewAdapter(currentClosestRoom.getPeople());
-                activityWhatsNearBinding.residentsRecyclerView.setAdapter(recyclerViewAdapter);
+                List<Person> people = currentClosestRoom.getPeople();
+                List<SearchResult> results = new ArrayList<>();
+                for (Person person : people) {
+                    results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), currentClosestRoom.getId()));
+                }
+                searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
+                activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
 
                 activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
                 activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());

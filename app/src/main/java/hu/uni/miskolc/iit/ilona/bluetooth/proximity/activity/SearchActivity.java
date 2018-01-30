@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchPersonRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
@@ -39,7 +38,6 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 searchTerm = activitySearchBinding.searchText.getText().toString();
-                activitySearchBinding.searchRecyclerView.setHasFixedSize(true);
                 activitySearchBinding.searchRecyclerView.setHasFixedSize(true);
                 searchRecyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
                 activitySearchBinding.searchRecyclerView.setLayoutManager(searchRecyclerViewLayoutManager);
@@ -66,7 +64,11 @@ public class SearchActivity extends AppCompatActivity {
                 } else {
                     Integer number = Integer.valueOf(searchTerm);
                     Room room = db.getRoomByNumber(number);
-                    searchRecyclerViewAdapter = new SearchPersonRecycleViewAdapter(room.getPeople());
+                    List<SearchResult> results = new ArrayList<>();
+                    for (Person person : room.getPeople()) {
+                        results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), person.getRoomId()));
+                    }
+                    searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
                 }
                 activitySearchBinding.searchRecyclerView.setAdapter(searchRecyclerViewAdapter);
 

@@ -73,17 +73,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void populateDatabase() {
         //region position
         Map<Integer, Position> positions = new HashMap<>();
-        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", 1, R.drawable.P3520EK, 0, R.drawable.P3520DNY, 0));
-        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", 1, R.drawable.P358EK, 0, R.drawable.P358DNY, R.drawable.P358ENY));
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", 1, R.drawable.p3520ek, 0, R.drawable.p3520dny, 0));
+        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", 1, R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
         positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt", 1));
         positions.put(4, new Position(4, 6, 8, 6, "labor előtt", 1));
         positions.put(5, new Position(5, 5, 8, 6, 1));
         positions.put(6, new Position(6, 7, 8, 6, 1));
         positions.put(7, new Position(7, 13, 8, 6, 1));
         positions.put(8, new Position(8, 17, 8, 6, 1));
-        positions.put(9, new Position(9, 8, 8, 6, "Elzárt folyosó labornál lévő ajtaja", 1, R.drawable.P88EK, 0, R.drawable.P88DNY, R.drawable.P88ENY));
-        positions.put(10, new Position(10, 8, 20, 6, 1, R.drawable.P820EK, R.drawable.P820DK, R.drawable.P820DNY, 0));
-        positions.put(11, new Position(11, 35, 12, 6, "lépcső", 1, R.drawable.Stairs, R.drawable.P3512DK, 0, R.drawable.P3512ENY));
+        positions.put(9, new Position(9, 8, 8, 6, "Elzárt folyosó labornál lévő ajtaja", 1, R.drawable.p88ek, 0, R.drawable.p88dny, R.drawable.p88eny));
+        positions.put(10, new Position(10, 8, 20, 6, 1, R.drawable.p820ek, R.drawable.p820dk, R.drawable.p820dny, 0));
+        positions.put(11, new Position(11, 35, 12, 6, "lépcső", 1, R.drawable.stairs, R.drawable.p3512dk, 0, R.drawable.p3512eny));
         positions.put(12, new Position(12, 8, 10, 6, 1));
         positions.put(13, new Position(13, 8, 15, 6, 1));
         positions.put(14, new Position(14, 7, 20, 6, 1));
@@ -99,7 +99,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(24, new Position(24, 36, 8, 6, 1));
         positions.put(25, new Position(25, 32, 8, 6, 1));
         positions.put(27, new Position(27, 28, 8, 6, 1));
-        positions.put(26, new Position(26, 29, 8, 6, 1, 0, 0, R.drawable.P298DNY, 0));
+        positions.put(26, new Position(26, 29, 8, 6, 1, 0, 0, R.drawable.p298dny, 0));
         positions.put(28, new Position(28, 23, 8, 6, 1));
         positions.put(29, new Position(29, 21, 8, 6, 1));
         positions.put(30, new Position(30, 14, 8, 6, 1));

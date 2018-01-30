@@ -9,14 +9,13 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.View;
 
 import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityMainBinding;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.UserAlreadyExist;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,12 +30,7 @@ public class MainActivity extends AppCompatActivity {
         if (db.getDeviceCount() < 1) { //inits db if empty
             db.populateDatabase();
         }
-        try {
-            db.addUser(new User(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address").replace(":", ""), SecurityClearance.NONE));
-        } catch (UserAlreadyExist userAlreadyExist) {
 
-        }
-        User user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address").replace(":", ""));
 
         //region contentView
         ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -49,10 +43,9 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.whatNearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, NavigationsActivity.class));
+                startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
             }
         });
-        activityMainBinding.macAddress.setText(user.getMacAddressBL());
 
         //endregion
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -68,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_navigations, menu);
+        return true;
     }
 
     @Override

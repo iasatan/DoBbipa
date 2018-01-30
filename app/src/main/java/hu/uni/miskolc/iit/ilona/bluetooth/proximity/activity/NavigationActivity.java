@@ -93,11 +93,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                                 }
                                 distance = Math.abs(nextPosition.getY() - proximityPosition.getY());
 
-                            } /*else if (nextPosition.getX() == proximityPosition.getY()) {
-                                correctionDegree = -90;
-                            } else if (nextPosition.getY() == proximityPosition.getX()) {
-                                correctionDegree = 90;
-                            }*/
+                            }
 
                         }
                         activityNavigationBinding.distance.setText(distance.toString() + "m");
@@ -121,7 +117,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         BluetoothManager btManager;
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
-        user = db.getUser(android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"));
+        user = new User();
 
         for (Device device : db.getAllDevice()) {
             devices.put(device.getMAC(), device);
@@ -163,6 +159,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
 
