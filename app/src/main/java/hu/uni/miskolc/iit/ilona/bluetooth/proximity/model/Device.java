@@ -22,9 +22,6 @@ public class Device {
 
     //endregion
     //region constructors
-    /*public Device() {
-        prevRSSI = new ArrayList<>();
-    }*/
 
     public Device(int id, int baseRSSI, String MAC, Position position, Alignment alignment) {
         this.id = id;

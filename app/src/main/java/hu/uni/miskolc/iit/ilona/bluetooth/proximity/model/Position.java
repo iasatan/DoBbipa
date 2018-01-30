@@ -10,7 +10,6 @@ public class Position {
     //region variables
     private final int id;
     private final String comment;
-    private final Integer buildingId;
     private final Integer frontId;
     private final Integer rightId;
     private final Integer behindId;
@@ -24,14 +23,13 @@ public class Position {
     public Position() {
         id = 0;
         comment = "";
-        buildingId = 0;
         frontId = 0;
         rightId = 0;
         behindId = 0;
         leftId = 0;
     }
 
-    public Position(int id, double x, double y, double z, String comment, int buildingId, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
+    public Position(int id, double x, double y, double z, String comment, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
         this.id = id;
         this.comment = comment;
         this.x = x;
@@ -41,10 +39,9 @@ public class Position {
         this.rightId = rightId;
         this.behindId = behindId;
         this.leftId = leftId;
-        this.buildingId = buildingId;
     }
 
-    public Position(int id, double x, double y, double z, int buildingId, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
+    public Position(int id, double x, double y, double z, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
         this.id = id;
         comment = "";
         this.x = x;
@@ -54,16 +51,14 @@ public class Position {
         this.rightId = rightId;
         this.behindId = behindId;
         this.leftId = leftId;
-        this.buildingId = buildingId;
     }
 
-    public Position(int id, double x, double y, double z, String comment, int buildingId) {
+    public Position(int id, double x, double y, double z, String comment) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
         this.comment = comment;
-        this.buildingId = buildingId;
         frontId = 0;
         rightId = 0;
         behindId = 0;
@@ -71,13 +66,12 @@ public class Position {
 
     }
 
-    public Position(int id, double x, double y, double z, int buildingId) {
+    public Position(int id, double x, double y, double z) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
         comment = "";
-        this.buildingId = buildingId;
         frontId = 0;
         rightId = 0;
         behindId = 0;
@@ -91,7 +85,6 @@ public class Position {
         setY(position.getY());
         setZ(position.getZ());
         comment = position.comment;
-        buildingId = position.buildingId;
         frontId = position.frontId;
         rightId = position.rightId;
         behindId = position.behindId;
@@ -133,10 +126,6 @@ public class Position {
 
     public String getComment() {
         return comment;
-    }
-
-    public Integer getBuildingId() {
-        return buildingId;
     }
 
     public Integer getFrontId() {

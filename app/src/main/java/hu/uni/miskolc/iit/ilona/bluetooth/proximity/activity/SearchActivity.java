@@ -47,7 +47,7 @@ public class SearchActivity extends AppCompatActivity {
                     List<SearchResult> results = new ArrayList<>();
                     for (Person person : people) {
                         if (StringUtils.containsIgnoreCase(person.getName(), searchTerm)) {
-                            results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), person.getRoomId()));
+                            results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
                         }
                     }
                     for (Room room : rooms) {
@@ -66,7 +66,7 @@ public class SearchActivity extends AppCompatActivity {
                     Room room = db.getRoomByNumber(number);
                     List<SearchResult> results = new ArrayList<>();
                     for (Person person : room.getPeople()) {
-                        results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), person.getRoomId()));
+                        results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
                     }
                     searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
                 }

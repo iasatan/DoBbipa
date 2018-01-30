@@ -35,6 +35,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundExcepti
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.History;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
@@ -43,6 +44,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
     private final static int REQUEST_ENABLE_BT = 1;
+    private DatabaseHandler db;
     private List<Edge> edges;
     private ActivityNavigationBinding activityNavigationBinding;
     private Room room;
@@ -56,9 +58,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private DijkstraAlgorithm dijkstraAlgorithm;
     private float currentDegree = 0f;
     private float correctionDegree;
-    private Double distance;
+    private Double distance = 1000.0;
     private SensorManager sensorManager;
-
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -69,13 +70,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 try {
                     user.addPosition(devices);
                     proximityPosition = user.getClosestPosition(positions);
-                    if (proximityPosition.equals(room.getPosition())) {
-                        activityNavigationBinding.nextPosition.setText(R.string.arrived);
+                    db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
+                    if (proximityPosition.equals(room.getPosition()) || distance < 1) {
+                        activityNavigationBinding.nextPosition.setText(getString(R.string.arrived));
                     } else {
+
 
                         LinkedList<Position> path = dijkstraAlgorithm.getPath(proximityPosition);
                         Position nextPosition = path.get(path.size() - 2);
                         if (path != null) {
+                            distance = 0.0;
                             activityNavigationBinding.nextPosition.setText(nextPosition.toString());
                             if (nextPosition.getY() == proximityPosition.getY()) {
                                 if (nextPosition.getX() > proximityPosition.getX()) {
@@ -83,7 +87,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                                 } else {
                                     correctionDegree = 35;
                                 }
-                                distance = Math.abs(nextPosition.getX() - proximityPosition.getX());
+                                for (int i = 0; i < path.size() - 2; i++) {
+                                    if (path.get(i).getY() == proximityPosition.getY()) {
+                                        distance += Math.abs(path.get(i).getX() - proximityPosition.getX());
+                                    }
+                                }
 
                             } else if (nextPosition.getX() == proximityPosition.getX()) {
                                 if (nextPosition.getY() > proximityPosition.getY()) {
@@ -91,7 +99,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                                 } else {
                                     correctionDegree = 125;
                                 }
-                                distance = Math.abs(nextPosition.getY() - proximityPosition.getY());
+                                for (int i = 0; i < path.size() - 2; i++) {
+                                    if (path.get(i).getX() == proximityPosition.getX()) {
+                                        distance += Math.abs(path.get(i).getY() - proximityPosition.getY());
+                                    }
+                                }
 
                             }
 
@@ -113,7 +125,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseHandler db;
+
         BluetoothManager btManager;
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();

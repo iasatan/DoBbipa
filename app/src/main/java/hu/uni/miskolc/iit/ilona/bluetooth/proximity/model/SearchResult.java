@@ -8,10 +8,10 @@ import android.graphics.drawable.Drawable;
 
 public class SearchResult {
     //region variables
-    private Drawable image;
-    private String name;
-    private String title;
-    private Integer roomId;
+    private final Drawable image;
+    private final String name;
+    private final String title;
+    private final Integer roomId;
 
     //endregion
     public SearchResult(Drawable image, String name, String title, Integer roomId) {
@@ -26,32 +26,17 @@ public class SearchResult {
         return image;
     }
 
-    public void setImage(Drawable image) {
-        this.image = image;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Integer getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Integer roomId) {
-        this.roomId = roomId;
-    }
     //endregion
 }

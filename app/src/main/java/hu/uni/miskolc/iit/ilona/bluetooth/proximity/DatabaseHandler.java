@@ -11,6 +11,7 @@ import com.example.android.test.R;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoEdgeFound;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.History;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
@@ -31,13 +33,18 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa58";
+    private static final String databaseName = "dobbipa64";
     private static final Integer databaseVersion = 1;
     private final Context context;
+    private int historyId;
+    private int groupid;
 
     public DatabaseHandler(Context context) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
+        historyId = getHistoryCount();
+        groupid = getHistoryLastGroupId();
+        groupid++;
     }
 
     public DatabaseHandler() {
@@ -47,14 +54,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z DOUBLE, comment TEXT, building INTEGER, front INTEGER, leftimage INTEGER, right INTEGER, behind INTEGER)");
+        db.execSQL("CREATE TABLE Position(id INTEGER PRIMARY KEY, x INTEGER, y INTEGER, z REAL, comment TEXT, front INTEGER, leftimage INTEGER, right INTEGER, behind INTEGER)");
         db.execSQL("CREATE TABLE Device(id INTEGER PRIMARY KEY, baserssi INTEGER, mac TEXT, position INTEGER, alignment TEXT)");
-        db.execSQL("CREATE TABLE Room(id INTEGER PRIMARY KEY, number INTEGER, position INTEGER, title TEXT, building INTEGER)");
-        db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER, image INTEGER, title TEXT, building INTEGER)");
-        db.execSQL("CREATE TABLE Edge(id INTEGER PRIMARY KEY, node1 INTEGER, node2 INTEGER, distance DOUBLE)");
-        //db.execSQL("CREATE TABLE User(id INTEGER PRIMARY KEY, macaddressbl TEXT)");
-        db.execSQL("CREATE TABLE History(id INTEGER PRIMARY KEY, user TEXT, position INTEGER, date REAL)");
-        db.execSQL("CREATE TABLE Building(id INTEGER PRIMARY KEY, name TEXT)");
+        db.execSQL("CREATE TABLE Room(id INTEGER PRIMARY KEY, number INTEGER, position INTEGER, title TEXT)");
+        db.execSQL("CREATE TABLE People(id INTEGER PRIMARY KEY, name TEXT, roomId INTEGER, image INTEGER, title TEXT)");
+        db.execSQL("CREATE TABLE Edge(id INTEGER PRIMARY KEY, node1 INTEGER, node2 INTEGER, distance REAL)");
+        db.execSQL("CREATE TABLE History(id INTEGER PRIMARY KEY, groupid INTEGER, user TEXT, position INTEGER, direction INTEGER, date REAL)");
 
     }
 
@@ -73,38 +78,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void populateDatabase() {
         //region position
         Map<Integer, Position> positions = new HashMap<>();
-        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", 1, R.drawable.p3520ek, 0, R.drawable.p3520dny, 0));
-        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", 1, R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
-        positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt", 1));
-        positions.put(4, new Position(4, 6, 8, 6, "labor előtt", 1));
-        positions.put(5, new Position(5, 5, 8, 6, 1));
-        positions.put(6, new Position(6, 7, 8, 6, 1));
-        positions.put(7, new Position(7, 13, 8, 6, 1));
-        positions.put(8, new Position(8, 17, 8, 6, 1));
-        positions.put(9, new Position(9, 8, 8, 6, "Elzárt folyosó labornál lévő ajtaja", 1, R.drawable.p88ek, 0, R.drawable.p88dny, R.drawable.p88eny));
-        positions.put(10, new Position(10, 8, 20, 6, 1, R.drawable.p820ek, R.drawable.p820dk, R.drawable.p820dny, 0));
-        positions.put(11, new Position(11, 35, 12, 6, "lépcső", 1, R.drawable.stairs, R.drawable.p3512dk, 0, R.drawable.p3512eny));
-        positions.put(12, new Position(12, 8, 10, 6, 1));
-        positions.put(13, new Position(13, 8, 15, 6, 1));
-        positions.put(14, new Position(14, 7, 20, 6, 1));
-        positions.put(15, new Position(15, 23, 20, 6, 1));
-        positions.put(16, new Position(16, 11, 20, 6, 1));
-        positions.put(17, new Position(17, 12, 20, 6, 1));
-        positions.put(18, new Position(18, 19, 20, 6, 1));
-        positions.put(19, new Position(19, 21, 20, 6, 1));
-        positions.put(20, new Position(20, 28, 20, 6, 1));
-        positions.put(21, new Position(21, 33, 20, 6, 1));
-        positions.put(22, new Position(22, 39, 20, 6, 1));
-        positions.put(23, new Position(23, 39, 8, 6, 1));
-        positions.put(24, new Position(24, 36, 8, 6, 1));
-        positions.put(25, new Position(25, 32, 8, 6, 1));
-        positions.put(27, new Position(27, 28, 8, 6, 1));
-        positions.put(26, new Position(26, 29, 8, 6, 1, 0, 0, R.drawable.p298dny, 0));
-        positions.put(28, new Position(28, 23, 8, 6, 1));
-        positions.put(29, new Position(29, 21, 8, 6, 1));
-        positions.put(30, new Position(30, 14, 8, 6, 1));
-        positions.put(31, new Position(31, 15, 8, 6, 1));
-        positions.put(32, new Position(32, 6, 20, 6, 1));
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, 0, R.drawable.p3520dny, 0));
+        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
+        positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
+        positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
+        positions.put(5, new Position(5, 5, 8, 6));
+        positions.put(6, new Position(6, 7, 8, 6));
+        positions.put(7, new Position(7, 13, 8, 6));
+        positions.put(8, new Position(8, 17, 8, 6));
+        positions.put(9, new Position(9, 8, 8, 6, "Elzárt folyosó labornál lévő ajtaja", R.drawable.p88ek, 0, R.drawable.p88dny, R.drawable.p88eny));
+        positions.put(10, new Position(10, 8, 20, 6, R.drawable.p820ek, R.drawable.p820dk, R.drawable.p820dny, 0));
+        positions.put(11, new Position(11, 35, 12, 6, "lépcső", R.drawable.stairs, R.drawable.p3512dk, 0, R.drawable.p3512eny));
+        positions.put(12, new Position(12, 8, 10, 6));
+        positions.put(13, new Position(13, 8, 15, 6));
+        positions.put(14, new Position(14, 7, 20, 6));
+        positions.put(15, new Position(15, 23, 20, 6));
+        positions.put(16, new Position(16, 11, 20, 6));
+        positions.put(17, new Position(17, 12, 20, 6));
+        positions.put(18, new Position(18, 19, 20, 6));
+        positions.put(19, new Position(19, 21, 20, 6));
+        positions.put(20, new Position(20, 28, 20, 6));
+        positions.put(21, new Position(21, 33, 20, 6));
+        positions.put(22, new Position(22, 39, 20, 6));
+        positions.put(23, new Position(23, 39, 8, 6));
+        positions.put(24, new Position(24, 36, 8, 6));
+        positions.put(25, new Position(25, 32, 8, 6));
+        positions.put(27, new Position(27, 28, 8, 6));
+        positions.put(26, new Position(26, 29, 8, 6, 0, 0, R.drawable.p298dny, 0));
+        positions.put(28, new Position(28, 23, 8, 6));
+        positions.put(29, new Position(29, 21, 8, 6));
+        positions.put(30, new Position(30, 14, 8, 6));
+        positions.put(31, new Position(31, 15, 8, 6));
+        positions.put(32, new Position(32, 6, 20, 6));
         for (Map.Entry<Integer, Position> position : positions.entrySet()) {
             addPosition(position.getValue());
         }
@@ -182,31 +187,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(27, 0, getPosition(11), "Lépcső"));
         //endregion
         //region Person
-        addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer), context, 1));
-        addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, context.getString(R.string.phdStudentOne), context, 1));
-        addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(4, "Kovács Szilveszter", 2, R.drawable.ksz0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(5, "Krizsán Zoltán", 2, R.drawable.kz0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(6, "Bulla Dávid", 3, R.drawable.bd0, "Mérnöktanár", context, 1));
-        addPerson(new Person(7, "Szűcs Miklós", 3, R.drawable.szm0, "Mesteroktató", context, 1));
-        addPerson(new Person(8, "Baksáné Varga Erika", 4, R.drawable.bve0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(9, "Barabás Péter", 4, R.drawable.bp0, context.getString(R.string.seniorLecturer), context, 1));
-        addPerson(new Person(10, "Sasvári Péter", 4, R.drawable.sp0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(11, "Tompa Tamás", 9, R.drawable.tt0, context.getString(R.string.phdStudentTwo), context, 1)); //kép
-        addPerson(new Person(12, "Nagy Miklósné", 17, R.drawable.nf404, context.getString(R.string.librarian), context, 1));
-        addPerson(new Person(13, "Göncziné Halász Éva", 18, R.drawable.ghe0, "Tanulmányi igazgatási ügyintéző", context, 1));
-        addPerson(new Person(14, "Kovács László", 19, R.drawable.kl0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(15, "Wagner György", 20, R.drawable.wgy0, "Mesteroktató", context, 1));
-        addPerson(new Person(16, "Mileff Péter", 22, R.drawable.mp0, context.getString(R.string.associateProfessor), context, 1));
-        addPerson(new Person(17, "Smid László", 22, R.drawable.sl0, context.getString(R.string.assistantLecturer), context, 1));
-        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(19, "Bogdándy Bence", 24, R.drawable.bb0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(20, "Molnár Dávid", 24, R.drawable.md0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(21, "Pintér Tamás", 24, R.drawable.pt0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(22, "Boros Tamás", 24, R.drawable.bt0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student), context, 1));
-        addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student), context, 1));
+        addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer)));
+        addPerson(new Person(2, "Tamás Judit", 1, R.drawable.tj0, context.getString(R.string.phdStudentOne)));
+        addPerson(new Person(3, "Vincze Dávid", 1, R.drawable.vd0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(4, "Kovács Szilveszter", 2, R.drawable.ksz0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(5, "Krizsán Zoltán", 2, R.drawable.kz0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(6, "Bulla Dávid", 3, R.drawable.bd0, "Mérnöktanár"));
+        addPerson(new Person(7, "Szűcs Miklós", 3, R.drawable.szm0, "Mesteroktató"));
+        addPerson(new Person(8, "Baksáné Varga Erika", 4, R.drawable.bve0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(9, "Barabás Péter", 4, R.drawable.bp0, context.getString(R.string.seniorLecturer)));
+        addPerson(new Person(10, "Sasvári Péter", 4, R.drawable.sp0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(11, "Tompa Tamás", 9, R.drawable.tt0, context.getString(R.string.phdStudentTwo)));
+        addPerson(new Person(12, "Nagy Miklósné", 17, R.drawable.nf404, context.getString(R.string.librarian)));
+        addPerson(new Person(13, "Göncziné Halász Éva", 18, R.drawable.ghe0, "Tanulmányi igazgatási ügyintéző"));
+        addPerson(new Person(14, "Kovács László", 19, R.drawable.kl0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(15, "Wagner György", 20, R.drawable.wgy0, "Mesteroktató"));
+        addPerson(new Person(16, "Mileff Péter", 22, R.drawable.mp0, context.getString(R.string.associateProfessor)));
+        addPerson(new Person(17, "Smid László", 22, R.drawable.sl0, context.getString(R.string.assistantLecturer)));
+        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa0, context.getString(R.string.student)));
+        addPerson(new Person(19, "Bogdándy Bence", 24, R.drawable.bb0, context.getString(R.string.student)));
+        addPerson(new Person(20, "Molnár Dávid", 24, R.drawable.md0, context.getString(R.string.student)));
+        addPerson(new Person(21, "Pintér Tamás", 24, R.drawable.pt0, context.getString(R.string.student)));
+        addPerson(new Person(22, "Boros Tamás", 24, R.drawable.bt0, context.getString(R.string.student)));
+        addPerson(new Person(23, "Tóth Ádám", 24, R.drawable.ta0, context.getString(R.string.student)));
+        addPerson(new Person(24, "Ilku Krisztián", 24, R.drawable.ik0, context.getString(R.string.student)));
+        addPerson(new Person(25, "Chiraz Bachtarzi", 24, R.drawable.cb0, context.getString(R.string.student)));
         //endregion
     }
 
@@ -294,7 +299,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0, 0), new Person(0, context.getString(R.string.noSuchRoom), 0, R.drawable.nf404, "", context, 0));
+        Room room = new Room(0, 0, new Position(0, 0.0, 0.0, 0.0), new Person(0, context.getString(R.string.noSuchRoom), 0, R.drawable.nf404, ""));
         if (cursor.getCount() != 0) {
             room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
         }
@@ -355,7 +360,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put("leftimage", position.getLeftId());
         contentValues.put("right", position.getRightId());
         contentValues.put("behind", position.getBehindId());
-        contentValues.put("building", position.getBuildingId());
         db.insert("Position", null, contentValues);
     }
 
@@ -366,7 +370,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
         Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)),
-                Double.parseDouble(cursor.getString(3)), cursor.getString(4), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)), Integer.parseInt(cursor.getString(9)));
+                Double.parseDouble(cursor.getString(3)), cursor.getString(4), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)));
         cursor.close();
         return position;
     }
@@ -379,7 +383,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)),
-                        Double.parseDouble(cursor.getString(3)), cursor.getString(4), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)), Integer.parseInt(cursor.getString(9)));
+                        Double.parseDouble(cursor.getString(3)), cursor.getString(4), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)));
                 positions.add(position);
             } while (cursor.moveToNext());
         }
@@ -410,12 +414,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Device device = new Device(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), getPosition(Integer.parseInt(cursor.getString(3))), Alignment.valueOf(cursor.getString(4)));
-                /*device.setId(Integer.parseInt(cursor.getString(0)));
-                device.setBaseRSSI(Integer.parseInt(cursor.getString(1)));
-                device.setMAC(cursor.getString(2));
-                Position position = getPosition(Integer.parseInt(cursor.getString(3)));
-                device.setAlignment(Alignment.valueOf(cursor.getString(4)));
-                device.setPosition(position);*/
                 devices.add(device);
             } while (cursor.moveToNext());
         }
@@ -441,7 +439,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put("roomId", person.getRoomId());
         contentValues.put("image", person.getImageId());
         contentValues.put("title", person.getTitle());
-        contentValues.put("building", person.getBuildingId());
         db.insert("People", null, contentValues);
     }
 
@@ -453,7 +450,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4), context, Integer.parseInt(cursor.getString(5)));
+                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4));
                 people.add(person);
             } while (cursor.moveToNext());
         }
@@ -468,7 +465,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4), context, Integer.parseInt(cursor.getString(5)));
+                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4));
                 people.add(person);
             } while (cursor.moveToNext());
         }
@@ -477,44 +474,73 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //endregion
-    //region Building
-    public void addBuilding(Integer id, String name) {
+    //region History
+
+    public void addHistory(History history) {
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id", id);
-        contentValues.put("name", name);
-        db.insert("Building", null, contentValues);
+        ContentValues values = new ContentValues();
+        historyId++;
+        values.put("id", historyId);
+        values.put("groupid", groupid);
+        values.put("user", history.getName());
+        values.put("position", history.getPosition());
+        values.put("date", new Date().getTime());
+        values.put("direction", history.getDirection());
+        db.insert("History", null, values);
     }
 
-    public List<Position> getPositionsInBuiling(Integer id) {
-        List<Position> positions = new ArrayList<>();
-        String selectQuery = "Select * From Position WHERE buildingid = '" + id + "'";
+    public List<History> getAllHistory() {
+        List<History> histories = new ArrayList<>();
+        String selectQuery = "Select * From History";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Position position = new Position(Integer.parseInt(cursor.getString(0)), Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)),
-                        Double.parseDouble(cursor.getString(3)), cursor.getString(4), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)), Integer.parseInt(cursor.getString(9)));
-                positions.add(position);
+                histories.add(new History(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), Integer.parseInt(cursor.getString(3)), Float.parseFloat(cursor.getString(4)), Long.parseLong(cursor.getString(5))));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return positions;
+        return histories;
     }
 
-    public List<Person> getPeopleInBuiling(Integer id) {
-        List<Person> people = new ArrayList<>();
-        String selectQuery = "Select * From People WHERE buildingid = '" + id + "'";
+    public List<History> getHistoryByGroupId(Integer id) throws NoEdgeFound {
+        List<History> histories = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.query("Edge", null, "groupid=" + id, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
         if (cursor.moveToFirst()) {
             do {
-                Person person = new Person(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4), context, Integer.parseInt(cursor.getString(5)));
-                people.add(person);
+                histories.add(new History(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2), Integer.parseInt(cursor.getString(3)), Float.parseFloat(cursor.getString(4)), Long.parseLong(cursor.getString(5))));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return people;
+        return histories;
+
     }
-    //endregion
+
+    private int getHistoryCount() {
+        String countQuery = "SELECT * FROM History";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        Integer count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    private int getHistoryLastGroupId() {
+        String countQuery = "SELECT MAX(groupid) FROM History";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        Integer groupId = null;
+        if (cursor != null) {
+            cursor.moveToFirst();
+            groupId = cursor.getInt(0);
+        }
+        cursor.close();
+        return groupId;
+    }
 }

@@ -77,7 +77,7 @@ public class WhatsNearActivity extends AppCompatActivity {
                     List<Person> people = currentClosestRoom.getPeople();
                     List<SearchResult> results = new ArrayList<>();
                     for (Person person : people) {
-                        results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), currentClosestRoom.getId()));
+                        results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), currentClosestRoom.getId()));
                     }
                     searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
                     activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
@@ -149,7 +149,7 @@ public class WhatsNearActivity extends AppCompatActivity {
                 List<Person> people = currentClosestRoom.getPeople();
                 List<SearchResult> results = new ArrayList<>();
                 for (Person person : people) {
-                    results.add(new SearchResult(person.getImage(), person.getName(), person.getTitle(), currentClosestRoom.getId()));
+                    results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), currentClosestRoom.getId()));
                 }
                 searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
                 activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
