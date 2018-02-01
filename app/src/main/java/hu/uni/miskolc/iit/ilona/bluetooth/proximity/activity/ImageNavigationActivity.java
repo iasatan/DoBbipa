@@ -17,12 +17,9 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 
 import com.example.android.test.R;
-import com.example.android.test.databinding.ActivityNavigationBinding;
+import com.example.android.test.databinding.ActivityImageNavigationBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,12 +39,12 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 
-public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
-
+public class ImageNavigationActivity extends AppCompatActivity implements SensorEventListener {
     private final static int REQUEST_ENABLE_BT = 1;
+    private String macAddress;
     private DatabaseHandler db;
     private List<Edge> edges;
-    private ActivityNavigationBinding activityNavigationBinding;
+    private ActivityImageNavigationBinding activityImageNavigationBinding;
     private Room room;
     private User user;
     private BluetoothAdapter btAdapter;
@@ -58,7 +55,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private Position proximityPosition;
     private DijkstraAlgorithm dijkstraAlgorithm;
     private float currentDegree = 0f;
-    private float correctionDegree;
     private Double distance = 1000.0;
     private SensorManager sensorManager;
     private ScanCallback leScanCallback = new ScanCallback() {
@@ -71,9 +67,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 try {
                     user.addPosition(devices);
                     proximityPosition = user.getClosestPosition(positions);
-                    db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
+                    db.addHistory(new History(0, macAddress, proximityPosition.getId(), currentDegree));
                     if (proximityPosition.equals(room.getPosition()) || distance < 1) {
-                        activityNavigationBinding.nextPosition.setText(getString(R.string.arrived));
+                        activityImageNavigationBinding.nextPosition.setText(getString(R.string.arrived));
                     } else {
 
 
@@ -81,44 +77,62 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                         Position nextPosition = path.get(path.size() - 2);
                         if (path != null) {
                             distance = 0.0;
-                            activityNavigationBinding.nextPosition.setText(nextPosition.toString());
-                            if (nextPosition.getY() == proximityPosition.getY()) {
-                                if (nextPosition.getX() > proximityPosition.getX()) {
-                                    correctionDegree = -145;
-                                } else {
-                                    correctionDegree = 35;
-                                }
-                                for (int i = 0; i < path.size() - 2; i++) {
-                                    if (path.get(i).getY() == proximityPosition.getY()) {
-                                        distance = Math.abs(path.get(i).getX() - proximityPosition.getX());
-                                        break;
-                                    }
-                                }
+                            activityImageNavigationBinding.nextPosition.setText(nextPosition.toString());
+                            for (Position position : path) {
+                                if (position.hasImage()) {
+                                    if (position.getY() == proximityPosition.getY()) {
+                                        if (position.getX() > proximityPosition.getX() && position.getBehindId() != 0) {
+                                            activityImageNavigationBinding.imageView.setImageDrawable(getDrawable(position.getBehindId()));
+                                            for (int i = 0; i < path.size() - 2; i++) {
+                                                if (path.get(i).getY() == proximityPosition.getY()) {
+                                                    distance = Math.abs(path.get(i).getX() - proximityPosition.getX());
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        } else if (position.getX() < proximityPosition.getX() && position.getFrontId() != 0) {
+                                            activityImageNavigationBinding.imageView.setImageDrawable(getDrawable(position.getFrontId()));
+                                            for (int i = 0; i < path.size() - 2; i++) {
+                                                if (path.get(i).getY() == proximityPosition.getY()) {
+                                                    distance = Math.abs(path.get(i).getX() - proximityPosition.getX());
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        }
 
-                            } else if (nextPosition.getX() == proximityPosition.getX()) {
-                                if (nextPosition.getY() > proximityPosition.getY()) {
-                                    correctionDegree = -55;
-                                } else {
-                                    correctionDegree = 125;
-                                }
-                                for (int i = 0; i < path.size() - 2; i++) {
-                                    if (path.get(i).getX() == proximityPosition.getX()) {
-                                        distance = Math.abs(path.get(i).getY() - proximityPosition.getY());
-                                        break;
+                                    } else if (position.getX() == proximityPosition.getX()) {
+                                        if (position.getY() > proximityPosition.getY() && position.getRightId() != 0) {
+                                            activityImageNavigationBinding.imageView.setImageDrawable(getDrawable(position.getRightId()));
+                                            for (int i = 0; i < path.size() - 2; i++) {
+                                                if (path.get(i).getX() == proximityPosition.getX()) {
+                                                    distance += Math.abs(path.get(i).getY() - proximityPosition.getY());
+                                                }
+                                            }
+                                            break;
+                                        } else if (position.getY() < proximityPosition.getY() && position.getLeftId() != 0) {
+                                            activityImageNavigationBinding.imageView.setImageDrawable(getDrawable(position.getLeftId()));
+                                            for (int i = 0; i < path.size() - 2; i++) {
+                                                if (path.get(i).getX() == proximityPosition.getX()) {
+                                                    distance += Math.abs(path.get(i).getY() - proximityPosition.getY());
+                                                }
+                                            }
+                                            break;
+                                        }
                                     }
                                 }
 
                             }
 
                         }
-                        activityNavigationBinding.distance.setText(distance.toString() + "m");
-                        activityNavigationBinding.setPosition(proximityPosition.toString());
+                        activityImageNavigationBinding.distance.setText(distance.toString() + "m");
+                        activityImageNavigationBinding.setPosition(proximityPosition.toString());
                     }
                 } catch (NoCloseBeaconException e) {
                 } catch (NodeNotFoundException e) {
-                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                    activityImageNavigationBinding.setRoomNumber("the developer is fucking retarded");
                 } catch (NoPathFoundException e) {
-                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                    activityImageNavigationBinding.setRoomNumber("the developer is fucking retarded");
 
                 }
             }
@@ -128,8 +142,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         BluetoothManager btManager;
+        macAddress = android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address");
         db = new DatabaseHandler(getApplicationContext());
         devices = new HashMap<>();
         user = new User();
@@ -145,32 +159,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             room = db.getRoom(getIntent().getExtras().getInt("room"));
 
         } catch (NullPointerException e) {
-            startActivity(new Intent(NavigationActivity.this, SearchActivity.class));
+            startActivity(new Intent(ImageNavigationActivity.this, SearchActivity.class));
         }
         dijkstraAlgorithm = new DijkstraAlgorithm(edges, positions);
 
 
-        activityNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_navigation);
-        activityNavigationBinding.setRoomNumber(room.getNumber().toString());
-        activityNavigationBinding.setPosition("");
-        activityNavigationBinding.imageNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ImageNavigationActivity.class);
-                intent.putExtra("room", room.getId());
-                view.getContext().startActivity(intent);
-            }
-        });
+        activityImageNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_image_navigation);
+        activityImageNavigationBinding.setRoomNumber(room.getNumber().toString());
+        activityImageNavigationBinding.setPosition("");
         try {
             dijkstraAlgorithm.buildShortestPaths(room.getPosition());
         } catch (NodeNotFoundException e) {
-            activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+            activityImageNavigationBinding.setRoomNumber("the developer is fucking retarded");
         }
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             btAdapter = btManager.getAdapter();
         } catch (NullPointerException e) {
-            startActivity(new Intent(NavigationActivity.this, SearchActivity.class));
+            startActivity(new Intent(ImageNavigationActivity.this, SearchActivity.class));
         }
         btScanner = btAdapter.getBluetoothLeScanner();
         if (btAdapter != null && !btAdapter.isEnabled()) {
@@ -179,7 +185,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         startScanning();
-
     }
 
     @Override
@@ -202,27 +207,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     public void onSensorChanged(SensorEvent event) {
 
         // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
-        degree -= correctionDegree;
-
-        // create a rotation animation (reverse turn degree degrees)
-        RotateAnimation ra = new RotateAnimation(
-                currentDegree,
-                -degree,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f);
-
-        // how long the animation will take place
-        ra.setDuration(210);
-
-        // set the animation after the end of the reservation status
-        ra.setFillAfter(true);
-
-        // Start the animation
-        activityNavigationBinding.imageViewCompass.startAnimation(ra);
-        currentDegree = -degree;
-
+        currentDegree = Math.round(event.values[0]);
     }
 
     @Override

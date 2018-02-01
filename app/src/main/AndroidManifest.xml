@@ -29,6 +29,7 @@
         <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.SearchActivity" />
         <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.WhatsNearActivity" />
         <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.NavigationActivity" />
+        <activity android:name="hu.uni.miskolc.iit.ilona.bluetooth.proximity.activity.ImageNavigationActivity"></activity>
     </application>
 
 </manifest>

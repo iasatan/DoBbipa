@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class Device {
     //region variables
+    private static final int MAXRANGE = 13;  //12m is the maximum range that produce good results of the bluetooth beacons
     private final int id;
     private final int baseRSSI;
     private final String MAC;
@@ -56,7 +57,7 @@ public class Device {
         Map<String, Device> nearDevices = new HashMap<>();
         for (Map.Entry<String, Device> device : devices.entrySet()) {
             if (device.getValue().getAverageRSSI() != 0) {
-                if (device.getValue().getDistanceFromDevice() < 12) { //12m is the maximum range that produce good results of the bluetooth beacons
+                if (device.getValue().getDistanceFromDevice() < MAXRANGE) {
                     nearDevices.put(device.getKey(), device.getValue());
                 }
             }

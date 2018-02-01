@@ -10,10 +10,10 @@ public class Position {
     //region variables
     private final int id;
     private final String comment;
-    private final Integer frontId;
-    private final Integer rightId;
-    private final Integer behindId;
-    private final Integer leftId;
+    private final int frontId;
+    private final int rightId;
+    private final int behindId;
+    private final int leftId;
     private double x;
     private double y;
     private double z;
@@ -29,7 +29,7 @@ public class Position {
         leftId = 0;
     }
 
-    public Position(int id, double x, double y, double z, String comment, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
+    public Position(int id, double x, double y, double z, String comment, int frontId, int rightId, int behindId, int leftId) {
         this.id = id;
         this.comment = comment;
         this.x = x;
@@ -41,7 +41,7 @@ public class Position {
         this.leftId = leftId;
     }
 
-    public Position(int id, double x, double y, double z, Integer frontId, Integer rightId, Integer behindId, Integer leftId) {
+    public Position(int id, double x, double y, double z, int frontId, int rightId, int behindId, int leftId) {
         this.id = id;
         comment = "";
         this.x = x;
@@ -128,20 +128,36 @@ public class Position {
         return comment;
     }
 
-    public Integer getFrontId() {
+    public int getFrontId() {
         return frontId;
     }
 
-    public Integer getRightId() {
+    public int getRightId() {
         return rightId;
     }
 
-    public Integer getBehindId() {
+    public int getBehindId() {
         return behindId;
     }
 
-    public Integer getLeftId() {
+    public int getLeftId() {
         return leftId;
+    }
+
+    public boolean hasImage() {
+        if (frontId != 0) {
+            return true;
+        }
+        if (rightId != 0) {
+            return true;
+        }
+        if (behindId != 0) {
+            return true;
+        }
+        if (leftId != 0) {
+            return true;
+        }
+        return false;
     }
 
     //endregion

@@ -33,7 +33,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa64";
+    private static final String databaseName = "dobbipa68";
     private static final Integer databaseVersion = 1;
     private final Context context;
     private int historyId;
@@ -78,7 +78,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void populateDatabase() {
         //region position
         Map<Integer, Position> positions = new HashMap<>();
-        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, 0, R.drawable.p3520dny, 0));
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
         positions.put(2, new Position(2, 35, 8, 6, "KL előtt", R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
         positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
         positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
@@ -90,26 +90,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         positions.put(10, new Position(10, 8, 20, 6, R.drawable.p820ek, R.drawable.p820dk, R.drawable.p820dny, 0));
         positions.put(11, new Position(11, 35, 12, 6, "lépcső", R.drawable.stairs, R.drawable.p3512dk, 0, R.drawable.p3512eny));
         positions.put(12, new Position(12, 8, 10, 6));
-        positions.put(13, new Position(13, 8, 15, 6));
+        positions.put(13, new Position(13, 8, 15, 6, 0, R.drawable.p815r, 0, R.drawable.p815l));
         positions.put(14, new Position(14, 7, 20, 6));
         positions.put(15, new Position(15, 23, 20, 6));
         positions.put(16, new Position(16, 11, 20, 6));
         positions.put(17, new Position(17, 12, 20, 6));
         positions.put(18, new Position(18, 19, 20, 6));
-        positions.put(19, new Position(19, 21, 20, 6));
-        positions.put(20, new Position(20, 28, 20, 6));
+        positions.put(19, new Position(19, 21, 20, 6, R.drawable.p2120f, 0, R.drawable.p2120b, 0));
+        positions.put(20, new Position(20, 28, 20, 6, R.drawable.p2820f, 0, R.drawable.p2820b, 0));
         positions.put(21, new Position(21, 33, 20, 6));
-        positions.put(22, new Position(22, 39, 20, 6));
+        positions.put(22, new Position(22, 39, 20, 6, R.drawable.p3920f, 0, 0, 0));
         positions.put(23, new Position(23, 39, 8, 6));
         positions.put(24, new Position(24, 36, 8, 6));
         positions.put(25, new Position(25, 32, 8, 6));
         positions.put(27, new Position(27, 28, 8, 6));
         positions.put(26, new Position(26, 29, 8, 6, 0, 0, R.drawable.p298dny, 0));
         positions.put(28, new Position(28, 23, 8, 6));
-        positions.put(29, new Position(29, 21, 8, 6));
-        positions.put(30, new Position(30, 14, 8, 6));
+        positions.put(29, new Position(29, 21, 8, 6, R.drawable.p218f, 0, R.drawable.p218b, 0));
+        positions.put(30, new Position(30, 14, 8, 6, R.drawable.p148f, 0, R.drawable.p148f, 0));
         positions.put(31, new Position(31, 15, 8, 6));
         positions.put(32, new Position(32, 6, 20, 6));
+        positions.put(33, new Position(33, 15, 20, 6, R.drawable.p1520f, 0, R.drawable.p1520b, 0));
         for (Map.Entry<Integer, Position> position : positions.entrySet()) {
             addPosition(position.getValue());
         }
@@ -121,7 +122,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addEdge(new Edge(4, positions.get(20), positions.get(15)));
         addEdge(new Edge(5, positions.get(15), positions.get(19)));
         addEdge(new Edge(6, positions.get(19), positions.get(18)));
-        addEdge(new Edge(7, positions.get(18), positions.get(17)));
+        addEdge(new Edge(7, positions.get(18), positions.get(33)));
         addEdge(new Edge(8, positions.get(17), positions.get(16)));
         addEdge(new Edge(9, positions.get(16), positions.get(10)));
         addEdge(new Edge(10, positions.get(10), positions.get(14)));
@@ -147,6 +148,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addEdge(new Edge(30, positions.get(24), positions.get(23)));
         addEdge(new Edge(31, positions.get(11), positions.get(2)));
         addEdge(new Edge(32, positions.get(11), positions.get(1)));
+        addEdge(new Edge(33, positions.get(33), positions.get(17)));
         //endregion
         //region Device
         addDevice(new Device(1, 70, "0C:F3:EE:00:96:A0", getPosition(1), Alignment.LEFT));
@@ -184,7 +186,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addRoom(new Room(24, 106, getPosition(4)));
         addRoom(new Room(25, 117, getPosition(31), "Tanári Női Mozsdó"));
         addRoom(new Room(26, 118, getPosition(30), "Tanári Férfi Mozsdó"));
-        addRoom(new Room(27, 0, getPosition(11), "Lépcső"));
+        addRoom(new Room(27, 199, getPosition(11), "Lépcső"));
         //endregion
         //region Person
         addPerson(new Person(1, "Tóth Zsolt", 1, R.drawable.tzs0, context.getString(R.string.seniorLecturer)));
