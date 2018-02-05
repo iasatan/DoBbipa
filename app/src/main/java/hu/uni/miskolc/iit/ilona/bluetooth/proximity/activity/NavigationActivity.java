@@ -74,6 +74,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     //db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
                     if (proximityPosition.equals(room.getPosition()) || distance < 1) {
                         activityNavigationBinding.nextPosition.setText(getString(R.string.arrived));
+                        activityNavigationBinding.imageViewCompass.setImageDrawable(getDrawable(R.drawable.arrived));
                     } else {
 
 
