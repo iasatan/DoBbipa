@@ -33,7 +33,7 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa68";
+    private static final String databaseName = "dobbipa70";
     private static final Integer databaseVersion = 1;
     private final Context context;
     private int historyId;
@@ -141,7 +141,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addEdge(new Edge(23, positions.get(3), positions.get(29)));
         addEdge(new Edge(24, positions.get(29), positions.get(28)));
         addEdge(new Edge(25, positions.get(28), positions.get(27)));
-        addEdge(new Edge(26, positions.get(28), positions.get(27)));
+        addEdge(new Edge(26, positions.get(26), positions.get(27)));
         addEdge(new Edge(27, positions.get(26), positions.get(25)));
         addEdge(new Edge(28, positions.get(25), positions.get(2)));
         addEdge(new Edge(29, positions.get(2), positions.get(24)));

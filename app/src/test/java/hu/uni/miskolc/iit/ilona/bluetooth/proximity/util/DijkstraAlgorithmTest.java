@@ -1,5 +1,7 @@
 package hu.uni.miskolc.iit.ilona.bluetooth.proximity.util;
 
+import com.example.android.test.R;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -26,38 +28,39 @@ public class DijkstraAlgorithmTest {
     public void execute() throws NodeNotFoundException, NoPathFoundException {
         nodes = new ArrayList<>();
         Map<Integer, Position> positions = new HashMap<>();
-        positions.put(1, new Position(1, 35, 20, 6, "101 előtt"));
-        positions.put(2, new Position(2, 35, 8, 6, "KL előtt"));
-        positions.put(3, new Position(3, 18, 8, 6, SecurityClearance.LEVEl1, "Konyha előtt"));
-        positions.put(4, new Position(4, 6, 8, 6, SecurityClearance.LEVEl1, "labor előtt"));
-        positions.put(5, new Position(5, 5, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(6, new Position(6, 7, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(7, new Position(7, 13, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(8, new Position(8, 17, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(9, new Position(9, 8, 8, 6, SecurityClearance.LEVEl1, "Elzárt folyosó labornál lévő ajtaja"));
-        positions.put(10, new Position(10, 8, 20, 6));
-        positions.put(11, new Position(11, 35, 12, 6, "lépcső"));
+        positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
+        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
+        positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
+        positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
+        positions.put(5, new Position(5, 5, 8, 6));
+        positions.put(6, new Position(6, 7, 8, 6));
+        positions.put(7, new Position(7, 13, 8, 6));
+        positions.put(8, new Position(8, 17, 8, 6));
+        positions.put(9, new Position(9, 8, 8, 6, "Elzárt folyosó labornál lévő ajtaja", R.drawable.p88ek, 0, R.drawable.p88dny, R.drawable.p88eny));
+        positions.put(10, new Position(10, 8, 20, 6, R.drawable.p820ek, R.drawable.p820dk, R.drawable.p820dny, 0));
+        positions.put(11, new Position(11, 35, 12, 6, "lépcső", R.drawable.stairs, R.drawable.p3512dk, 0, R.drawable.p3512eny));
         positions.put(12, new Position(12, 8, 10, 6));
-        positions.put(13, new Position(13, 8, 15, 6));
+        positions.put(13, new Position(13, 8, 15, 6, 0, R.drawable.p815r, 0, R.drawable.p815l));
         positions.put(14, new Position(14, 7, 20, 6));
         positions.put(15, new Position(15, 23, 20, 6));
         positions.put(16, new Position(16, 11, 20, 6));
         positions.put(17, new Position(17, 12, 20, 6));
         positions.put(18, new Position(18, 19, 20, 6));
-        positions.put(19, new Position(19, 21, 20, 6));
-        positions.put(20, new Position(20, 28, 20, 6));
+        positions.put(19, new Position(19, 21, 20, 6, R.drawable.p2120f, 0, R.drawable.p2120b, 0));
+        positions.put(20, new Position(20, 28, 20, 6, R.drawable.p2820f, 0, R.drawable.p2820b, 0));
         positions.put(21, new Position(21, 33, 20, 6));
-        positions.put(22, new Position(22, 39, 20, 6));
+        positions.put(22, new Position(22, 39, 20, 6, R.drawable.p3920f, 0, 0, 0));
         positions.put(23, new Position(23, 39, 8, 6));
         positions.put(24, new Position(24, 36, 8, 6));
         positions.put(25, new Position(25, 32, 8, 6));
-        positions.put(27, new Position(27, 28, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(26, new Position(26, 29, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(28, new Position(28, 23, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(29, new Position(29, 21, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(30, new Position(30, 14, 8, 6, SecurityClearance.LEVEl1));
-        positions.put(31, new Position(31, 15, 8, 6, SecurityClearance.LEVEl1));
+        positions.put(27, new Position(27, 28, 8, 6));
+        positions.put(26, new Position(26, 29, 8, 6, 0, 0, R.drawable.p298dny, 0));
+        positions.put(28, new Position(28, 23, 8, 6));
+        positions.put(29, new Position(29, 21, 8, 6, R.drawable.p218f, 0, R.drawable.p218b, 0));
+        positions.put(30, new Position(30, 14, 8, 6, R.drawable.p148f, 0, R.drawable.p148f, 0));
+        positions.put(31, new Position(31, 15, 8, 6));
         positions.put(32, new Position(32, 6, 20, 6));
+        positions.put(33, new Position(33, 15, 20, 6, R.drawable.p1520f, 0, R.drawable.p1520b, 0));
         for (Map.Entry<Integer, Position> position : positions.entrySet()) {
             nodes.add(position.getValue());
         }
@@ -87,7 +90,7 @@ public class DijkstraAlgorithmTest {
         edges.add(new Edge(23, positions.get(3), positions.get(29)));
         edges.add(new Edge(24, positions.get(29), positions.get(28)));
         edges.add(new Edge(25, positions.get(28), positions.get(27)));
-        edges.add(new Edge(26, positions.get(28), positions.get(27)));
+        edges.add(new Edge(26, positions.get(26), positions.get(27)));
         edges.add(new Edge(27, positions.get(26), positions.get(25)));
         edges.add(new Edge(28, positions.get(25), positions.get(2)));
         edges.add(new Edge(29, positions.get(2), positions.get(24)));
@@ -95,9 +98,9 @@ public class DijkstraAlgorithmTest {
         edges.add(new Edge(31, positions.get(11), positions.get(2)));
         edges.add(new Edge(32, positions.get(11), positions.get(1)));
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(edges, nodes);
-        dijkstra.buildShortestPaths(new Position(0, 6, 8, 6));
-        LinkedList<Position> path = dijkstra.getPath(new Position(0, 8, 15, 4.4));
-
+        dijkstra.buildShortestPaths(positions.get(25));
+        LinkedList<Position> path = dijkstra.getPath(positions.get(5));
+        System.out.println(dijkstra.getTotalDistance(positions.get(5)));
         Assert.assertTrue(path.size() > 0);
 
         for (Position position : path) {

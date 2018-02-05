@@ -36,7 +36,6 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundExcepti
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.History;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
@@ -60,6 +59,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private float currentDegree = 0f;
     private float correctionDegree;
     private Double distance = 1000.0;
+    private Double totalDistance;
     private SensorManager sensorManager;
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -71,7 +71,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 try {
                     user.addPosition(devices);
                     proximityPosition = user.getClosestPosition(positions);
-                    db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
+                    //db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
                     if (proximityPosition.equals(room.getPosition()) || distance < 1) {
                         activityNavigationBinding.nextPosition.setText(getString(R.string.arrived));
                     } else {
@@ -79,8 +79,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
                         LinkedList<Position> path = dijkstraAlgorithm.getPath(proximityPosition);
                         Position nextPosition = path.get(path.size() - 2);
+
                         if (path != null) {
                             distance = 0.0;
+                            totalDistance = dijkstraAlgorithm.getTotalDistance(proximityPosition);
                             activityNavigationBinding.nextPosition.setText(nextPosition.toString());
                             if (nextPosition.getY() == proximityPosition.getY()) {
                                 if (nextPosition.getX() > proximityPosition.getX()) {
@@ -111,7 +113,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                             }
 
                         }
-                        activityNavigationBinding.distance.setText(distance.toString() + "m");
+                        activityNavigationBinding.distance.setText(distance.toString() + "m / " + totalDistance.toString() + "m");
                         activityNavigationBinding.setPosition(proximityPosition.toString());
                     }
                 } catch (NoCloseBeaconException e) {

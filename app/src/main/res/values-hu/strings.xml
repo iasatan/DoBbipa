@@ -2,7 +2,7 @@
     <string name="app_name">DoBbipa</string>
     <string name="startScan">Keresés Indítása</string>
     <string name="stopScan">Keresés Leállítása</string>
-    <string name="appBasicInfo">Belső Helymeghatározás</string>
+    <string name="appBasicInfo">Belső Helymeghatározás és Navigáció</string>
     <string name="closestRoom">Legközelebbi Szoba: </string>
     <string name="roomNumber">Szoba Szám: </string>
     <string name="residents">Lakosok: </string>

@@ -147,4 +147,50 @@ public class DijkstraAlgorithm {
         return path;
     }
 
+    public Double getTotalDistance(Position source) throws NodeNotFoundException, NoPathFoundException {
+        Double distance = 0.0;
+        Position step = null;
+        for (Position position1 : settledNodes) {
+            if (position1.equals(source)) {
+                step = position1;
+                break;
+            }
+        }
+        if (step == null) {
+            throw new NodeNotFoundException();
+        }
+        if (predecessors.get(step) == null) {
+            throw new NoPathFoundException();
+        }
+        return distances.get(step);
+    }
+
+    public Position getClosestPositionInPathWithPicture(Position source, int direction) throws NodeNotFoundException, NoPathFoundException {
+        List<Position> positions = new ArrayList<>(settledNodes);
+        List<Position> positionList = new ArrayList<>();
+        for (Position position : positions) {
+            switch (direction) {
+                case 1:
+                    if (position.getFrontId() != 0) {
+                        positionList.add(position);
+                    }
+                    break;
+                case 2:
+                    if (position.getRightId() != 0) {
+                        positionList.add(position);
+                    }
+                    break;
+                case 3:
+                    if (position.getBehindId() != 0) {
+                        positionList.add(position);
+                    }
+                    break;
+                case 4:
+                    if (position.getLeftId() != 0) {
+                        positionList.add(position);
+                    }
+            }
+        }
+        return source.getClosestPosition(positionList);
+    }
 }
