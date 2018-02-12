@@ -144,22 +144,6 @@ public class Position {
         return leftId;
     }
 
-    public boolean hasImage() {
-        if (frontId != 0) {
-            return true;
-        }
-        if (rightId != 0) {
-            return true;
-        }
-        if (behindId != 0) {
-            return true;
-        }
-        if (leftId != 0) {
-            return true;
-        }
-        return false;
-    }
-
     //endregion
     @Override
     public String toString() {
@@ -171,15 +155,34 @@ public class Position {
                 '}';
     }
 
+    /**
+     * returns the distance between the two positions
+     *
+     * @param position
+     * @return
+     */
     public double getDistance(Position position) {
         return Math.sqrt(getDistanceSquareFrom(position));
     }
 
+    /**
+     * returns the square of the distance between two positions
+     * useful if the exact distance is irrelevant, and we want to sort the positions
+     *
+     * @param position
+     * @return
+     */
     private double getDistanceSquareFrom(Position position) {
         return Math.pow(position.getX() - x, 2) + Math.pow(position.getY() - y, 2);
 
     }
 
+    /**
+     * returns the closest room to this position
+     *
+     * @param rooms
+     * @return
+     */
     public Room getClosestRoom(List<Room> rooms) {
         Double minDistance = getDistanceSquareFrom(rooms.get(0).getPosition());
         Double distance;
@@ -197,7 +200,12 @@ public class Position {
 
     }
 
-
+    /**
+     * returns the closest position to this position
+     *
+     * @param positions
+     * @return
+     */
     public Position getClosestPosition(List<Position> positions) {
         Double minDistance = getDistanceSquareFrom(positions.get(0));
         Double distance;

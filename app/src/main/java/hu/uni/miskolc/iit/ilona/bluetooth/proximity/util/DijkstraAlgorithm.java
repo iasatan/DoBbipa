@@ -148,7 +148,6 @@ public class DijkstraAlgorithm {
     }
 
     public Double getTotalDistance(Position source) throws NodeNotFoundException, NoPathFoundException {
-        Double distance = 0.0;
         Position step = null;
         for (Position position1 : settledNodes) {
             if (position1.equals(source)) {

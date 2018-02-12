@@ -68,6 +68,9 @@ public class SearchActivity extends AppCompatActivity {
                     for (Person person : room.getPeople()) {
                         results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
                     }
+                    if (results.size() == 0) {
+                        results.add(new SearchResult(getApplicationContext().getDrawable(R.drawable.nf404), room.getNumber().toString(), room.getTitle(), 0));
+                    }
                     searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
                 }
                 activitySearchBinding.searchRecyclerView.setAdapter(searchRecyclerViewAdapter);

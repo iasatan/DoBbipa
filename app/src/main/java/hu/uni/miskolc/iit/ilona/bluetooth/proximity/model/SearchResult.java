@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 
 /**
  * Created by iasatan on 2018.01.11..
+ * Helper class for the search bar. Serializes the results, therefore only one RecycleViewAdapter is enough
  */
 
 public class SearchResult {

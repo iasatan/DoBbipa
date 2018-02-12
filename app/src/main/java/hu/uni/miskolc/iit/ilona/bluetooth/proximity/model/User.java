@@ -21,13 +21,8 @@ public class User {
 
     //region getters & setters
 
-
     public List<Position> getPrevPositions() {
         return prevPositions;
-    }
-
-    public void setPrevPositions(List<Position> prevPositions) {
-        this.prevPositions = prevPositions;
     }
 
     public Position getPosition() {
@@ -49,10 +44,13 @@ public class User {
 
 
     //endregion
-    public void addPosition(Position position) {
-        prevPositions.add(position);
-    }
 
+    /**
+     * Calculates the users position based on the data stored in the Device(beacon) object
+     *
+     * @param devices
+     * @throws NoCloseBeaconException
+     */
     public void addPosition(Map<String, Device> devices) throws NoCloseBeaconException {
         if (prevPositions.size() > 10) {
             prevPositions.remove(0);
@@ -66,7 +64,7 @@ public class User {
         if (nearDevices.size() == 1) {
             List<String> keys = new ArrayList<>(nearDevices.keySet());
             closeToOneBeacon(nearDevices.get(keys.get(0)));
-        } else { //checkes if the user is between beacons
+        } else { //checks when the user is between beacons
             List<Device> closestDevices = Device.closestTwoDevice(nearDevices);
             Double distanceBetweenBeacons = closestDevices.get(0).getPosition().getDistance(closestDevices.get(1).getPosition());
             List<Double> distances = new ArrayList<>();
@@ -94,6 +92,11 @@ public class User {
         prevPositions.add(position);
     }
 
+    /**
+     * calulates the position if only one beacon is within range, based on the devices Alignment variable
+     *
+     * @param nearestDevice - the closest bluetooth beacon
+     */
     private void closeToOneBeacon(Device nearestDevice) {
         switch (nearestDevice.getAlignment()) {
             case RIGHT:

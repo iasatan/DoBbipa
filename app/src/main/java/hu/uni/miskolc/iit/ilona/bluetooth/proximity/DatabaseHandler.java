@@ -79,7 +79,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //region position
         Map<Integer, Position> positions = new HashMap<>();
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
-        positions.put(2, new Position(2, 35, 8, 6, "KL előtt", R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
+        positions.put(2, new Position(2, 35, 8, 6, R.drawable.p358ek, 0, R.drawable.p358dny, R.drawable.p358eny));
         positions.put(3, new Position(3, 18, 8, 6, "Konyha előtt"));
         positions.put(4, new Position(4, 6, 8, 6, "labor előtt"));
         positions.put(5, new Position(5, 5, 8, 6));
@@ -545,4 +545,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return groupId;
     }
+    //endregion
 }

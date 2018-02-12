@@ -12,18 +12,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by iasatan on 2018.01.23..
- */
-public class PositionTest {
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 
-    Position position1 = new Position(0, 1, 1, 1);
-    Position position2 = new Position(1, 2, 2, 2);
+/**
+ * Created by iasatan on 2018.02.12..
+ */
+public class UserTest {
+    User user;
     List<Room> rooms;
     List<Position> positions;
+    Map<String, Device> devices;
 
     @Before
     public void setUp() {
+        user = new User();
+
         positions = new ArrayList<>();
         Map<Integer, Position> positionMap = new HashMap<>();
         positionMap.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
@@ -92,24 +95,28 @@ public class PositionTest {
         rooms.add(new Room(26, 118, positionMap.get(30), "Tanári Férfi Mozsdó"));
         rooms.add(new Room(27, 199, positionMap.get(11), "Lépcső"));
 
+        List<Device> devicesList = new ArrayList<>();
+        devices = new HashMap<>();
+        devicesList.add(new Device(1, 70, "0C:F3:EE:00:96:A0", positionMap.get(1), Alignment.LEFT));
+        devicesList.add(new Device(2, 57, "0C:F3:EE:00:82:4B", positionMap.get(2), Alignment.LEFT));
+        devicesList.add(new Device(3, 65, "0C:F3:EE:00:63:8C", positionMap.get(3), Alignment.LEFT));
+        devicesList.add(new Device(4, 63, "0C:F3:EE:00:96:44", positionMap.get(4), Alignment.RIGHT));
+        devicesList.add(new Device(5, 51, "0C:F3:EE:00:83:96", positionMap.get(13), Alignment.FRONT));
+        devicesList.add(new Device(6, 73, "0C:F3:EE:00:87:EC", positionMap.get(16), Alignment.RIGHT));
+        devicesList.add(new Device(7, 77, "0C:F3:EE:00:87:A8", positionMap.get(15), Alignment.LEFT));
+        devicesList.get(0).addRSSI(-34);
+        devicesList.get(0).addRSSI(-54);
+        devicesList.get(0).addRSSI(-65);
+        devicesList.get(0).addRSSI(-23);
+        for (Device device : devicesList) {
+            devices.put(device.getMAC(), device);
+        }
     }
 
     @Test
-    public void getDistance() {
-        Assert.assertEquals(position1.getDistance(position2), 1.4142135623730951, 0.001);
-        Assert.assertEquals(position1.getDistance(position1), 0.0, 0.001);
-        Assert.assertEquals(position1.getDistance(position2), position2.getDistance(position1), 0.001);
-        Assert.assertFalse(position1.getDistance(position2) < 1);
-    }
-
-    @Test
-    public void getClosestRoom() throws Exception {
-        Assert.assertEquals(position1.getClosestRoom(rooms), rooms.get(0));
-    }
-
-    @Test
-    public void getClosestPosition() throws Exception {
-        Assert.assertEquals(position1.getClosestPosition(positions), positions.get(4));
+    public void addPosition() throws NoCloseBeaconException {
+        user.addPosition(devices);
+        Assert.assertEquals(user.getPosition(), new Position(0, 35.05011872336273, 20, 4.4));
     }
 
 }
