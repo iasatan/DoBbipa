@@ -4,6 +4,7 @@ import com.example.android.test.R;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -23,9 +24,10 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 public class DijkstraAlgorithmTest {
     private List<Position> nodes;
     private List<Edge> edges;
+    private DijkstraAlgorithm dijkstra;
 
-    @Test
-    public void execute() throws NodeNotFoundException, NoPathFoundException {
+    @Before
+    public void setUp() {
         nodes = new ArrayList<>();
         Map<Integer, Position> positions = new HashMap<>();
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
@@ -97,14 +99,32 @@ public class DijkstraAlgorithmTest {
         edges.add(new Edge(30, positions.get(24), positions.get(23)));
         edges.add(new Edge(31, positions.get(11), positions.get(2)));
         edges.add(new Edge(32, positions.get(11), positions.get(1)));
-        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(edges, nodes);
-        dijkstra.buildShortestPaths(positions.get(25));
-        LinkedList<Position> path = dijkstra.getPath(positions.get(5));
-        System.out.println(dijkstra.getTotalDistance(positions.get(5)));
-        Assert.assertTrue(path.size() > 0);
 
-        for (Position position : path) {
-            System.out.println(position);
-        }
+        dijkstra = new DijkstraAlgorithm(edges, nodes);
     }
+
+    @Test
+    public void buildShortestPaths() throws Exception {
+    }
+
+    @Test
+    public void getPath() throws NodeNotFoundException, NoPathFoundException {
+        dijkstra.buildShortestPaths(nodes.get(25));
+        LinkedList<Position> path = dijkstra.getPath(nodes.get(5));
+        Assert.assertTrue(path.size() > 0);
+        Assert.assertEquals(path.size(), 11);
+    }
+
+    @Test(expected = NodeNotFoundException.class)
+    public void getPathWithWrongNode() throws NodeNotFoundException, NoPathFoundException {
+        dijkstra.buildShortestPaths(nodes.get(25));
+        LinkedList<Position> path = dijkstra.getPath(new Position(0, 123, 123, 123));
+    }
+
+    @Test
+    public void getTotalDistance() throws NodeNotFoundException, NoPathFoundException {
+        dijkstra.buildShortestPaths(nodes.get(25));
+        Assert.assertEquals(dijkstra.getTotalDistance(nodes.get(5)), 22.0);
+    }
+
 }

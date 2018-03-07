@@ -1,11 +1,8 @@
 package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by iasatan on 2017.10.13..
@@ -34,37 +31,6 @@ public class Device {
     }
     //endregion
 
-    public static List<Device> closestTwoDevice(Map<String, Device> nearDevices) {
-        if (nearDevices.values().size() == 2) {
-            return Arrays.asList((Device) nearDevices.values().toArray()[0], (Device) nearDevices.values().toArray()[1]);
-        }
-        Device[] result = new Device[2];
-        result[0] = (Device) nearDevices.values().toArray()[0];
-        result[1] = result[0];
-        for (Device currentDevice : nearDevices.values()) {
-            if (currentDevice.getDistanceFromDevice() < result[1].getDistanceFromDevice()) {
-                result[1] = currentDevice;
-            }
-            if (currentDevice.getDistanceFromDevice() < result[0].getDistanceFromDevice()) {
-                result[1] = result[0];
-                result[0] = currentDevice;
-            }
-        }
-        return Arrays.asList(result);
-    }
-
-    public static Map<String, Device> getNearDevices(Map<String, Device> devices) {
-        Map<String, Device> nearDevices = new HashMap<>();
-        for (Map.Entry<String, Device> device : devices.entrySet()) {
-            if (device.getValue().getAverageRSSI() != 0) {
-                if (device.getValue().getDistanceFromDevice() < MAXRANGE) {
-                    nearDevices.put(device.getKey(), device.getValue());
-                }
-            }
-        }
-        return nearDevices;
-    }
-
     public void addRSSI(Integer RSSI) {
         prevRSSI.add(RSSI);
     }
@@ -80,7 +46,7 @@ public class Device {
         return prevRSSI;
     }
 
-    private Double getAverageRSSI() {
+    public Double getAverageRSSI() {
         Double average = 0.0;
         if (prevRSSI.size() == 0) { //if no previous RSSI measured than returns 0
             return average;

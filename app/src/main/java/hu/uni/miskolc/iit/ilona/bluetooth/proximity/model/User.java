@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DeviceUtil;
 
 /**
  * Created by iasatan on 2017.12.14..
@@ -56,7 +57,7 @@ public class User {
             prevPositions.remove(0);
         }
         position.setZ(4.4); //average height a user holds it's phone
-        Map<String, Device> nearDevices = Device.getNearDevices(devices);
+        Map<String, Device> nearDevices = DeviceUtil.getNearDevices(devices);
 
         if (nearDevices.size() == 0) {
             throw new NoCloseBeaconException();
@@ -65,7 +66,7 @@ public class User {
             List<String> keys = new ArrayList<>(nearDevices.keySet());
             closeToOneBeacon(nearDevices.get(keys.get(0)));
         } else { //checks when the user is between beacons
-            List<Device> closestDevices = Device.closestTwoDevice(nearDevices);
+            List<Device> closestDevices = DeviceUtil.closestTwoDevice(nearDevices);
             Double distanceBetweenBeacons = closestDevices.get(0).getPosition().getDistance(closestDevices.get(1).getPosition());
             List<Double> distances = new ArrayList<>();
             distances.add(closestDevices.get(0).getDistanceFromDevice());
