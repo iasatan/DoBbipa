@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class PositionTest {
 
+
     Position position1 = new Position(0, 1, 1, 1);
     Position position2 = new Position(1, 2, 2, 2);
     List<Room> rooms;
@@ -112,4 +113,28 @@ public class PositionTest {
         Assert.assertEquals(position1.getClosestPosition(positions), positions.get(4));
     }
 
+    @Test
+    public void getComment() throws Exception {
+        Assert.assertEquals(positions.get(3).getComment(), "labor előtt");
+    }
+
+    @Test
+    public void getFrontId() throws Exception {
+        Assert.assertEquals(positions.get(32).getFrontId(), R.drawable.p1520f);
+    }
+
+    @Test
+    public void getRightId() throws Exception {
+        Assert.assertEquals(positions.get(10).getRightId(), R.drawable.p3512dk);
+    }
+
+    @Test
+    public void getBehindId() throws Exception {
+        Assert.assertEquals(positions.get(32).getBehindId(), R.drawable.p1520b);
+    }
+
+    @Test
+    public void getLeftId() throws Exception {
+        Assert.assertEquals(positions.get(10).getLeftId(), R.drawable.p3512eny);
+    }
 }

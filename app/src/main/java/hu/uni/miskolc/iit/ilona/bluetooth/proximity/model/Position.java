@@ -99,7 +99,6 @@ public class Position {
         return id;
     }
 
-
     public double getX() {
         return x;
     }
