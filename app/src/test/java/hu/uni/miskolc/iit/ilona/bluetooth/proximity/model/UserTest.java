@@ -104,19 +104,66 @@ public class UserTest {
         devicesList.add(new Device(5, 51, "0C:F3:EE:00:83:96", positionMap.get(13), Alignment.FRONT));
         devicesList.add(new Device(6, 73, "0C:F3:EE:00:87:EC", positionMap.get(16), Alignment.RIGHT));
         devicesList.add(new Device(7, 77, "0C:F3:EE:00:87:A8", positionMap.get(15), Alignment.LEFT));
-        devicesList.get(0).addRSSI(-34);
+        /*devicesList.get(0).addRSSI(-34);
         devicesList.get(0).addRSSI(-54);
         devicesList.get(0).addRSSI(-65);
-        devicesList.get(0).addRSSI(-23);
+        devicesList.get(0).addRSSI(-23);*/
         for (Device device : devicesList) {
             devices.put(device.getMAC(), device);
         }
     }
 
     @Test
-    public void addPosition() throws NoCloseBeaconException {
+    public void positionFromOneCloseBeacon() throws NoCloseBeaconException {
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-34);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-54);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-65);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-23);
         user.addPosition(devices);
-        Assert.assertEquals(user.getPosition(), new Position(0, 35.05011872336273, 20, 4.4));
+        Position actual = user.getPosition();
+        Position expected = new Position(0, 35.05011872336273, 20, 4.4);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void positionFromTwoCloseBeacon() throws NoCloseBeaconException {
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-34);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-54);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-65);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-23);
+
+        devices.get("0C:F3:EE:00:82:4B").addRSSI(-34);
+        devices.get("0C:F3:EE:00:82:4B").addRSSI(-54);
+        devices.get("0C:F3:EE:00:82:4B").addRSSI(-65);
+        devices.get("0C:F3:EE:00:82:4B").addRSSI(-23);
+        user.addPosition(devices);
+        Position actual = user.getPosition();
+        Position expected = new Position(0, 35.0, 22.19505398960031, 4.4);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void closestRoomTest() throws NoCloseBeaconException {
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-34);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-54);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-65);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-23);
+        user.addPosition(devices);
+        Room actual = user.getClosestRoom(rooms);
+        Room expected = rooms.get(14);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void closestPositionTest() throws NoCloseBeaconException {
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-34);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-54);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-65);
+        devices.get("0C:F3:EE:00:96:A0").addRSSI(-23);
+        user.addPosition(devices);
+        Position actual = user.getClosestPosition(positions);
+        Position expected = new Position(0, 35, 20, 4.4);
+        Assert.assertEquals(expected, actual);
     }
 
 }

@@ -22,10 +22,6 @@ public class User {
 
     //region getters & setters
 
-    public List<Position> getPrevPositions() {
-        return prevPositions;
-    }
-
     public Position getPosition() {
 
         return position;
