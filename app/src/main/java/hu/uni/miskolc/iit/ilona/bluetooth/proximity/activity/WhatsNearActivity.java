@@ -27,7 +27,6 @@ import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
@@ -71,20 +70,17 @@ public class WhatsNearActivity extends AppCompatActivity {
             Device device = devices.get(address);
             device.addRSSI(result.getRssi());
             if (device.getPrevRSSIs().size() >= 3) {
-                try {
-                    user.addPosition(devices);
-                    currentClosestRoom = user.getClosestRoom(rooms);
-                    List<Person> people = currentClosestRoom.getPeople();
-                    List<SearchResult> results = new ArrayList<>();
-                    for (Person person : people) {
-                        results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), currentClosestRoom.getId()));
-                    }
-                    searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
-                    activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
-                    activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
-                    activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
-                } catch (NoCloseBeaconException e) {
+                user.addPosition(devices);
+                currentClosestRoom = user.getClosestRoom(rooms);
+                List<Person> people = currentClosestRoom.getPeople();
+                List<SearchResult> results = new ArrayList<>();
+                for (Person person : people) {
+                    results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), currentClosestRoom.getId()));
                 }
+                searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
+                activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
+                activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
+                activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
             }
         }
     };

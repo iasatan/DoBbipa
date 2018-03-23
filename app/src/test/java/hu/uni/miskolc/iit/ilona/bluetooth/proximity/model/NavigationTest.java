@@ -1,33 +1,34 @@
-package hu.uni.miskolc.iit.ilona.bluetooth.proximity.util;
+package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
 import com.example.android.test.R;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 
 /**
- * Created by iasatan on 2018.01.25..
+ * Created by iasatan on 2018.03.23..
  */
-public class DijkstraAlgorithmTest {
+public class NavigationTest {
+
+
+    Navigation navigation;
     private List<Position> nodes;
     private List<Edge> edges;
     private DijkstraAlgorithm dijkstra;
 
+
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         nodes = new ArrayList<>();
         Map<Integer, Position> positions = new HashMap<>();
         positions.put(1, new Position(1, 35, 20, 6, "101 előtt", R.drawable.p3520ek, R.drawable.p3520r, R.drawable.p3520dny, 0));
@@ -99,44 +100,74 @@ public class DijkstraAlgorithmTest {
         edges.add(new Edge(30, positions.get(24), positions.get(23)));
         edges.add(new Edge(31, positions.get(11), positions.get(2)));
         edges.add(new Edge(32, positions.get(11), positions.get(1)));
-
+        Room room = new Room(24, 106, positions.get(4));
         dijkstra = new DijkstraAlgorithm(edges, nodes);
+        dijkstra.buildShortestPaths(room.getPosition());
+        navigation = new Navigation(dijkstra, room);
     }
 
     @Test
-    public void buildShortestPaths() throws Exception {
+    public void getPicture() throws Exception {
+        navigation.navigateImageBased(new Position(6, 7, 8, 6));
+        int picture = navigation.getPicture();
+        int expected = R.drawable.p88ek;
+        Assert.assertEquals(expected, picture);
     }
 
     @Test
-    public void getPath() throws NodeNotFoundException, NoPathFoundException {
-        dijkstra.buildShortestPaths(nodes.get(25));
-        LinkedList<Position> path = dijkstra.getPath(nodes.get(5));
-        Assert.assertTrue(path.size() > 0);
-        Assert.assertEquals(path.size(), 11);
-    }
-
-    @Test(expected = NodeNotFoundException.class)
-    public void getPathWithWrongNode() throws NodeNotFoundException, NoPathFoundException {
-        dijkstra.buildShortestPaths(nodes.get(25));
-        LinkedList<Position> path = dijkstra.getPath(new Position(0, 123, 123, 123));
+    public void getDistance() throws Exception {
+        navigation.navigateImageBased(new Position(6, 7, 8, 6));
+        double distance = navigation.getDistance();
+        double expected = 1.0;
+        Assert.assertEquals(expected, distance, 0.001);
     }
 
     @Test
-    public void getTotalDistance() throws NodeNotFoundException, NoPathFoundException {
-        dijkstra.buildShortestPaths(nodes.get(25));
-        Assert.assertEquals(dijkstra.getTotalDistance(nodes.get(5)), 22.0);
+    public void getDistace2() throws NodeNotFoundException, NoPathFoundException {
+        navigation.navigateImageBased(new Position(30, 8, 20, 6));
+        double distance = navigation.getDistance();
+        double expected = 12.0;
+        Assert.assertEquals(expected, distance, 0.001);
     }
 
-    @Test(expected = NodeNotFoundException.class)
-    public void badNodeTest() throws NodeNotFoundException, NoPathFoundException {
-        dijkstra.buildShortestPaths(nodes.get(25));
-        LinkedList<Position> path = dijkstra.getPath(new Position(0, 102, 120, 0.4));
+    @Test
+    public void getCorrectionDegree() throws Exception {
+        navigation.navigateDirectionBased(new Position(30, 8, 20, 6));
+        float correctionDegree = navigation.getCorrectionDegree();
+        float expected = 125;
+        Assert.assertEquals(expected, correctionDegree, 0.01);
     }
 
-    @Test(expected = NoPathFoundException.class)
-    public void noPathTest() throws NodeNotFoundException, NoPathFoundException {
-        dijkstra.buildShortestPaths(nodes.get(25));
-        LinkedList<Position> path = dijkstra.getPath(nodes.get(25));
+    @Test
+    public void getNextPositionText() throws Exception {
+        navigation.navigateImageBased(new Position(6, 7, 8, 6));
+        String nextPositionText = navigation.getNextPositionText();
+        String expected = new Position(4, 6, 8, 6).toString();
+        Assert.assertEquals(expected, nextPositionText);
+    }
+
+    @Test
+    public void getTotalDistance() throws Exception {
+        navigation.navigateImageBased(new Position(6, 7, 8, 6));
+        double distance = navigation.getTotalDistance();
+        double expected = 1.0;
+        Assert.assertEquals(expected, distance, 0.001);
+    }
+
+    @Test
+    public void testArrival() throws NodeNotFoundException, NoPathFoundException {
+        navigation.navigateImageBased(new Position(4, 6, 8, 6));
+        double distance = navigation.getDistance();
+        double expectedDistance = 0.0;
+        Assert.assertEquals(expectedDistance, distance, 0.001);
+
+        int picture = navigation.getPicture();
+        int expectedPicture = R.drawable.arrived;
+        Assert.assertEquals(expectedPicture, picture);
+
+        int nextPositionText = Integer.parseInt(navigation.getNextPositionText());
+        int expectedNextPositionText = R.string.arrived;
+        Assert.assertEquals(expectedNextPositionText, nextPositionText);
     }
 
 }

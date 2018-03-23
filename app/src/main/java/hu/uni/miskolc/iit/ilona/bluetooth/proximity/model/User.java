@@ -48,16 +48,16 @@ public class User {
      * @param devices
      * @throws NoCloseBeaconException
      */
-    public void addPosition(Map<String, Device> devices) throws NoCloseBeaconException {
+    public void addPosition(Map<String, Device> devices) /*throws NoCloseBeaconException*/ {
         if (prevPositions.size() > 10) {
             prevPositions.remove(0);
         }
         position.setZ(4.4); //average height a user holds it's phone
         Map<String, Device> nearDevices = DeviceUtil.getNearDevices(devices);
 
-        if (nearDevices.size() == 0) {
+        /*if (nearDevices.size() == 0) {
             throw new NoCloseBeaconException();
-        }
+        }*/
         if (nearDevices.size() == 1) {
             List<String> keys = new ArrayList<>(nearDevices.keySet());
             closeToOneBeacon(nearDevices.get(keys.get(0)));
@@ -114,12 +114,5 @@ public class User {
                 position.setX(nearestDevice.getPosition().getX());
                 break;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                ", position=" + position +
-                '}';
     }
 }

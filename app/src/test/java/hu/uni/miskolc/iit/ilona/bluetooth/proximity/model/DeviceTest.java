@@ -49,7 +49,9 @@ public class DeviceTest {
         device.addRSSI(-78);
         device.addRSSI(-43);
         device.addRSSI(-76);
-        assertEquals(device.getDistanceFromDevice(), 1.041285, 0.01);
+        device.addRSSI(-75);
+        device.addRSSI(-87);
+        assertEquals(device.getDistanceFromDevice(), 1.2683429483792452, 0.01);
     }
 
     @Test

@@ -2,7 +2,6 @@ package hu.uni.miskolc.iit.ilona.bluetooth.proximity.model;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.MediumTest;
@@ -31,15 +30,7 @@ public class SearchResultTest {
     public void setUp() throws Exception {
         instrumentationCtx = InstrumentationRegistry.getContext();
         res = getInstrumentation().getTargetContext().getResources();
-        res.getDrawable(R.drawable.sa0);
         result = new SearchResult(res.getDrawable(R.drawable.sa0), "Satan Adam", "Student", 1);
-    }
-
-    @Test
-    public void getImage() throws Exception {
-        Drawable actual = result.getImage();
-        Drawable expected = res.getDrawable(R.drawable.sa0);
-        //Assert.assertEquals(actual, expected);
     }
 
     @Test
@@ -51,10 +42,16 @@ public class SearchResultTest {
 
     @Test
     public void getTitle() throws Exception {
+        String actual = result.getTitle();
+        String expected = "Student";
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void getRoomId() throws Exception {
+        int actual = result.getRoomId();
+        int expected = 1;
+        Assert.assertEquals(expected, actual);
     }
 
 }

@@ -10,16 +10,10 @@ import android.view.View;
 import com.example.android.test.R;
 import com.example.android.test.databinding.ActivitySearchBinding;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.adapter.SearchRecycleViewAdapter;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchResult;
 
 public class SearchActivity extends AppCompatActivity {
@@ -41,6 +35,10 @@ public class SearchActivity extends AppCompatActivity {
                 activitySearchBinding.searchRecyclerView.setHasFixedSize(true);
                 searchRecyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
                 activitySearchBinding.searchRecyclerView.setLayoutManager(searchRecyclerViewLayoutManager);
+                List<SearchResult> results = SearchResult.search(searchTerm, db, getApplicationContext());
+                searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
+
+                /*
                 if (!NumberUtils.isCreatable(searchTerm)) {
                     List<Person> people = db.getAllPeople();
                     List<Room> rooms = db.getAllRoom();
@@ -72,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
                         results.add(new SearchResult(getApplicationContext().getDrawable(R.drawable.nf404), room.getNumber().toString(), room.getTitle(), 0));
                     }
                     searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
-                }
+                }*/
                 activitySearchBinding.searchRecyclerView.setAdapter(searchRecyclerViewAdapter);
 
             }

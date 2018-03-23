@@ -24,18 +24,19 @@ import android.view.animation.RotateAnimation;
 import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityNavigationBinding;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.DatabaseHandler;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoCloseBeaconException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Navigation;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
@@ -58,9 +59,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private DijkstraAlgorithm dijkstraAlgorithm;
     private float currentDegree = 0f;
     private float correctionDegree;
-    private Double distance = 1000.0;
-    private Double totalDistance;
     private SensorManager sensorManager;
+    private Navigation navigation;
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -68,62 +68,26 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             Device device = devices.get(address);
             device.addRSSI(result.getRssi());
             if (device.getPrevRSSIs().size() >= 3) {
+                user.addPosition(devices);
+                proximityPosition = user.getClosestPosition(positions);
+                //db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
+                activityNavigationBinding.setPosition(proximityPosition.toString());
                 try {
-                    user.addPosition(devices);
-                    proximityPosition = user.getClosestPosition(positions);
-                    //db.addHistory(new History(0, android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address"), proximityPosition.getId(), currentDegree));
-                    if (proximityPosition.equals(room.getPosition()) || distance < 1) {
-                        activityNavigationBinding.nextPosition.setText(getString(R.string.arrived));
-                        activityNavigationBinding.imageViewCompass.setImageDrawable(getDrawable(R.drawable.arrived));
-                    } else {
-
-
-                        LinkedList<Position> path = dijkstraAlgorithm.getPath(proximityPosition);
-                        Position nextPosition = path.get(path.size() - 2);
-
-                        if (path != null) {
-                            distance = 0.0;
-                            totalDistance = dijkstraAlgorithm.getTotalDistance(proximityPosition);
-                            activityNavigationBinding.nextPosition.setText(nextPosition.toString());
-                            if (nextPosition.getY() == proximityPosition.getY()) {
-                                if (nextPosition.getX() > proximityPosition.getX()) {
-                                    correctionDegree = -145;
-                                } else {
-                                    correctionDegree = 35;
-                                }
-                                for (int i = 0; i < path.size() - 2; i++) {
-                                    if (path.get(i).getY() == proximityPosition.getY()) {
-                                        distance = Math.abs(path.get(i).getX() - proximityPosition.getX());
-                                        break;
-                                    }
-                                }
-
-                            } else if (nextPosition.getX() == proximityPosition.getX()) {
-                                if (nextPosition.getY() > proximityPosition.getY()) {
-                                    correctionDegree = -55;
-                                } else {
-                                    correctionDegree = 125;
-                                }
-                                for (int i = 0; i < path.size() - 2; i++) {
-                                    if (path.get(i).getX() == proximityPosition.getX()) {
-                                        distance = Math.abs(path.get(i).getY() - proximityPosition.getY());
-                                        break;
-                                    }
-                                }
-
-                            }
-
-                        }
-                        activityNavigationBinding.distance.setText(distance.toString() + "m / " + totalDistance.toString() + "m");
-                        activityNavigationBinding.setPosition(proximityPosition.toString());
-                    }
-                } catch (NoCloseBeaconException e) {
+                    navigation.navigateDirectionBased(proximityPosition);
                 } catch (NodeNotFoundException e) {
-                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+                    e.printStackTrace();
                 } catch (NoPathFoundException e) {
-                    activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
-
+                    e.printStackTrace();
                 }
+                activityNavigationBinding.distance.setText(navigation.getDistance().toString() + "m / " + navigation.getTotalDistance().toString() + "m");
+                String nextPosition = navigation.getNextPositionText();
+                if (NumberUtils.isCreatable(nextPosition)) {
+                    activityNavigationBinding.nextPosition.setText(getString(Integer.parseInt(nextPosition)));
+                } else {
+                    activityNavigationBinding.nextPosition.setText(navigation.getNextPositionText());
+                }
+                correctionDegree = navigation.getCorrectionDegree();
+
             }
         }
     };
@@ -169,6 +133,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         } catch (NodeNotFoundException e) {
             activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
         }
+        navigation = new Navigation(dijkstraAlgorithm, room);
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             btAdapter = btManager.getAdapter();
