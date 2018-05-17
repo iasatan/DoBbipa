@@ -27,7 +27,8 @@
             android:layout_centerHorizontal="true"
             android:text="@string/appBasicInfo"
             android:textAlignment="center"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/roomTextView"
@@ -35,7 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginTop="20dp"
-            android:text="@string/roomNumber" />
+            android:text="@string/roomNumber"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/roomNumberTextView"
@@ -44,7 +46,8 @@
             android:layout_below="@id/title"
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/roomTextView"
-            android:text="@{roomNumber}" />
+            android:text="@{roomNumber}"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/positionTextView"
@@ -52,7 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/roomTextView"
             android:layout_marginTop="20dp"
-            android:text="@string/position" />
+            android:text="@string/position"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/positionStringTextView"
@@ -61,7 +65,8 @@
             android:layout_below="@+id/roomTextView"
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/positionTextView"
-            android:text="@{position}" />
+            android:text="@{position}"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/nextPosition"
@@ -70,7 +75,8 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/positionTextView"
             android:layout_marginTop="29dp"
-            android:text="" />
+            android:text=""
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/distance"
@@ -78,7 +84,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/nextPosition"
             android:layout_centerHorizontal="true"
-            android:text="" />
+            android:text=""
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageViewCompass"

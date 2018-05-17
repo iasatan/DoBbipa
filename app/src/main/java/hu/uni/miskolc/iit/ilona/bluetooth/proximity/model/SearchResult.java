@@ -56,12 +56,22 @@ public class SearchResult {
         } else {
             Integer number = Integer.valueOf(searchTerm);
             Room room = db.getRoomByNumber(number);
+            results.add(new SearchResult(context.getDrawable(R.drawable.nf404), room.getTitle(), room.getNumber().toString(), room.getId()));
             for (Person person : room.getPeople()) {
                 results.add(new SearchResult(context.getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
             }
+
             if (results.size() == 0) {
                 results.add(new SearchResult(context.getDrawable(R.drawable.nf404), room.getNumber().toString(), room.getTitle(), 0));
             }
+        }
+        return results;
+    }
+
+    public static List<SearchResult> searchResultListFromPersonList(List<Person> people, Context context, Room room) {
+        List<SearchResult> results = new ArrayList<>();
+        for (Person person : people) {
+            results.add(new SearchResult(context.getDrawable(person.getImageId()), person.getName(), person.getTitle(), room.getId()));
         }
         return results;
     }

@@ -11,17 +11,14 @@ import com.example.android.test.R;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoEdgeFound;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Device;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
-import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.History;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Person;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
@@ -33,18 +30,18 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Room;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String databaseName = "dobbipa70";
+    private static final String databaseName = "dobbipa72";
     private static final Integer databaseVersion = 1;
     private final Context context;
-    private int historyId;
-    private int groupid;
+    //private int historyId;
+    //private int groupid;
 
     public DatabaseHandler(Context context) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
-        historyId = getHistoryCount();
-        groupid = getHistoryLastGroupId();
-        groupid++;
+        //historyId = getHistoryCount();
+        //groupid = getHistoryLastGroupId();
+        //groupid++;
     }
 
     public DatabaseHandler() {
@@ -206,7 +203,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addPerson(new Person(15, "Wagner György", 20, R.drawable.wgy0, "Mesteroktató"));
         addPerson(new Person(16, "Mileff Péter", 22, R.drawable.mp0, context.getString(R.string.associateProfessor)));
         addPerson(new Person(17, "Smid László", 22, R.drawable.sl0, context.getString(R.string.assistantLecturer)));
-        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa0, context.getString(R.string.student)));
+        addPerson(new Person(18, "Sátán Ádám", 24, R.drawable.sa1, context.getString(R.string.student)));
         addPerson(new Person(19, "Bogdándy Bence", 24, R.drawable.bb0, context.getString(R.string.student)));
         addPerson(new Person(20, "Molnár Dávid", 24, R.drawable.md0, context.getString(R.string.student)));
         addPerson(new Person(21, "Pintér Tamás", 24, R.drawable.pt0, context.getString(R.string.student)));
@@ -244,6 +241,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return edges;
     }
 
+    /*
     public Edge getEdgeById(Integer id) throws NoEdgeFound {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query("Edge", null, "id=" + id, null, null, null, null);
@@ -260,7 +258,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return edge;
     }
-
+    */
     //endregion
     //region Room
     public void addRoom(Room room) {
@@ -284,16 +282,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return room;
     }
 
-    public Room getRoomByPosition(int positionId) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("Room", null, "position=" + positionId, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        Room room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
-        cursor.close();
-        return room;
-    }
 
     public Room getRoomByNumber(int number) {
         SQLiteDatabase db = getReadableDatabase();
@@ -324,6 +312,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return rooms;
     }
 
+    /*
+    public Room getRoomByPosition(int positionId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Room", null, "position=" + positionId, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Room room = new Room(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), getPosition(Integer.parseInt(cursor.getString(2))), cursor.getString(3), getPeopleInRoom(Integer.parseInt(cursor.getString(0))));
+        cursor.close();
+        return room;
+    }
     public int getRoomCount() {
         String countQuery = "SELECT * FROM Room";
         SQLiteDatabase db = getReadableDatabase();
@@ -347,7 +346,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("Room", "id=" + id, null);
     }
-
+    */
     //endregion
     //region Position
     public void addPosition(Position position) {
@@ -408,7 +407,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public Collection<Device> getAllDevice() {
+    private Collection<Device> getAllDevice() {
         Collection<Device> devices = new HashSet<>();
         String selectQuery = "Select * From Device";
         SQLiteDatabase db = getReadableDatabase();
@@ -431,6 +430,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return temp;
     }
+
+    public Map<String, Device> getDeviceMap() {
+        Map<String, Device> devices = new HashMap<>();
+        for (Device device : getAllDevice()) {
+            devices.put(device.getMAC(), device);
+        }
+        return devices;
+    }
+
 
     //endregion
     //region Person
@@ -477,7 +485,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //endregion
     //region History
-
+    /*
     public void addHistory(History history) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -546,4 +554,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return groupId;
     }
     //endregion
+    */
 }

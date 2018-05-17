@@ -21,7 +21,6 @@ import com.example.android.test.R;
 import com.example.android.test.databinding.ActivityWhatsNearBinding;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,19 +33,6 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.SearchResult;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.User;
 
 public class WhatsNearActivity extends AppCompatActivity {
-    //region ble transmission
-    /*AdvertiseCallback advertisingCallback = new AdvertiseCallback() {
-        @Override
-        public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-            super.onStartSuccess(settingsInEffect);
-        }
-
-        @Override
-        public void onStartFailure(int errorCode) {
-            super.onStartFailure(errorCode);
-        }
-    };*/
-    //endregion
     //region variables
     private static final String STARTED = "started";
     private static final String CLOSESTROOMID = "closestRoomId";
@@ -72,12 +58,7 @@ public class WhatsNearActivity extends AppCompatActivity {
             if (device.getPrevRSSIs().size() >= 3) {
                 user.addPosition(devices);
                 currentClosestRoom = user.getClosestRoom(rooms);
-                List<Person> people = currentClosestRoom.getPeople();
-                List<SearchResult> results = new ArrayList<>();
-                for (Person person : people) {
-                    results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), currentClosestRoom.getId()));
-                }
-                searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
+                searchRecyclerViewAdapter = new SearchRecycleViewAdapter(SearchResult.searchResultListFromPersonList(currentClosestRoom.getPeople(), getApplicationContext(), currentClosestRoom));
                 activityWhatsNearBinding.residentsRecyclerView.setAdapter(searchRecyclerViewAdapter);
                 activityWhatsNearBinding.setClosestRoom(currentClosestRoom.getNumber().toString());
                 activityWhatsNearBinding.setRoomTitle(currentClosestRoom.getTitle());
@@ -100,11 +81,9 @@ public class WhatsNearActivity extends AppCompatActivity {
         //endregion
         //region database
         DatabaseHandler db;
-        devices = new HashMap<>();
+
         db = new DatabaseHandler(getApplicationContext());
-        for (Device device : db.getAllDevice()) {
-            devices.put(device.getMAC(), device);
-        }
+        devices = db.getDeviceMap();
         user = new User();
         rooms = db.getAllRoom();
         //endregion

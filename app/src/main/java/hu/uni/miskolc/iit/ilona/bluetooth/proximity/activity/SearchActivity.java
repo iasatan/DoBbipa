@@ -37,40 +37,6 @@ public class SearchActivity extends AppCompatActivity {
                 activitySearchBinding.searchRecyclerView.setLayoutManager(searchRecyclerViewLayoutManager);
                 List<SearchResult> results = SearchResult.search(searchTerm, db, getApplicationContext());
                 searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
-
-                /*
-                if (!NumberUtils.isCreatable(searchTerm)) {
-                    List<Person> people = db.getAllPeople();
-                    List<Room> rooms = db.getAllRoom();
-                    List<SearchResult> results = new ArrayList<>();
-                    for (Person person : people) {
-                        if (StringUtils.containsIgnoreCase(person.getName(), searchTerm)) {
-                            results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
-                        }
-                    }
-                    for (Room room : rooms) {
-                        if (StringUtils.containsIgnoreCase(room.getTitle(), searchTerm)) {
-                            results.add(new SearchResult(getApplicationContext().getDrawable(R.drawable.nf404), room.getTitle(), room.getNumber().toString(), room.getId()));
-                        }
-                    }
-                    if (results.size() == 0) {
-                        results.add(new SearchResult(getApplicationContext().getDrawable(R.drawable.nf404), getString(R.string.noResult), "", 0));
-                    }
-                    searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
-
-
-                } else {
-                    Integer number = Integer.valueOf(searchTerm);
-                    Room room = db.getRoomByNumber(number);
-                    List<SearchResult> results = new ArrayList<>();
-                    for (Person person : room.getPeople()) {
-                        results.add(new SearchResult(getApplicationContext().getDrawable(person.getImageId()), person.getName(), person.getTitle(), person.getRoomId()));
-                    }
-                    if (results.size() == 0) {
-                        results.add(new SearchResult(getApplicationContext().getDrawable(R.drawable.nf404), room.getNumber().toString(), room.getTitle(), 0));
-                    }
-                    searchRecyclerViewAdapter = new SearchRecycleViewAdapter(results);
-                }*/
                 activitySearchBinding.searchRecyclerView.setAdapter(searchRecyclerViewAdapter);
 
             }

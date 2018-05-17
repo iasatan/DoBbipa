@@ -54,10 +54,6 @@ public class User {
         }
         position.setZ(4.4); //average height a user holds it's phone
         Map<String, Device> nearDevices = DeviceUtil.getNearDevices(devices);
-
-        /*if (nearDevices.size() == 0) {
-            throw new NoCloseBeaconException();
-        }*/
         if (nearDevices.size() == 1) {
             List<String> keys = new ArrayList<>(nearDevices.keySet());
             closeToOneBeacon(nearDevices.get(keys.get(0)));

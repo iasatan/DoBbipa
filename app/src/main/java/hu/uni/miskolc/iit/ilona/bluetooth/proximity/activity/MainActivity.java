@@ -31,22 +31,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        //region contentView
-        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SearchActivity.class));
-            }
-        });
-        activityMainBinding.whatNearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
-            }
-        });
+        dataBinding();
 
-        //endregion
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.locationAccess));
@@ -60,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+    }
+
+    private void dataBinding() {
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        activityMainBinding.searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+            }
+        });
+        activityMainBinding.whatNearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, WhatsNearActivity.class));
+            }
+        });
     }
 
     @Override

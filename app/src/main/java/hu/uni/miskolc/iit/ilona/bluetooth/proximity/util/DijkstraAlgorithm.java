@@ -11,6 +11,7 @@ import java.util.Set;
 
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NoPathFoundException;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.exception.NodeNotFoundException;
+import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Alignment;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Edge;
 import hu.uni.miskolc.iit.ilona.bluetooth.proximity.model.Position;
 
@@ -164,27 +165,27 @@ public class DijkstraAlgorithm {
         return distances.get(step);
     }
 
-    public Position getClosestPositionInPathWithPicture(Position source, int direction) throws NodeNotFoundException, NoPathFoundException {
+    public Position getClosestPositionInPathWithPicture(Position source, Alignment alignment) throws NodeNotFoundException, NoPathFoundException {
         List<Position> positions = new ArrayList<>(settledNodes);
         List<Position> positionList = new ArrayList<>();
         for (Position position : positions) {
-            switch (direction) {
-                case 1:
+            switch (alignment) {
+                case FRONT:
                     if (position.getFrontId() != 0) {
                         positionList.add(position);
                     }
                     break;
-                case 2:
+                case RIGHT:
                     if (position.getRightId() != 0) {
                         positionList.add(position);
                     }
                     break;
-                case 3:
+                case BEHIND:
                     if (position.getBehindId() != 0) {
                         positionList.add(position);
                     }
                     break;
-                case 4:
+                case LEFT:
                     if (position.getLeftId() != 0) {
                         positionList.add(position);
                     }

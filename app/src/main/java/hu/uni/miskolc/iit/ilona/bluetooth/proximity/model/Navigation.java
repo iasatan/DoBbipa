@@ -67,12 +67,7 @@ public class Navigation {
                 } else {
                     correctionDegree = 35;
                 }
-                for (int i = 0; i < path.size() - 2; i++) {
-                    if (path.get(i).getY() == position.getY()) {
-                        distance = Math.abs(path.get(i).getX() - position.getX());
-                        break;
-                    }
-                }
+                getDistanceSameY(position, path);
 
             } else if (nextPosition.getX() == position.getX()) {
                 if (nextPosition.getY() > position.getY()) {
@@ -80,12 +75,7 @@ public class Navigation {
                 } else {
                     correctionDegree = 125;
                 }
-                for (int i = 0; i < path.size() - 2; i++) {
-                    if (path.get(i).getX() == position.getX()) {
-                        distance = Math.abs(path.get(i).getY() - position.getY());
-                        break;
-                    }
-                }
+                getDistanceSameX(position, path);
 
             }
 
@@ -113,34 +103,44 @@ public class Navigation {
             nextPositionText = nextPosition.toString();
             if (position.getX() == nextPosition.getX()) {
                 if (position.getY() < nextPosition.getY()) {
-                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, 4).getLeftId();
+                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, Alignment.LEFT).getLeftId();
                 } else {
-                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, 2).getRightId();
+                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, Alignment.RIGHT).getRightId();
                 }
-                for (int i = 0; i < path.size() - 2; i++) {
-                    if (path.get(i).getX() == position.getX()) {
-                        distance = Math.abs(path.get(i).getY() - position.getY());
-                        break;
-                    }
-                }
+
+                getDistanceSameX(position, path);
 
             } else if (position.getY() == nextPosition.getY()) {
                 if (position.getX() < nextPosition.getX()) {
-                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, 3).getBehindId();
+                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, Alignment.BEHIND).getBehindId();
                 } else {
-                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, 1).getFrontId();
+                    picture = dijkstraAlgorithm.getClosestPositionInPathWithPicture(nextPosition, Alignment.FRONT).getFrontId();
                 }
 
-                for (int i = 0; i < path.size() - 1; i++) {
-                    if (path.get(i).getY() == position.getY()) {
-                        distance = Math.abs(path.get(i).getX() - position.getX());
-                        break;
-                    }
-                }
+                getDistanceSameY(position, path);
 
             }
         }
 
 
+    }
+
+
+    private void getDistanceSameX(Position position, LinkedList<Position> path) {
+        for (int i = 0; i < path.size() - 1; i++) {
+            if (path.get(i).getX() == position.getX()) {
+                distance = Math.abs(path.get(i).getY() - position.getY());
+                break;
+            }
+        }
+    }
+
+    private void getDistanceSameY(Position position, LinkedList<Position> path) {
+        for (int i = 0; i < path.size() - 1; i++) {
+            if (path.get(i).getY() == position.getY()) {
+                distance = Math.abs(path.get(i).getX() - position.getX());
+                break;
+            }
+        }
     }
 }

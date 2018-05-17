@@ -27,7 +27,6 @@ import com.example.android.test.databinding.ActivityNavigationBinding;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,11 +74,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 try {
                     navigation.navigateDirectionBased(proximityPosition);
                 } catch (NodeNotFoundException e) {
-                    e.printStackTrace();
+
                 } catch (NoPathFoundException e) {
                     e.printStackTrace();
                 }
-                activityNavigationBinding.distance.setText(navigation.getDistance().toString() + "m / " + navigation.getTotalDistance().toString() + "m");
+                try {
+                    activityNavigationBinding.distance.setText(navigation.getDistance().toString() + "m / " + navigation.getTotalDistance().toString() + "m");
+                } catch (Exception e) {
+
+                }
+
                 String nextPosition = navigation.getNextPositionText();
                 if (NumberUtils.isCreatable(nextPosition)) {
                     activityNavigationBinding.nextPosition.setText(getString(Integer.parseInt(nextPosition)));
@@ -96,14 +100,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BluetoothManager btManager;
         db = new DatabaseHandler(getApplicationContext());
-        devices = new HashMap<>();
+        devices = db.getDeviceMap();
         user = new User();
-
-        for (Device device : db.getAllDevice()) {
-            devices.put(device.getMAC(), device);
-        }
         positions = db.getAllPosition();
         edges = db.getAllEdge();
 
@@ -117,23 +116,21 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         dijkstraAlgorithm = new DijkstraAlgorithm(edges, positions);
 
 
-        activityNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_navigation);
-        activityNavigationBinding.setRoomNumber(room.getNumber().toString());
-        activityNavigationBinding.setPosition("");
-        activityNavigationBinding.imageNavigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ImageNavigationActivity.class);
-                intent.putExtra("room", room.getId());
-                view.getContext().startActivity(intent);
-            }
-        });
+        dataBinding();
         try {
             dijkstraAlgorithm.buildShortestPaths(room.getPosition());
         } catch (NodeNotFoundException e) {
-            activityNavigationBinding.setRoomNumber("the developer is fucking retarded");
+            activityNavigationBinding.setRoomNumber(getString(R.string.noRoomNumberException));
         }
         navigation = new Navigation(dijkstraAlgorithm, room);
+        initBluetooth();
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        startScanning();
+
+    }
+
+    private void initBluetooth() {
+        BluetoothManager btManager;
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             btAdapter = btManager.getAdapter();
@@ -145,9 +142,20 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        startScanning();
+    }
 
+    private void dataBinding() {
+        activityNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_navigation);
+        activityNavigationBinding.setRoomNumber(room.getNumber().toString());
+        activityNavigationBinding.setPosition("");
+        activityNavigationBinding.imageNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), ImageNavigationActivity.class);
+                intent.putExtra("room", room.getId());
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

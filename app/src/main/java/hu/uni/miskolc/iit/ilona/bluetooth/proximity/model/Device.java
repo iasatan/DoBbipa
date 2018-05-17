@@ -10,7 +10,6 @@ import java.util.List;
 
 public class Device {
     //region variables
-    private static final int MAXRANGE = 13;  //12m is the maximum range that produce good results of the bluetooth beacons
     private final int id;
     private final int baseRSSI;
     private final String MAC;

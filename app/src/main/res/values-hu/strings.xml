@@ -30,5 +30,6 @@
     <string name="settings">Beállítások</string>
     <string name="arrived">Elérte az uticélját</string>
     <string name="imageNavigation">Kép alapú navigáció</string>
+    <string name="noRoomNumberException">Nincs ilyen számú szoba</string>
 
 </resources>

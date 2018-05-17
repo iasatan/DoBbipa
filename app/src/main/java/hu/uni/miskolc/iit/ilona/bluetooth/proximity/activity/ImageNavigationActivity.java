@@ -24,7 +24,6 @@ import com.example.android.test.databinding.ActivityImageNavigationBinding;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ import hu.uni.miskolc.iit.ilona.bluetooth.proximity.util.DijkstraAlgorithm;
 
 public class ImageNavigationActivity extends AppCompatActivity implements SensorEventListener {
     private final static int REQUEST_ENABLE_BT = 1;
-    Double totalDistance;
     private String macAddress;
     private DatabaseHandler db;
     private List<Edge> edges;
@@ -72,12 +70,14 @@ public class ImageNavigationActivity extends AppCompatActivity implements Sensor
                 try {
                     navigation.navigateImageBased(proximityPosition);
                 } catch (NodeNotFoundException e) {
-                    e.printStackTrace();
                 } catch (NoPathFoundException e) {
-                    e.printStackTrace();
                 }
                 activityImageNavigationBinding.imageView.setImageDrawable(getDrawable(navigation.getPicture()));
-                activityImageNavigationBinding.distance.setText(navigation.getDistance().toString() + "m / " + navigation.getTotalDistance().toString() + "m");
+                try {
+                    activityImageNavigationBinding.distance.setText(navigation.getDistance().toString() + "m / " + navigation.getTotalDistance().toString() + "m");
+                } catch (Exception e) {
+                }
+
                 String nextPosition = navigation.getNextPositionText();
                 if (NumberUtils.isCreatable(nextPosition)) {
                     activityImageNavigationBinding.nextPosition.setText(getString(Integer.parseInt(nextPosition)));
@@ -94,18 +94,12 @@ public class ImageNavigationActivity extends AppCompatActivity implements Sensor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BluetoothManager btManager;
         macAddress = android.provider.Settings.Secure.getString(getContentResolver(), "bluetooth_address");
         db = new DatabaseHandler(getApplicationContext());
-        devices = new HashMap<>();
+        devices = db.getDeviceMap();
         user = new User();
-
-        for (Device device : db.getAllDevice()) {
-            devices.put(device.getMAC(), device);
-        }
         positions = db.getAllPosition();
         edges = db.getAllEdge();
-
 
         try {
             room = db.getRoom(getIntent().getExtras().getInt("room"));
@@ -115,16 +109,20 @@ public class ImageNavigationActivity extends AppCompatActivity implements Sensor
         }
         dijkstraAlgorithm = new DijkstraAlgorithm(edges, positions);
 
-
-        activityImageNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_image_navigation);
-        activityImageNavigationBinding.setRoomNumber(room.getNumber().toString());
-        activityImageNavigationBinding.setPosition("");
+        dataBinding();
         try {
             dijkstraAlgorithm.buildShortestPaths(room.getPosition());
         } catch (NodeNotFoundException e) {
-            activityImageNavigationBinding.setRoomNumber("the developer is fucking retarded");
+            activityImageNavigationBinding.setRoomNumber(getString(R.string.noRoomNumberException));
         }
         navigation = new Navigation(dijkstraAlgorithm, room);
+        initBluetooth();
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        startScanning();
+    }
+
+    private void initBluetooth() {
+        BluetoothManager btManager;
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             btAdapter = btManager.getAdapter();
@@ -136,8 +134,12 @@ public class ImageNavigationActivity extends AppCompatActivity implements Sensor
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        startScanning();
+    }
+
+    private void dataBinding() {
+        activityImageNavigationBinding = DataBindingUtil.setContentView(this, R.layout.activity_image_navigation);
+        activityImageNavigationBinding.setRoomNumber(room.getNumber().toString());
+        activityImageNavigationBinding.setPosition("");
     }
 
     @Override
