@@ -86,6 +86,7 @@ public class Navigation {
         nextPositionText = Integer.toString(R.string.arrived);
         picture = R.drawable.arrived;
         distance = 0.0;
+        totalDistance = 0.0;
     }
 
 
